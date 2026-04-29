@@ -1,0 +1,109 @@
+% =============================================================================
+% Encoding & Fonts
+% =============================================================================
+\usepackage[utf8]{inputenc} % Manage special characters (legacy; often not needed with modern engines)
+\usepackage[T1]{fontenc}    % Better font encoding (hyphenation, accented chars)
+
+
+
+% =============================================================================
+% Chapter / Header Styling
+% =============================================================================
+\usepackage[Bjarne]{fncychap} % Fancy chapter style (e.g., Sonny, Lenny, ...)
+\usepackage{fancyhdr}         % Customize headers/footers
+
+% =============================================================================
+% Page Layout
+% =============================================================================
+\usepackage[
+	lmargin=1.5in,
+	rmargin=1in,
+	tmargin=1in,
+	bmargin=1in
+]{geometry} % Page margins
+
+% =============================================================================
+% TOC / Section Numbering
+% =============================================================================
+\setcounter{tocdepth}{2}    % TOC depth: 2 => include subsections
+\setcounter{secnumdepth}{4} % Numbering depth: 4 => include subsubsubsections (if defined)
+
+% =============================================================================
+% Links / URLs
+% =============================================================================
+\usepackage{url} % Typeset URLs
+
+% =============================================================================
+% Code Listings
+% =============================================================================
+\usepackage{listings} % Include code listings
+
+% =============================================================================
+% Math & Units
+% =============================================================================
+\usepackage{amsmath,amssymb} % Math packages
+\usepackage{siunitx}         % SI units
+
+% =============================================================================
+% Figures, Tables & Captions
+% =============================================================================
+\usepackage[bf]{caption}        % Bold captions
+\usepackage{array,booktabs}     % Better tables
+\usepackage{graphicx}           % Include graphics
+\usepackage{float}              % Improved float placement
+\usepackage[export]{adjustbox}  % Adjust/align graphics (e.g., center, frame)
+\usepackage{subfig}             % Subfigures
+\usepackage{tabularx}
+
+% =============================================================================
+% Counters
+% =============================================================================
+\usepackage{chngcntr}             % Control counters
+\counterwithin{figure}{section}   % Figure numbering within sections
+\counterwithin{table}{section}    % Table numbering within sections
+
+% =============================================================================
+% Colors
+% =============================================================================
+\usepackage{color,xcolor} % Text and element colors
+
+% =============================================================================
+% Abbreviations / Acronyms
+% =============================================================================
+\usepackage[acronym,nonumberlist]{glossaries}
+\makeglossaries
+\loadglsentries{Chapters/00-preliminary/sub-chapters/03-abbreviations}
+
+% =============================================================================
+% Hyperlinks & PDF Bookmarks
+% =============================================================================
+\usepackage[hidelinks]{hyperref}
+\usepackage{bookmark}
+
+% =============================================================================
+% Bibliography (BibLaTeX)
+% =============================================================================
+\usepackage[
+	backend=biber,
+	style=apa,
+	date=long,        % long: 24th Mar. 1997 | short: 24/03/1997
+	sorting=nyt,
+	maxcitenames=3    % Maximum number of names before et al.
+]{biblatex}
+\addbibresource{bibliography.bib}
+
+% =============================================================================
+% Utilities
+% =============================================================================
+\usepackage{comment}   % Comment out blocks
+\usepackage{afterpage} % Defer commands until after current page
+
+% =============================================================================
+% Custom Commands
+% =============================================================================
+\newcommand\myemptypage{%
+	\null
+	\thispagestyle{empty}
+	\addtocounter{page}{-1}
+	\newpage
+} % Insert an empty page without page number or page counter increment
