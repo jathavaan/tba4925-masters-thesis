@@ -839,16 +839,23 @@
 	url          = {https://www.postgresql.org/docs/current/wal-intro.html},
 	urldate      = {2026-04-25},
 }
-@article{wang2024_storage_disaggregated_databases,
-	title        = {Understanding the Performance Implications of the Design Principles in Storage-Disaggregated Databases},
-	author       = {Wang, Jianguo and Zhang, Qizhen},
-	year         = {2024},
-	journal      = {Proceedings of the ACM on Management of Data},
-	volume       = {2},
-	number       = {3},
-	doi          = {10.1145/3654983},
-	url          = {https://doi.org/10.1145/3654983},
-	urldate      = {2026-04-20},
+@article{pang2024_storage_disaggregated_databases,
+author = {Pang, Xi and Wang, Jianguo},
+title = {Understanding the Performance Implications of the Design Principles in Storage-Disaggregated Databases},
+year = {2024},
+issue_date = {June 2024},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+volume = {2},
+number = {3},
+url = {https://doi.org/10.1145/3654983},
+doi = {10.1145/3654983},
+abstract = {Storage-compute disaggregation has recently emerged as a novel architecture in modern data centers, particularly in the cloud. By decoupling compute from storage, this new architecture enables independent and elastic scaling of compute and storage resources, potentially increasing resource utilization and reducing overall costs. To best leverage the disaggregated architecture, a new breed of database systems termed storage-disaggregated databases has recently been developed, such as Amazon Aurora, Microsoft Socrates, Google AlloyDB, Alibaba PolarDB, and Huawei Taurus. However, little is known about the effectiveness of the design principles in these databases since they are typically developed by industry giants, and only the overall performance results are presented without detailing the impact of individual design principles. As a result, many critical research questions remain unclear, such as the performance impact of storage-disaggregation, the log-as-the-database design, shared-storage, and various log-replay methods.In this paper, we investigate the performance implications of the design principles that are widely adopted in storage-disaggregated databases for the first time. As these databases were usually not open-sourced, we have made a significant effort to implement a storage-disaggregated database prototype based on PostgreSQL v13.0. By fully controlling and instrumenting the codebase, we are able to selectively enable and disable individual optimizations and techniques to evaluate their impact on performance in various scenarios. Furthermore, we open-source our storage-disaggregated database prototype for use by the broader database research community, fostering collaboration and innovation in this field.},
+journal = {Proc. ACM Manag. Data},
+month = may,
+articleno = {180},
+numpages = {26},
+keywords = {cloud-native databases, disaggregated databases}
 }
 @misc{wikipedia2025_esri_shapefile,
 	title        = {Esri Shapefile},
@@ -884,7 +891,232 @@
 	publisher    = {Association for Computing Machinery},
 	address      = {New York, NY, USA},
 	series       = {SIGSPATIAL '15},
+	pages        = {1--4},
 	doi          = {10.1145/2820783.2820860},
 	url          = {https://doi.org/10.1145/2820783.2820860},
-	urldate      = {2026-04-27},
+	urldate      = {2026-04-29}
+}
+@article{yu2019_geospark_perspective_beyond,
+	title        = {Spatial Data Management in {Apache Spark}: The {GeoSpark} Perspective and Beyond},
+	author       = {Yu, Jia and Zhang, Zongsi and Sarwat, Mohamed},
+	year         = {2019},
+	journal      = {GeoInformatica},
+	volume       = {23},
+	number       = {1},
+	pages        = {37--78},
+	doi          = {10.1007/s10707-018-0330-9},
+	url          = {https://doi.org/10.1007/s10707-018-0330-9},
+	urldate      = {2026-04-29}
+}
+@inproceedings{armbrust2015_spark_sql_relational_data_processing,
+	title        = {{Spark SQL}: Relational Data Processing in {Spark}},
+	author       = {Armbrust, Michael and Xin, Reynold S. and Lian, Cheng and Huai, Yin and Liu, Davies and Bradley, Joseph K. and Meng, Xiangrui and Kaftan, Tomer and Franklin, Michael J. and Ghodsi, Ali and Zaharia, Matei},
+	year         = {2015},
+	booktitle    = {Proceedings of the 2015 ACM SIGMOD International Conference on Management of Data},
+	publisher    = {Association for Computing Machinery},
+	address      = {New York, NY, USA},
+	series       = {SIGMOD '15},
+	pages        = {1383--1394},
+	doi          = {10.1145/2723372.2742797},
+	url          = {https://doi.org/10.1145/2723372.2742797},
+	urldate      = {2026-04-29}
+}
+@inproceedings{zaharia2012_resilient_distributed_datasets,
+	title        = {Resilient Distributed Datasets: A Fault-Tolerant Abstraction for In-Memory Cluster Computing},
+	author       = {Zaharia, Matei and Chowdhury, Mosharaf and Das, Tathagata and Dave, Ankur and Ma, Justin and McCauley, Murphy and Franklin, Michael J. and Shenker, Scott and Stoica, Ion},
+	year         = {2012},
+	booktitle    = {9th USENIX Symposium on Networked Systems Design and Implementation (NSDI 12)},
+	publisher    = {USENIX Association},
+	address      = {San Jose, CA},
+	pages        = {15--28},
+	url          = {https://www.usenix.org/conference/nsdi12/technical-sessions/presentation/zaharia},
+	urldate      = {2026-04-29}
+}
+@inproceedings{eldawy2015_spatialhadoop_mapreduce_spatial,
+	title        = {{SpatialHadoop}: A {MapReduce} Framework for Spatial Data},
+	author       = {Eldawy, Ahmed and Mokbel, Mohamed F.},
+	year         = {2015},
+	booktitle    = {2015 IEEE 31st International Conference on Data Engineering (ICDE)},
+	publisher    = {IEEE},
+	pages        = {1352--1363},
+	doi          = {10.1109/ICDE.2015.7113382},
+	url          = {https://doi.org/10.1109/ICDE.2015.7113382},
+	urldate      = {2026-04-29}
+}
+@misc{sedona2024_spatial_rdd_application,
+	title        = {Spatial {RDD} Application},
+	author       = {{Apache Sedona}},
+	year         = {2024},
+	url          = {https://sedona.apache.org/latest/tutorial/rdd/},
+	urldate      = {2026-04-29},
+	howpublished = {Apache Sedona Documentation}
+}
+@misc{sedona2024_spatial_sql_application,
+	title        = {Spatial {DataFrame}/{SQL} Application},
+	author       = {{Apache Sedona}},
+	year         = {2024},
+	url          = {https://sedona.apache.org/latest/tutorial/sql/},
+	urldate      = {2026-04-29},
+	howpublished = {Apache Sedona Documentation}
+}
+@misc{sedona2024_geoparquet_loader,
+	title        = {{GeoParquet} Loader},
+	author       = {{Apache Sedona}},
+	year         = {2024},
+	url          = {https://sedona.apache.org/latest/tutorial/files/geoparquet-sedona-spark/},
+	urldate      = {2026-04-29},
+	howpublished = {Apache Sedona Documentation}
+}
+@misc{spark2024_tuning_shuffle_operations,
+	title        = {Tuning -- Performance Tuning},
+	author       = {{Apache Spark}},
+	year         = {2024},
+	url          = {https://spark.apache.org/docs/latest/tuning.html},
+	urldate      = {2026-04-29},
+	howpublished = {Apache Spark Documentation}
+}
+@misc{databricks2024_cost_optimization_best_practices,
+	title        = {Best Practices for Cost Optimization},
+	author       = {{Databricks}},
+	year         = {2024},
+	url          = {https://docs.databricks.com/aws/en/lakehouse-architecture/cost-optimization/best-practices.html},
+	urldate      = {2026-04-29},
+	howpublished = {Databricks Documentation}
+}
+@misc{databricks2018_optimized_autoscaling,
+	title        = {Introducing {Databricks} Optimized Autoscaling on {Apache Spark}},
+	author       = {{Databricks}},
+	year         = {2018},
+	month        = {05},
+	day          = {02},
+	url          = {https://www.databricks.com/blog/2018/05/02/introducing-databricks-optimized-auto-scaling.html},
+	urldate      = {2026-04-29},
+	howpublished = {Databricks Engineering Blog}
+}
+@misc{microsoft2024_azure_storage_databricks,
+	title        = {Connect to {Azure Data Lake Storage Gen2} and {Blob Storage}},
+	author       = {{Microsoft}},
+	year         = {2024},
+	url          = {https://learn.microsoft.com/en-us/azure/databricks/connect/storage/azure-storage},
+	urldate      = {2026-04-29},
+	howpublished = {Microsoft Learn -- Azure Databricks Documentation}
+}
+@misc{spark2024_cluster_mode_overview,
+	title        = {Cluster Mode Overview},
+	author       = {{Apache Spark}},
+	year         = {2024},
+	url          = {https://spark.apache.org/docs/latest/cluster-overview.html},
+	urldate      = {2026-04-29},
+	howpublished = {Apache Spark Documentation}
+}
+@misc{spark2024_job_scheduling,
+	title        = {Job Scheduling},
+	author       = {{Apache Spark}},
+	year         = {2024},
+	url          = {https://spark.apache.org/docs/latest/job-scheduling.html},
+	urldate      = {2026-04-29},
+	howpublished = {Apache Spark Documentation}
+}
+@misc{spark2024_partitioner_api,
+	title        = {{Partitioner} ({Spark 4.1.1 JavaDoc})},
+	author       = {{Apache Spark}},
+	year         = {2024},
+	url          = {https://spark.apache.org/docs/latest/api/java/org/apache/spark/Partitioner.html},
+	urldate      = {2026-04-29},
+	howpublished = {Apache Spark API Documentation}
+}
+@inproceedings{guttman1984_rtree_dynamic_index,
+	title        = {{R-trees}: A Dynamic Index Structure for Spatial Searching},
+	author       = {Guttman, Antonin},
+	year         = {1984},
+	booktitle    = {Proceedings of the {ACM} {SIGMOD} International Conference on Management of Data},
+	pages        = {47--57},
+	doi          = {10.1145/602259.602266},
+	url          = {https://dl.acm.org/doi/10.1145/602259.602266},
+	urldate      = {2026-05-04},
+}
+@inproceedings{kwon2012_skewtune_mitigating_skew,
+	title        = {{SkewTune}: Mitigating Skew in {MapReduce} Applications},
+	author       = {Kwon, YongChul and Balazinska, Magdalena and Howe, Bill and Rolia, Jerome},
+	year         = {2012},
+	booktitle    = {Proceedings of the 2012 {ACM} {SIGMOD} International Conference on Management of Data},
+	pages        = {25--36},
+	publisher    = {{ACM}},
+	doi          = {10.1145/2213836.2213840},
+	url          = {https://nlp.cs.washington.edu/research/tr/2012/03/UW-CSE-12-03-03.PDF}
+}
+@misc{spark2024_sql_performance_tuning,
+	title        = {{Performance Tuning} ({Spark SQL Documentation})},
+	author       = {{Apache Spark}},
+	year         = {2024},
+	url          = {https://spark.apache.org/docs/latest/sql-performance-tuning.html},
+	urldate      = {2026-04-29},
+	howpublished = {Apache Spark Documentation}
+}
+@misc{databricks2024_compute_configuration,
+	title        = {Compute configuration reference},
+	author       = {{Databricks}},
+	year         = {2024},
+	url          = {https://docs.databricks.com/aws/en/compute/configure},
+	urldate      = {2026-04-29},
+	howpublished = {Databricks Documentation}
+}
+
+@misc{databricks2024_pricing,
+	title        = {{Databricks} Pricing},
+	author       = {{Databricks}},
+	year         = {2024},
+	url          = {https://www.databricks.com/product/pricing},
+	urldate      = {2026-04-29},
+	howpublished = {Databricks Product Documentation}
+}
+@misc{sedona2026_sedonaspark,
+	title        = {{SedonaSpark}},
+	author       = {{Apache Sedona Project Management Committee}},
+	year         = {2026},
+	url          = {https://sedona.apache.org/latest/sedonaspark/},
+	urldate      = {2026-05-05},
+	howpublished = {Apache Sedona Documentation}
+}
+@misc{sedona2026_setup_overview,
+	title        = {Apache Sedona -- Setup Overview},
+	author       = {{Apache Sedona Project Management Committee}},
+	year         = {2026},
+	url          = {https://sedona.apache.org/latest/setup/overview/},
+	urldate      = {2026-05-05},
+	howpublished = {Apache Sedona Documentation}
+}
+@misc{databricks2024_compute_configuration,
+	title        = {Compute Configuration Reference},
+	author       = {{Databricks}},
+	year         = {2024},
+	url          = {https://learn.microsoft.com/en-us/azure/databricks/compute/configure},
+	urldate      = {2026-05-05},
+	howpublished = {Azure Databricks Documentation}
+}
+
+@misc{databricks2024_cost_optimization_best_practices,
+	title        = {Best Practices for Cost Optimization},
+	author       = {{Databricks}},
+	year         = {2024},
+	url          = {https://learn.microsoft.com/en-us/azure/databricks/lakehouse-architecture/cost-optimization/best-practices},
+	urldate      = {2026-05-05},
+	howpublished = {Azure Databricks Documentation}
+}
+
+@misc{databricks2024_pool_index,
+	title        = {Connect to Pools},
+	author       = {{Databricks}},
+	year         = {2024},
+	url          = {https://learn.microsoft.com/en-us/azure/databricks/compute/pool-index},
+	urldate      = {2026-05-05},
+	howpublished = {Azure Databricks Documentation}
+}
+@misc{databricks2025_lakehouse,
+	title        = {What is a Data Lakehouse?},
+	author       = {{Databricks}},
+	year         = {2025},
+	url          = {https://docs.databricks.com/aws/en/lakehouse/},
+	urldate      = {2026-05-05},
+	howpublished = {Databricks Documentation}
 }
