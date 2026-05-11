@@ -34,9 +34,55 @@
 \usepackage{url} % Typeset URLs
 
 % =============================================================================
-% Code Listings
+% Colors
 % =============================================================================
-\usepackage{listings} % Include code listings
+\usepackage{color,xcolor} % Text and element colors
+\usepackage{listings}        % Code listings
+
+% =============================================================================
+% Listings — XML style
+% =============================================================================
+\definecolor{lstbg}{HTML}{F5F5F5}
+\definecolor{lstrule}{HTML}{CCCCCC}
+\definecolor{lstkey}{HTML}{2C3E50}
+\definecolor{lststring}{HTML}{B7704D}
+\definecolor{lstcomment}{HTML}{7F7F7F}
+
+\lstdefinestyle{xmlstyle}{%
+    extendedchars=true,
+    basicstyle=\ttfamily\scriptsize,
+    backgroundcolor=\color{lstbg},
+    frame=single,
+    rulecolor=\color{lstrule},
+    framerule=0.4pt,
+    breaklines=true,
+    breakatwhitespace=false,
+    breakindent=1em,
+    postbreak={\mbox{\textcolor{lstrule}{$\hookrightarrow$}\space}},
+    columns=fullflexible,
+    keepspaces=true,
+    showstringspaces=false,
+    tabsize=2,
+    captionpos=b,
+    literate=%
+        {—}{{---}}1
+        {–}{{--}}1
+        {→}{{$\rightarrow$}}1
+        {←}{{$\leftarrow$}}1
+        {×}{{$\times$}}1
+        {…}{{\ldots}}1
+        {•}{{\textbullet}}1
+        {‘}{{`}}1
+        {’}{{'}}1
+        {“}{{``}}1
+        {”}{{''}}1
+        {å}{{\r{a}}}1
+        {ø}{{\o}}1
+        {æ}{{\ae}}1
+        {Å}{{\r{A}}}1
+        {Ø}{{\O}}1
+        {Æ}{{\AE}}1
+}
 
 % =============================================================================
 % Math & Units
@@ -62,10 +108,7 @@
 \counterwithin{figure}{section}   % Figure numbering within sections
 \counterwithin{table}{section}    % Table numbering within sections
 
-% =============================================================================
-% Colors
-% =============================================================================
-\usepackage{color,xcolor} % Text and element colors
+
 
 % =============================================================================
 % Abbreviations / Acronyms
