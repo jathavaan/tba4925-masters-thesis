@@ -1,9 +1,15 @@
+% File: Chapters/05-system-architecture-and-implementation/sub-chapters/01-architecture-overview.tex
+
 \section{Architecture overview}
-The research questions require the system to compare spatial query performance across configurations that differ in storage format, processing engine, and execution model. To produce valid comparisons, the system isolates the variable under test while holding everything else constant. Every architectural decision traces back to enabling a fair answer to one of the three research questions.
+\label{sec:implementation:overview}
 
+% Content:
+% - the run-time layout: a container orchestrator dispatches each experiment as an isolated short-lived container group; result and cost analytics written to blob storage
+% - the three storage tiers populating the format axis and the three engines populating the compute axis, each pointing back to the Section 2.3 / 2.4 mechanism it exercises
+% - Figure: benchmark system architecture overview (existing Figure 5.1.1)
+% - roadmap sentence to Sections 5.2-5.6
 
-
-\begin{figure}[ht]
+\begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{Chapters/05-system-architecture-and-implementation/sub-chapters/figures/05-system-overview.png}
     \caption{Benchmark system architecture overview}

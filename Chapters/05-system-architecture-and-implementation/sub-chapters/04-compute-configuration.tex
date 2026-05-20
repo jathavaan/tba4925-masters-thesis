@@ -1,1 +1,25 @@
+% File: Chapters/05-system-architecture-and-implementation/sub-chapters/04-compute-configuration.tex
+
 \section{Compute configuration}
+\label{sec:implementation:compute}
+
+% Content:
+% - lead: published defaults except where a non-default choice is explicitly motivated
+
+\subsection{DuckDB}
+\label{sec:implementation:compute:duckdb}
+
+% Content:
+% - in-process; spatial + azure extensions; managed-identity secret; curl transport on Linux; read_parquet over az:// with predicate/projection pushdown; ST_Read GDAL path for Shapefile
+
+\subsection{PostGIS}
+\label{sec:implementation:compute:postgis}
+
+% Content:
+% - PostgreSQL 16 + PostGIS 3.4; server parameters (shared_buffers / effective_cache_size / work_mem); fresh TLS connection per iteration, pooling disabled and why
+
+\subsection{Apache Sedona on Databricks}
+\label{sec:implementation:compute:sedona}
+
+% Content:
+% - Sedona 1.7.1 on runtime 15.4 LTS; cluster lifecycle (create once, submit warm, terminate in finally); the three notebook variants (default / broadcast / partitioned) and the exact hint/config each sets; repartition-to-parallelism step and its straggler-avoidance rationale; driver heap sizing

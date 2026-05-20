@@ -1,1 +1,25 @@
+% File: Chapters/05-system-architecture-and-implementation/sub-chapters/03-data-layer.tex
+
 \section{Data layer}
+\label{sec:implementation:data}
+
+% Content:
+% - one logical dataset materialized into three physical representations; conflation source and fixed release identifier; synthesis (clone counts) realizing the size tiers of Section \ref{sec:methodology:overview:datasets}
+
+\subsection{GeoParquet on ADLS Gen2}
+\label{sec:implementation:data:geoparquet}
+
+% Content:
+% - GeoParquet 1.1.0 write settings (WKB, covering bbox, row-group size, partition_key sort); Hive layout keyed by release/size/theme/region and how it enables county-scoped pruning
+
+\subsection{PostGIS on Azure PostgreSQL}
+\label{sec:implementation:data:postgis}
+
+% Content:
+% - one buildings_{size} table per tier, GiST index, GeoPandas batched load, ANALYZE; loaded once
+
+\subsection{Shapefile bundle}
+\label{sec:implementation:data:shapefile}
+
+% Content:
+% - five/six-component bundle, .prj WKT1, .qix quadtree index; downloaded to local disk before the timed scope; the asymmetry-by-design statement, pointing back to the threats section
