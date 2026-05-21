@@ -30,7 +30,7 @@
 % Content:
 % - every per-iteration sample is written as Parquet to the benchmarks container in a Hive-partitioned layout keyed by query, run, benchmark run, and iteration; nothing is aggregated at write time
 % - this is the implementation contract that makes the distributions, bootstrap intervals, Wilcoxon tests, and A-hat-12 effect sizes of Section \ref{research-design-and-methodology:statistical-analysis} computable downstream without re-running the benchmark
-% - distributed runs additionally persist the phase-metric columns of Section \ref{research-design-and-methodology:metrics-and-cost-model:distributed-phase-metrics} on the same sample row, so the RQ2 decomposition (Section \ref{research-design-and-methodology:statistical-analysis:answering-rq2-distributed-against-single-node-and-scaling}) reads from one table
+% - distributed runs additionally persist the phase-metric columns of Section \ref{research-design-and-methodology:metrics-and-cost-model:distributed-phase-metrics} on the same sample row, so the RQ2 decomposition (Section \ref{research-design-and-methodology:statistical-analysis:answering-rq2-scaling}) reads from one table
 
 \subsection{What is not measured}
 \label{system-architecture-and-implementation:measurement-instrumentation-and-cost-model:what-is-not-measured}
