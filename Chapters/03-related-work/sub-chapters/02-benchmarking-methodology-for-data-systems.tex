@@ -1,5 +1,5 @@
 \section{Benchmarking methodology for data systems}
-\label{sec:related-work:benchmarking-methodology}
+\label{related-work:benchmarking-methodology-for-data-systems}
 
 \textcite{beyer_2015_benchmarking_and_resource_measurement} identifies a set of requirements for reliable benchmarking, including accurate measurement of CPU time and memory, reliable termination of processes, and a controlled execution environment. They show that classical Linux mechanisms such as \texttt{time} and \texttt{ulimit} fail to meet these requirements, primarily because they do not account for child processes correctly, and propose a framework based on Linux control groups (cgroups), a kernel feature that tracks and limits resource usage for groups of processes as a unit. The \acrfull{jcgm} supplies the underlying terminology used in this thesis to describe measurement quality, including the distinction between accuracy, precision, repeatability, and reproducibility \parencite{jcgm2012_international_vocabulary_of_metrology}.
 

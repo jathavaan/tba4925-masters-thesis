@@ -1,39 +1,39 @@
 % File: Chapters/05-system-architecture-and-implementation/sub-chapters/06-measurement-and-cost.tex
 
 \section{Measurement instrumentation and cost model}
-\label{sec:implementation:measurement-instrumentation}
+\label{system-architecture-and-implementation:measurement-instrumentation-and-cost-model}
 
 % Content:
 % - two instrumentation regimes: host-level for single-node, Spark-internal for Databricks
 
 \subsection{Host-level instrumentation}
-\label{sec:implementation:measurement:host}
+\label{system-architecture-and-implementation:measurement-instrumentation-and-cost-model:host-level-instrumentation}
 
 % Content:
 % - per-iteration decorator: perf_counter, psutil cpu_times, psutil net_io_counters; isolation by ACI container group
 
 \subsection{Spark phase metrics}
-\label{sec:implementation:measurement:spark}
+\label{system-architecture-and-implementation:measurement-instrumentation-and-cost-model:spark-phase-metrics}
 
 % Content:
-% - SparkListener aggregating executorRunTime, inputMetrics.bytesRead, shuffle read/write bytes, stage durations; the JSON payload via dbutils.notebook.exit; mapping to the lifecycle phases of Section \ref{sec:methodology:metrics:phases}
+% - SparkListener aggregating executorRunTime, inputMetrics.bytesRead, shuffle read/write bytes, stage durations; the JSON payload via dbutils.notebook.exit; mapping to the lifecycle phases of Section \ref{research-design-and-methodology:metrics-and-cost-model:distributed-phase-metrics}
 
 \subsection{Cost model implementation}
-\label{sec:implementation:measurement:cost}
+\label{system-architecture-and-implementation:measurement-instrumentation-and-cost-model:cost-model-implementation}
 
 % Content:
-% - offline computation over observed duration and configured allocation; pinned 2026 Norway East / Sweden Central pricing constants with source URLs; per-component formulas realizing the cost model of Section \ref{sec:methodology:metrics:cost}
+% - offline computation over observed duration and configured allocation; pinned 2026 Norway East / Sweden Central pricing constants with source URLs; per-component formulas realizing the cost model of Section \ref{research-design-and-methodology:metrics-and-cost-model:cost-model}
 
 \subsection{Raw-sample persistence}
-\label{sec:implementation:measurement:persistence}
+\label{system-architecture-and-implementation:measurement-instrumentation-and-cost-model:raw-sample-persistence}
 
 % Content:
 % - every per-iteration sample is written as Parquet to the benchmarks container in a Hive-partitioned layout keyed by query, run, benchmark run, and iteration; nothing is aggregated at write time
-% - this is the implementation contract that makes the distributions, bootstrap intervals, Wilcoxon tests, and A-hat-12 effect sizes of Section \ref{sec:methodology:statistics} computable downstream without re-running the benchmark
-% - distributed runs additionally persist the phase-metric columns of Section \ref{sec:methodology:metrics:phases} on the same sample row, so the RQ2 decomposition (Section \ref{sec:methodology:statistics:rq2}) reads from one table
+% - this is the implementation contract that makes the distributions, bootstrap intervals, Wilcoxon tests, and A-hat-12 effect sizes of Section \ref{research-design-and-methodology:statistical-analysis} computable downstream without re-running the benchmark
+% - distributed runs additionally persist the phase-metric columns of Section \ref{research-design-and-methodology:metrics-and-cost-model:distributed-phase-metrics} on the same sample row, so the RQ2 decomposition (Section \ref{research-design-and-methodology:statistical-analysis:answering-rq2-distributed-against-single-node-and-scaling}) reads from one table
 
 \subsection{What is not measured}
-\label{sec:implementation:measurement:exclusions}
+\label{system-architecture-and-implementation:measurement-instrumentation-and-cost-model:what-is-not-measured}
 
 % Content:
 % - end-user latency from outside Azure; residual cache effects; Azure-side queueing variance; provisioning/idle outside the cost window

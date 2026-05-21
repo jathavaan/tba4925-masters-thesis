@@ -1,13 +1,13 @@
 % File: Chapters/05-system-architecture-and-implementation/sub-chapters/02-infrastructure.tex
 
 \section{Infrastructure}
-\label{sec:implementation:infrastructure}
+\label{system-architecture-and-implementation:infrastructure}
 
 % Content:
 % - single resource group, Norway East, with the Databricks-in-Sweden-Central exception and its quota justification; cross-region egress bounded by the intra-tenant free tier
 
 \subsection{Compute platforms}
-\label{sec:implementation:infrastructure:compute}
+\label{system-architecture-and-implementation:infrastructure:compute-platforms}
 
 % Content:
 % - ACI sizing (3 vCPU / 8 GiB) for DuckDB/PostGIS/orchestrator; ACI-over-AKS rationale
@@ -15,15 +15,15 @@
 % - PostgreSQL Flexible Server Standard_B2ms (off-the-shelf low-cost target, not upper-bound GP)
 
 \subsection{Storage and identity}
-\label{sec:implementation:infrastructure:storage}
+\label{system-architecture-and-implementation:infrastructure:storage-and-identity}
 
 % Content:
 % - single ADLS Gen2 account, hierarchical namespace, blob vs dfs endpoints; soft-delete disabled (ABFS 409 reason)
 % - single user-assigned managed identity; roles held; no secret material at build time
 
 \subsection{Determinism and reproducibility}
-\label{sec:implementation:infrastructure:determinism}
+\label{system-architecture-and-implementation:infrastructure:determinism-and-reproducibility}
 
 % Content:
-% - YAML manifest + per-run seed; shuffled dispatch realizing the randomization of Section \ref{sec:methodology:overview:replication}
+% - YAML manifest + per-run seed; shuffled dispatch realizing the randomization of Section \ref{research-design-and-methodology:overview-and-experimental-design:replication-and-randomization}
 % - warmup iterations for single-node; why Databricks skips warmup at the implementation level (cost multiplier)
