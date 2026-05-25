@@ -36,13 +36,13 @@ The \acrshort{rq}2 workload is a spatial join between Norwegian municipal bounda
         \textbf{Workload} & \textbf{Predicate} & \textbf{Configurations} & \textbf{Tiers} \\
         \midrule
         Point-in-polygon     & \texttt{ST\_Contains} point probe              & DuckDB + GeoParquet, PostGIS, GeoPandas + Shapefile & Small, large \\
-        $k$-nearest-neighbor & Distance ordering (\texttt{ST\_Distance})      & DuckDB + GeoParquet, PostGIS, GeoPandas + Shapefile & Small, large \\
+        $k$-nearest-neighbor & Distance ordering (\texttt{ST\_Distance})      & DuckDB + GeoParquet, PostGIS, GeoPandas + Shapefile & Small \\
         Bounding-box filter  & Rectangular window (\texttt{ST\_Intersects})   & DuckDB + GeoParquet, PostGIS, GeoPandas + Shapefile & Small, large \\
         \midrule
         Spatial join         & \texttt{ST\_Intersects} join, per municipality & Sedona (broadcast, partitioned; 2--16 workers), PostGIS, DuckDB       & Small, medium, large \\
         \bottomrule
     \end{tabularx}
-    \caption[Benchmark workloads.]{The benchmark workloads, the predicate each evaluates, the configurations that execute it, and the dataset tiers at which it is run.}
+    \caption[Benchmark workloads.]{The benchmark workloads, the predicate each evaluates, the configurations that execute it, and the dataset tiers at which it is run. The GeoPandas + Shapefile configuration runs at the small tier only and is excluded from the large tier.}
     \label{tab:workload-matrix}
 \end{table}
 
