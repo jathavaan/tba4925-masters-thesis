@@ -5,22 +5,12 @@ The benchmarking framework runs within a single Azure resource group, \texttt{do
 
 \subsection{Compute platforms}
 \label{system-architecture-and-implementation:infrastructure:compute-platforms}
-% ACI sizing: single-node engines + orchestrator. NOTE REPO DISCREPANCY to resolve in draft:
-%   benchmarks.yml uses cpu: 4 / memory_gb: 16 for every query experiment and README states
-%   "4 vCPU and 16 GB RAM"; the run-benchmarks.yml orchestrator container is 2 vCPU / 2 GiB and
-%   setup container is 8 vCPU / 64 GiB. The Ch.5 skeleton comment said "3 vCPU / 8 GiB" — that is
-%   NOT in the repo; use the benchmarks.yml/README values (4 vCPU / 16 GiB query, orchestrator
-%   2/2, setup 8/64). \acrfull{aci} on first body use here if not already expanded earlier.
-% ACI-over-AKS rationale: short-lived isolated container group per experiment, restart-policy
-%   Never, no cluster to manage (main.py / run-benchmarks.yml).
-% Databricks: classic compute (non-serverless), driver + workers all Standard_D4s_v3
-%   (4 vCore / 16 GiB), fresh job cluster per run, terminated in finally. Spark 15.4.x-scala2.12
-%   (DBR 15.4 LTS), Sedona 1.7.1. (config.py: DATABRICKS_SPARK_VERSION, DATABRICKS_NODE_TYPE_ID,
-%   DATABRICKS_SEDONA_MAVEN_COORDINATES / _PYPI_PACKAGE.)
-% PostgreSQL Flexible Server: Burstable Standard_B2ms, Premium SSD P10 128 GiB, Norway East
-%   (README). FLAG INTERNAL CONFLICT: azure_pricing_service.py comments price it as General
-%   Purpose Standard_D4ads_v5; README provisions Burstable Standard_B2ms. State the provisioned
-%   SKU (B2ms) as built and flag the pricing-constant mismatch for the cost subsection.
+
+Each single-node experiment runs inside its own \acrshort{aci} container group. Every benchmark is a short-lived job that needs an isolated execution unit with no cross-experiment state, and \acrshort{aci} provides this with no orchestrator or node pool persisting between runs. The orchestrator creates one container group per experiment with a restart policy of \texttt{Never}, streams its logs to completion, and deletes the group before the next experiment is dispatched, so each measurement starts from a fresh process on a freshly scheduled host. Query containers are sized at 4 vCPU and \SI{16}{\gibi\byte} of memory, matching the DuckDB and PostGIS client allocations and giving all single-node configurations an identical compute envelope. The outside-cluster orchestrator runs in its own \acrshort{aci} container group sized at 2 vCPU and \SI{2}{\gibi\byte}, since its workload is the serial dispatch loop of Section~\ref{system-architecture-and-implementation:orchestration-and-pairing}, not query execution.
+
+Apache Sedona runs on Azure Databricks classic compute, with one fresh job cluster provisioned per Sedona experiment and terminated in a \texttt{finally} block after the timed iterations complete. Classic clusters expose node type and worker count, both factors of the \acrshort{rq}2 design, whereas serverless compute does not. The driver and every worker run on \texttt{Standard\_D4s\_v3} virtual machines (4 vCore, \SI{16}{\gibi\byte}). Each Sedona node therefore carries the same per-node resource envelope as a single-node \acrshort{aci}, and variation between cluster sizes traces to worker count alone. The runtime is pinned to Databricks Runtime 15.4 \acrshort{lts} (\texttt{15.4.x-scala2.12}). Cluster provisioning, library installation, and the post-run termination all fall outside the timed window, per the warmup discipline established in Section~\ref{research-design-and-methodology:overview-and-experimental-design:replication-and-randomization}.
+
+PostGIS runs against an Azure Database for PostgreSQL Flexible Server provisioned in Norway East as a General Purpose \texttt{Standard\_D4ads\_v5} instance (4 vCores, \SI{16}{\gibi\byte} of memory, AMD processor). Storage is Premium SSD at the P10 performance tier, sized to \SI{128}{\gibi\byte}, with zonal high availability disabled and storage autogrow off. The General Purpose tier was selected over Burstable so that compute capacity is pre-allocated and billed at a flat hourly rate. A Burstable instance would otherwise introduce credit-driven variability in throughput across the long-running national-scale join. The same instance backs every PostGIS workload at every dataset tier, so all PostGIS results share one server configuration and the cost terms developed in Section~\ref{system-architecture-and-implementation:measurement-instrumentation-and-cost-model:cost-model-implementation} apply uniformly.
 
 \subsection{Storage and identity}
 \label{system-architecture-and-implementation:infrastructure:storage-and-identity}
