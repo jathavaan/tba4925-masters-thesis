@@ -1,25 +1,45 @@
-% File: Chapters/05-system-architecture-and-implementation/sub-chapters/04-compute-configuration.tex
-
 \section{Compute configuration}
 \label{system-architecture-and-implementation:compute-configuration}
 
-% Content:
-% - lead: published defaults except where a non-default choice is explicitly motivated
+% LEAD: published defaults except where a non-default choice is explicitly motivated.
 
 \subsection{DuckDB}
 \label{system-architecture-and-implementation:compute-configuration:duckdb}
-
-% Content:
-% - in-process; spatial + azure extensions; managed-identity secret; curl transport on Linux; read_parquet over az:// with predicate/projection pushdown; ST_Read GDAL path for Shapefile
+% In-process (duckdb 1.4.0); spatial + azure extensions loaded; Azure secret bound to account
+%   name (PROVIDER config); azure_transport_option_type = curl on Linux (persistence/context/
+%   duckdb.py — stated reason: avoids default HTTP client issues). read_parquet over az:// with
+%   predicate + projection pushdown (cross-ref pushdown in background); ST_Read GDAL path covers
+%   the Shapefile reads. Queries: ST_Contains (PiP), ORDER BY ST_Distance LIMIT k (kNN, no native
+%   KNN index — full scan+sort), ST_Intersects + ST_Area>10 in EPSG:25832 reprojection (bbox).
 
 \subsection{PostGIS}
 \label{system-architecture-and-implementation:compute-configuration:postgis}
-
-% Content:
-% - PostgreSQL 16 + PostGIS 3.4; server parameters (shared_buffers / effective_cache_size / work_mem); fresh TLS connection per iteration, pooling disabled and why
+% PostgreSQL 16 + PostGIS 3.4 (CREATE EXTENSION IF NOT EXISTS postgis at context init). FLAG:
+%   exact PG/PostGIS version numbers ("16"/"3.4") are NOT pinned in the repo — postgis2024_manual_34
+%   bib entry implies 3.4 but server major version is unstated. Report what IS in repo (server
+%   params, azure.extensions=POSTGIS, GiST, sslmode=require, pool_pre_ping) and FLAG the version
+%   as MISSING rather than inventing "16 / 3.4".
+% Fresh TLS connection per iteration via SQLAlchemy engine; pooling NOT disabled in code
+%   (pool_pre_ping enabled, no NullPool) — the skeleton comment "pooling disabled and why" is NOT
+%   supported by postgres_db_context.py. Correct it: describe per-iteration connect() inside the
+%   timed function and flag the skeleton claim.
+% Predicates mirror DuckDB: ST_Contains, <-> KNN (GiST index-ordered, bbox-distance — note the
+%   <-> bbox-distance caveat from the entrypoint docstring), ST_Intersects + ST_Area>10 (SRID 25832).
 
 \subsection{Apache Sedona on Databricks}
 \label{system-architecture-and-implementation:compute-configuration:apache-sedona-on-databricks}
-
-% Content:
-% - Sedona 1.7.1 on runtime 15.4 LTS; cluster lifecycle (create once, submit warm, terminate in finally); the three notebook variants (default / broadcast / partitioned) and the exact hint/config each sets; repartition-to-parallelism step and its straggler-avoidance rationale; driver heap sizing
+% Sedona 1.7.1 (shaded maven sedona-spark-shaded-3.5_2.12:1.7.1 + apache-sedona==1.7.1 +
+%   geopandas==0.14.4) on DBR 15.4 LTS. Cluster lifecycle: create_cluster once -> install libs ->
+%   wait RUNNING + INSTALLED -> upload notebook; submit warm; terminate_cluster in finally.
+%   LEGACY_SINGLE_USER mode + single_user_name from SCIM /Me.
+% Spark conf (databricks_service _create_cluster): photon.enabled=false (Photon bypasses Sedona's
+%   Catalyst JoinQueryDetector -> BroadcastNestedLoopJoin), adaptive.enabled=false (AQE rewrites
+%   spatial joins), autoBroadcastJoinThreshold=-1, KryoSerializer, driver memory 9g/overhead 1g/
+%   maxResultSize 4g (config.py). THIS is the home of the Photon / BroadcastNestedLoopJoin / AQE
+%   facts currently sitting in the Ch.4 threats table.
+% Two notebook variants: broadcast (broadcast() hint -> BroadcastIndexJoin) and partitioned
+%   (sedona.global.index=true, join.gridtype=kdbtree, join.indexbuildside=right -> RangeJoin).
+%   repartition-to-defaultParallelism step (num_workers x 4 cores) for straggler avoidance.
+%   `default` (CBO) variant dropped — timed out/failed at scale (README issue #254).
+% Cross-ref broadcast-vs-partitioned to
+%   Section~\ref{background:distributed-spatial-processing:distributed-spatial-operations}.

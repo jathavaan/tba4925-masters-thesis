@@ -1,29 +1,46 @@
-% File: Chapters/05-system-architecture-and-implementation/sub-chapters/02-infrastructure.tex
-
 \section{Infrastructure}
 \label{system-architecture-and-implementation:infrastructure}
 
-% Content:
-% - single resource group, Norway East, with the Databricks-in-Sweden-Central exception and its quota justification; cross-region egress bounded by the intra-tenant free tier
+The benchmarking framework runs within a single Azure resource group, \texttt{doppa}, provisioned in Norway East so that every metered resource shares one billing and administrative boundary. The Azure Databricks workspace that hosts the Apache Sedona clusters is the exception, placed in Sweden Central instead. Norway East lacks sufficient \texttt{Standard\_D4s\_v3} quota for the multi-node clusters required by the national-scale spatial join, so the workspace is created where that quota is available. This split is the only source of cross-region traffic in the system: the Sedona executors in Sweden Central read \acrshort{adls} in Norway East, whereas every other configuration keeps its compute and storage within the same region and tenant. The resulting egress is the single billed transfer in the framework, and its rate enters the cost model in Section~\ref{system-architecture-and-implementation:measurement-instrumentation-and-cost-model:cost-model-implementation}.
 
 \subsection{Compute platforms}
 \label{system-architecture-and-implementation:infrastructure:compute-platforms}
-
-% Content:
-% - ACI sizing (3 vCPU / 8 GiB) for DuckDB/PostGIS/orchestrator; ACI-over-AKS rationale
-% - Databricks classic compute, Standard_D4s_v3 driver+workers, fresh job cluster per cluster lifecycle
-% - PostgreSQL Flexible Server Standard_B2ms (off-the-shelf low-cost target, not upper-bound GP)
+% ACI sizing: single-node engines + orchestrator. NOTE REPO DISCREPANCY to resolve in draft:
+%   benchmarks.yml uses cpu: 4 / memory_gb: 16 for every query experiment and README states
+%   "4 vCPU and 16 GB RAM"; the run-benchmarks.yml orchestrator container is 2 vCPU / 2 GiB and
+%   setup container is 8 vCPU / 64 GiB. The Ch.5 skeleton comment said "3 vCPU / 8 GiB" — that is
+%   NOT in the repo; use the benchmarks.yml/README values (4 vCPU / 16 GiB query, orchestrator
+%   2/2, setup 8/64). \acrfull{aci} on first body use here if not already expanded earlier.
+% ACI-over-AKS rationale: short-lived isolated container group per experiment, restart-policy
+%   Never, no cluster to manage (main.py / run-benchmarks.yml).
+% Databricks: classic compute (non-serverless), driver + workers all Standard_D4s_v3
+%   (4 vCore / 16 GiB), fresh job cluster per run, terminated in finally. Spark 15.4.x-scala2.12
+%   (DBR 15.4 LTS), Sedona 1.7.1. (config.py: DATABRICKS_SPARK_VERSION, DATABRICKS_NODE_TYPE_ID,
+%   DATABRICKS_SEDONA_MAVEN_COORDINATES / _PYPI_PACKAGE.)
+% PostgreSQL Flexible Server: Burstable Standard_B2ms, Premium SSD P10 128 GiB, Norway East
+%   (README). FLAG INTERNAL CONFLICT: azure_pricing_service.py comments price it as General
+%   Purpose Standard_D4ads_v5; README provisions Burstable Standard_B2ms. State the provisioned
+%   SKU (B2ms) as built and flag the pricing-constant mismatch for the cost subsection.
 
 \subsection{Storage and identity}
 \label{system-architecture-and-implementation:infrastructure:storage-and-identity}
-
-% Content:
-% - single ADLS Gen2 account, hierarchical namespace, blob vs dfs endpoints; soft-delete disabled (ABFS 409 reason)
-% - single user-assigned managed identity; roles held; no secret material at build time
+% Single \acrshort{adls} account `doppabs`, hierarchical namespace; blob vs dfs endpoints
+%   (DuckDB az:// / abfss:// for Sedona). Soft-delete disabled — README IMPORTANT: enabling it
+%   makes the Databricks ABFS driver fail with HTTP 409 on dfs.core.windows.net reads. State that
+%   as the stated rationale.
+% Identity: single user-assigned managed identity `doppa-uami`, Contributor on the RG, AcrPull/
+%   AcrPush on the registry; GitHub Actions federated credentials; no secret material baked into
+%   images (secrets via --secure-environment-variables from main.py / workflows).
+% Container registry `doppaacr`; images pushed by push-containers-to-acr.yml.
 
 \subsection{Determinism and reproducibility}
 \label{system-architecture-and-implementation:infrastructure:determinism-and-reproducibility}
-
-% Content:
-% - YAML manifest + per-run seed; shuffled dispatch realizing the randomization of Section \ref{research-design-and-methodology:overview-and-experimental-design:replication-and-randomization}
-% - warmup iterations for single-node; why Databricks skips warmup at the implementation level (cost multiplier)
+% YAML manifest (benchmarks.yml) + per-run seed: main.py shuffles experiments with
+%   random.Random(benchmark_run); realizes the randomization of
+%   Section~\ref{research-design-and-methodology:overview-and-experimental-design:replication-and-randomization}.
+% Run ID = date + 6-char suffix (RUN_ID_LENGTH); benchmark_run indexes repeated suite runs
+%   (BENCHMARK_RUNS=30). Bootstrap RNG seeded from (run_id, query_id) via blake2b (monitor_utils
+%   _make_bootstrap_rng) — implementation of the reproducible stop point promised in Ch.4.
+% Warmup: BENCHMARK_WARMUP_ITERATIONS=5 single-node; Databricks + national-scale joins override
+%   warmup_iterations=1 (one warmup is enough on long low-variance runs; more dominates the
+%   wall-clock budget — stated CLAUDE.md/README rationale). Cross-ref Ch.4 replication protocol.

@@ -1,39 +1,67 @@
-% File: Chapters/05-system-architecture-and-implementation/sub-chapters/06-measurement-and-cost.tex
-
 \section{Measurement instrumentation and cost model}
 \label{system-architecture-and-implementation:measurement-instrumentation-and-cost-model}
 
-% Content:
-% - two instrumentation regimes: host-level for single-node, Spark-internal for Databricks
+% LEAD: two instrumentation regimes — host-level for single-node, Spark-internal for Databricks —
+%   feeding one cost model. Realizes the metrics of
+%   Section~\ref{research-design-and-methodology:metrics-and-cost-model:cost-model}.
 
 \subsection{Host-level instrumentation}
 \label{system-architecture-and-implementation:measurement-instrumentation-and-cost-model:host-level-instrumentation}
-
-% Content:
-% - per-iteration decorator: perf_counter, psutil cpu_times, psutil net_io_counters; isolation by ACI container group
+% @monitor decorator (monitor.py): per-iteration time.perf_counter, psutil cpu_times (user/system),
+%   psutil net_io_counters (bytes sent/recv), result cardinality. Isolation by one ACI container
+%   group per experiment. Stopping rule implementation: sequential (bootstrap CI half-width <= 5%
+%   of mean, floors BENCHMARK_MIN_ITERATIONS=10 and MIN_TIMED_WINDOW=60s, per-iter timeout
+%   MAX_ITERATION=3600s=60min, cumulative MAX_TIMED_WINDOW=6h) vs fixed (national joins,
+%   NATIONAL_SCALE_SPATIAL_JOIN=3, MAX_FIXED_WINDOW=5h). FLAG Ch.4 vs repo: Ch.4 prose says
+%   "450 minutes" and "75 minutes"; config.py gives 3600s/360min ceiling, 6h timed window, 5h
+%   fixed window. Report repo constants and flag the Ch.4 numbers as not matching.
+%   failed-iteration handling: status="failed" samples, MAX_CONSECUTIVE_FAILURES=3, stop_reason
+%   partial/failed. This is where Azure Monitor (60s metric buckets) is named as the reason for
+%   the 60s floor.
 
 \subsection{Spark phase metrics}
 \label{system-architecture-and-implementation:measurement-instrumentation-and-cost-model:spark-phase-metrics}
-
-% Content:
-% - SparkListener aggregating executorRunTime, inputMetrics.bytesRead, shuffle read/write bytes, stage durations; the JSON payload via dbutils.notebook.exit; mapping to the lifecycle phases of Section \ref{research-design-and-methodology:metrics-and-cost-model:distributed-phase-metrics}
+% Scala SparkListener (onStageCompleted) aggregates executorRunTime, inputMetrics.bytesRead,
+%   shuffle read/write bytes, stage durations -> global temp view -> JSON via
+%   dbutils.notebook.exit -> DatabricksRunResult. Map to the three lifecycle phases of
+%   Section~\ref{research-design-and-methodology:metrics-and-cost-model:distributed-phase-metrics}:
+%   executor read time, shuffle volume, driver collection time (residual = wall - sum(stage durs),
+%   clamped >=0). Note stage_durations_ms capped at 100 (payload cap).
 
 \subsection{Cost model implementation}
 \label{system-architecture-and-implementation:measurement-instrumentation-and-cost-model:cost-model-implementation}
-
-% Content:
-% - offline computation over observed duration and configured allocation; pinned 2026 Norway East / Sweden Central pricing constants with source URLs; per-component formulas realizing the cost model of Section \ref{research-design-and-methodology:metrics-and-cost-model:cost-model}
+% Offline computation over observed duration + configured allocation (azure_cost_service).
+%   Pinned 2026 prices (azure_pricing_service, with source URLs): ACI vcpu/s 0.0000143, mem GB/s
+%   0.0000016; Blob hot LRS Norway East 0.022 GB/mo, read 0.006/10k, write+list 0.065/10k;
+%   cross-region egress 0.02/GB (the $0.02 figure currently in Ch.4 lives here); Databricks
+%   Sweden Central 0.75 DBU/node/h x 0.15 + 0.204 VM/node/h, driver counted (workers+1);
+%   Postgres compute 0.476/h, storage 0.15 GB/mo. Per-component formulas realize
+%   Section~\ref{research-design-and-methodology:metrics-and-cost-model:cost-model} Eq. — map each
+%   term. FLAG: pricing service prices Postgres as Standard_D4ads_v5 GP while README provisions
+%   Burstable B2ms; state both and flag. Intra-region/intra-tenant egress = 0 assumption (only
+%   Sedona crosses a region boundary). Standard tier retires 2026-10-01 note.
 
 \subsection{Raw-sample persistence}
 \label{system-architecture-and-implementation:measurement-instrumentation-and-cost-model:raw-sample-persistence}
+% Every per-iteration sample written as Parquet to the benchmarks container, Hive-partitioned by
+%   query_id/run_id/benchmark_run/iteration (monitoring_storage_service); nothing aggregated at
+%   write time. SchemaVersion.V4. benchmark_metadata.parquet carries achieved/failed iterations,
+%   stop_reason, CI half-width, mean, median. This is the implementation contract that makes the
+%   distributions / Wilcoxon / bootstrap CI / A^12 of Section~\ref{research-design-and-methodology:statistical-analysis}
+%   computable downstream without re-running. Distributed runs persist phase-metric columns on the
+%   same row (feeds the RQ2 decomposition).
 
-% Content:
-% - every per-iteration sample is written as Parquet to the benchmarks container in a Hive-partitioned layout keyed by query, run, benchmark run, and iteration; nothing is aggregated at write time
-% - this is the implementation contract that makes the distributions, bootstrap intervals, Wilcoxon tests, and A-hat-12 effect sizes of Section \ref{research-design-and-methodology:statistical-analysis} computable downstream without re-running the benchmark
-% - distributed runs additionally persist the phase-metric columns of Section \ref{research-design-and-methodology:metrics-and-cost-model:distributed-phase-metrics} on the same sample row, so the RQ2 decomposition (Section \ref{research-design-and-methodology:statistical-analysis:answering-rq2-scaling-against-single-node}) reads from one table
+\subsection{Execution outcomes and skipped cells}
+\label{system-architecture-and-implementation:measurement-instrumentation-and-cost-model:execution-outcomes-and-skipped-cells}
+% [NEW] Brief, factual "what did not run" grounded in benchmarks.yml skip: reasons —
+%   national-scale-spatial-join-duckdb-large (skip: timeout, exceeds 60-min per-iter), 
+%   -postgis-large (skip: failed, OOM on Azure PostgreSQL Flex Server), all partitioned
+%   medium+large Sedona (skip: failed, RangeJoin spatial index exceeds Standard_D4s_v3 memory).
+%   State as built-system facts (which cells produced no data and the recorded reason); leave
+%   interpretation to Ch.6 and the Ch.4 threats table — cross-ref, do not re-argue.
 
 \subsection{What is not measured}
 \label{system-architecture-and-implementation:measurement-instrumentation-and-cost-model:what-is-not-measured}
-
-% Content:
-% - end-user latency from outside Azure; residual cache effects; Azure-side queueing variance; provisioning/idle outside the cost window
+% End-user latency from outside Azure; residual cache effects; Azure-side queueing variance;
+%   provisioning/idle outside the cost window (cluster create/terminate deliberately excluded —
+%   stated README rationale: cost of running on a warm engine, not cold-starting per query).

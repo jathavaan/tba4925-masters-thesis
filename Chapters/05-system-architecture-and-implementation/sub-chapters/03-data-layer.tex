@@ -1,25 +1,44 @@
-% File: Chapters/05-system-architecture-and-implementation/sub-chapters/03-data-layer.tex
-
 \section{Data layer}
 \label{system-architecture-and-implementation:data-layer}
 
-% Content:
-% - one logical dataset materialized into three physical representations; conflation source and fixed release identifier; synthesis (clone counts) realizing the size tiers of Section \ref{sec:methodology:overview:datasets}
+% LEAD: one logical dataset (Norwegian building polygons) materialized into three physical
+%   representations that populate the format axis; same release identifier across all three so
+%   any byte/time difference is format, not data (cross-ref Ch.4 controls).
+
+\subsection{Logical dataset and size tiers}
+\label{system-architecture-and-implementation:data-layer:logical-dataset-and-size-tiers}
+% [NEW] Source: conflation of OSM + FKB (TestDatasetService) -> small (~5M). Synthesis
+%   (DatasetSynthesisService) by per-polygon cloning (translate+rotate+jitter, drop invalid):
+%   medium = 9 clones/polygon (~40M), large = 23 clones/polygon (~100M)
+%   (DatasetSize.clones_per_polygon). Fixed release BENCHMARK_DOPPA_DATA_RELEASE=2026-05-23.1.
+%   partition_key = geohash precision 3 (PARTITION_RESOLUTION) over LAEA Europe centroid.
+%   Realizes the size tiers referenced in Ch.4 workloads; cross-ref. Note SETUP_COUNTY_LIMIT
+%   as the dev-mode knob (full Norway when unset).
 
 \subsection{GeoParquet on ADLS Gen2}
 \label{system-architecture-and-implementation:data-layer:geoparquet-on-adls-gen2}
-
-% Content:
-% - GeoParquet 1.1.0 write settings (WKB, covering bbox, row-group size, partition_key sort); Hive layout keyed by release/size/theme/region and how it enables county-scoped pruning
+% GeoParquet 1.1.0 write settings (blob_storage_service / README): geometry_encoding="WKB",
+%   schema_version="1.1.0", write_covering_bbox=True (adds bbox struct xmin/ymin/xmax/ymax),
+%   row_group_size=100000 (GEOPARQUET_ROW_GROUP_SIZE), snappy compression, rows sorted by
+%   partition_key. Hive layout: release/{release}/size={size}/theme=buildings/region={county}/
+%   part_XXXXX.parquet. Tie the covering bbox + row-group statistics back to the block-level
+%   pruning mechanism (Section~\ref{background:geometry-and-indexing:spatial-indexing}) and the
+%   range-request access pattern — county-scoped pruning. NOTE: README says zstd is recommended
+%   but the writer uses snappy — report snappy as built.
 
 \subsection{PostGIS on Azure PostgreSQL}
 \label{system-architecture-and-implementation:data-layer:postgis-on-azure-postgresql}
-
-% Content:
-% - one buildings_{size} table per tier, GiST index, GeoPandas batched load, ANALYZE; loaded once
+% One buildings_{size} table per tier (buildings_small/medium/large), GiST index
+%   buildings_{size}_geometry_idx, ANALYZE after load. Loaded once by setup (streamed from blob
+%   via DuckDB fetch_df_chunk to avoid materializing the full dataset). Server params from README:
+%   shared_buffers=2097152 (\SI{2}{\gibi\byte}), effective_cache_size=6291456 (\SI{6}{\gibi\byte}),
+%   work_mem=65536 (\SI{64}{\mebi\byte}); azure.extensions=POSTGIS. \acrfull{gist} first body use
+%   if not expanded earlier. This is where the GiST/ANALYZE facts from Ch.4 threats table land.
 
 \subsection{Shapefile bundle}
 \label{system-architecture-and-implementation:data-layer:shapefile-bundle}
-
-% Content:
-% - five/six-component bundle, .prj WKT1, .qix quadtree index; downloaded to local disk before the timed scope; the asymmetry-by-design statement, pointing back to the threats section
+% Components written by benchmark_service / setup: .shp/.shx/.dbf/.cpg + .prj (WKT1_ESRI, EPSG:4326)
+%   + .qix quadtree spatial index (ogr CREATE SPATIAL INDEX). Uploaded to copies/shapefile and
+%   downloaded to local disk BEFORE the timed scope (laptop-workflow emulation), small tier only.
+%   State the asymmetry-by-design and point back to Ch.4 threats
+%   (Section~\ref{research-design-and-methodology:threats-to-validity}); do not re-argue it.

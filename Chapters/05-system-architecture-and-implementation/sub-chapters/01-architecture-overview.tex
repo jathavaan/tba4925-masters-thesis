@@ -1,17 +1,17 @@
-% File: Chapters/05-system-architecture-and-implementation/sub-chapters/01-architecture-overview.tex
-
 \section{Architecture overview}
 \label{system-architecture-and-implementation:architecture-overview}
 
-% Content:
-% - the run-time layout: a container orchestrator dispatches each experiment as an isolated short-lived container group; result and cost analytics written to blob storage
-% - the three storage tiers populating the format axis and the three engines populating the compute axis, each pointing back to the Section 2.3 / 2.4 mechanism it exercises
-% - Figure: benchmark system architecture overview (existing Figure 5.1.1)
-% - roadmap sentence to Sections 5.2-5.6
+The experimental design in Chapter~\ref{ch:methodology} fixes what is varied, what is held constant, and how each outcome is measured; this chapter realizes that design as a running system on Azure. Each experiment runs as an isolated, short-lived containerized job. Every architectural choice answers a single constraint: a difference in elapsed time, transferred bytes, or cost must trace to the configuration under test rather than to the surrounding infrastructure.
+
+Figure~\ref{fig:system-overview} shows the run-time layout. An orchestrator (\texttt{main.py}) runs outside the cluster, reads the experiment manifest \texttt{benchmarks.yml}, and launches one \acrfull{aci} container group per experiment with a restart policy of \texttt{Never}, so each job runs once and is then torn down. Inside each container, a dispatcher (\texttt{benchmark\_runner.py}) matches the experiment's \texttt{script-id} to the entrypoint that implements it. Each entrypoint records its per-iteration samples and a per-benchmark cost row, both written as Parquet to the \texttt{benchmarks} container in Blob Storage for downstream analysis.
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\textwidth]{Chapters/05-system-architecture-and-implementation/sub-chapters/figures/05-system-overview.png}
+    \includegraphics[width=\textwidth]{Chapters/05-system-architecture-and-implementation/sub-chapters/figures/05-system-overvie}
     \caption{Benchmark system architecture overview}
     \label{fig:system-overview}
 \end{figure}
+
+The system varies along two axes. On the data axis, one logical dataset of Norwegian building polygons is materialized as three physical representations; on the compute axis, four engines read them, each tied to the access mechanism it exercises. GeoParquet on \acrfull{adls} is read by both DuckDB and Apache Sedona and exercises the range-request access pattern established in Section~\ref{background:spatial-data-formats-and-storage-models:summary}. PostGIS reads the same buildings from server-managed tables, while the Shapefile bundle is read from local disk through GeoPandas as the full-scan baseline. Crossing the cloud-native and traditional axis with the single-node and distributed axis yields the four design cells of Figure~\ref{fig:design-space}.
+
+The remaining sections specify these components. Section~\ref{system-architecture-and-implementation:infrastructure} fixes the compute platforms, storage, and identity; Section~\ref{system-architecture-and-implementation:data-layer} describes the three data representations; Section~\ref{system-architecture-and-implementation:compute-configuration} sets out each engine's configuration; Section~\ref{system-architecture-and-implementation:orchestration-and-pairing} covers orchestration and pairing; and Section~\ref{system-architecture-and-implementation:measurement-instrumentation-and-cost-model} details the measurement instrumentation and the cost model.

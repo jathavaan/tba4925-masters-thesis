@@ -1,9 +1,35 @@
-% File: Chapters/05-system-architecture-and-implementation/sub-chapters/05-orchestration-and-pairing.tex
-
 \section{Orchestration and pairing}
 \label{system-architecture-and-implementation:orchestration-and-pairing}
 
-% Content:
-% - the serial-outer / parallel-inner orchestrator loop; related_script_ids as the batch graph
-% - the four batching constraints realizing the pairing protocol of Section \ref{research-design-and-methodology:overview-and-experimental-design:replication-and-randomization}: same query type, same size, at most one PostGIS member, Databricks vCPU sum <= regional quota
-% - Table: the batch listing (the 20-batch table from the README), with the per-batch Databricks vCPU sum
+% LEAD: how the pairing protocol of
+%   Section~\ref{research-design-and-methodology:overview-and-experimental-design:replication-and-randomization}
+%   is realized as a serial-outer / parallel-inner orchestrator. Do not re-argue why pairing matters.
+
+\subsection{Dispatch loop and batch graph}
+\label{system-architecture-and-implementation:orchestration-and-pairing:dispatch-loop-and-batch-graph}
+% [NEW] main.py outer loop is serial: pick next not-yet-completed experiment, fan out its peer
+%   batch in parallel (ThreadPoolExecutor max_workers=10), wait, mark all completed, advance.
+%   related_script_ids declared bidirectionally = the batch graph; orchestrator dedupes via
+%   completed_experiments so each batch runs once. _safe_run keeps a failed peer from aborting the
+%   batch; partial-batch warning logged. One ACI per member, restart-policy Never.
+
+\subsection{Batching constraints}
+\label{system-architecture-and-implementation:orchestration-and-pairing:batching-constraints}
+% [NEW] Four simultaneous constraints (CLAUDE.md / README): (a) same query type, (b) same
+%   dataset_size, (c) at most one PostGIS member (shared Azure Postgres server), (d) Databricks
+%   cluster vCPU sum <= 200, computed as (workers+1)x4 per Sedona member on Standard_D4s_v3 =
+%   regional quota. DuckDB/Shapefile draw from a separate ACI quota. Each maps to a real shared
+%   resource being protected.
+
+\subsection{Batch listing}
+\label{system-architecture-and-implementation:orchestration-and-pairing:batch-listing}
+% [NEW] Reproduce the 17-batch table from README (P1,P2,K1,K2,B1,B2,A_S1,A_S2,A_M1..A_M3,
+%   A_L1..A_L6) with per-batch Databricks vCPU sum and members. RESOLVE THE COUNT DISCREPANCY:
+%   README says "51 experiments / 17 batches" in some places and "17 batches" with a body text
+%   that elsewhere says 20; benchmarks.yml is authoritative — derive counts from it and flag any
+%   mismatch with the README prose. Use booktabs; \label the table.
+\begin{table}[H]
+    % \centering / \begin{tabular} ... batch | type | size | databricks vCPU | members
+    \caption[Benchmark batch listing.]{...}
+    \label{tab:batch-listing}
+\end{table}
