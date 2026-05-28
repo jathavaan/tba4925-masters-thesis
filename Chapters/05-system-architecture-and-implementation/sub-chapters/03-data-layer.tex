@@ -1,9 +1,6 @@
 \section{Data layer}
 \label{system-architecture-and-implementation:data-layer}
-
-% LEAD: one logical dataset (Norwegian building polygons) materialized into three physical
-%   representations that populate the format axis; same release identifier across all three so
-%   any byte/time difference is format, not data (cross-ref Ch.4 controls).
+The benchmark runs on a single logical dataset of Norwegian building polygons, materialized as three physical representations that populate the format axis of the experimental design: GeoParquet on object storage, server-managed tables in PostGIS, and a Shapefile bundle on local disk. All three derive from the same source data under one fixed release identifier, \texttt{2026-05-23.1}, so the rows a configuration reads differ only in how they are encoded and stored, never in what they contain. Fixing the dataset across every level is the control established in Section~\ref{research-design-and-methodology:overview-and-experimental-design:factors-and-levels}: because the data are identical, a difference in transferred bytes or elapsed time traces to the format-and-engine pairing under test rather than to a difference in inputs. The subsections below cover the logical dataset and its size tiers first, then each physical representation in turn.
 
 \subsection{Logical dataset and size tiers}
 \label{system-architecture-and-implementation:data-layer:logical-dataset-and-size-tiers}
@@ -14,6 +11,7 @@
 %   partition_key = geohash precision 3 (PARTITION_RESOLUTION) over LAEA Europe centroid.
 %   Realizes the size tiers referenced in Ch.4 workloads; cross-ref. Note SETUP_COUNTY_LIMIT
 %   as the dev-mode knob (full Norway when unset).
+
 
 \subsection{GeoParquet on ADLS Gen2}
 \label{system-architecture-and-implementation:data-layer:geoparquet-on-adls-gen2}
