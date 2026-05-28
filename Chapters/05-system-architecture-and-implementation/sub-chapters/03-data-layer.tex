@@ -4,25 +4,14 @@ The benchmark runs on a single logical dataset of Norwegian building polygons, m
 
 \subsection{Logical dataset and size tiers}
 \label{system-architecture-and-implementation:data-layer:logical-dataset-and-size-tiers}
-% [NEW] Source: conflation of OSM + FKB (TestDatasetService) -> small (~5M). Synthesis
-%   (DatasetSynthesisService) by per-polygon cloning (translate+rotate+jitter, drop invalid):
-%   medium = 9 clones/polygon (~40M), large = 23 clones/polygon (~100M)
-%   (DatasetSize.clones_per_polygon). Fixed release BENCHMARK_DOPPA_DATA_RELEASE=2026-05-23.1.
-%   partition_key = geohash precision 3 (PARTITION_RESOLUTION) over LAEA Europe centroid.
-%   Realizes the size tiers referenced in Ch.4 workloads; cross-ref. Note SETUP_COUNTY_LIMIT
-%   as the dev-mode knob (full Norway when unset).
-
+The dataset is materialized at three size tiers, small, medium, and large, that realize those defined for the workloads in Section~\ref{research-design-and-methodology:workloads:workload-definitions}. The small tier holds roughly \num{5000000} building polygons and comes directly from the test dataset pipeline, which conflates \acrfull{osm} and \acrfull{fkb} building data into a single deduplicated set. The medium and large tiers are synthesized from the small tier by cloning each polygon. Each source polygon is copied a fixed number of times. Every clone is translated to a new position within its source county, rotated by a random angle, and perturbed by a small coordinate jitter. Clones whose geometry fails a validity check are discarded. The medium tier applies nine clones per source polygon for a target of roughly \num{40000000} rows, and the large tier applies \num{23} for roughly \num{100000000}. Synthetic clones inherit their source's schema but carry \texttt{NULL} in every non-geometry attribute, so only the originals have populated values. Every row across all three tiers is assigned a \texttt{partition\_key}: a precision-3 geohash computed over the polygon centroid in the LAEA Europe projection (EPSG:3035). This key groups spatially adjacent buildings together, supporting the layout described in the following subsections.
 
 \subsection{GeoParquet on ADLS Gen2}
 \label{system-architecture-and-implementation:data-layer:geoparquet-on-adls-gen2}
-% GeoParquet 1.1.0 write settings (blob_storage_service / README): geometry_encoding="WKB",
-%   schema_version="1.1.0", write_covering_bbox=True (adds bbox struct xmin/ymin/xmax/ymax),
-%   row_group_size=100000 (GEOPARQUET_ROW_GROUP_SIZE), snappy compression, rows sorted by
-%   partition_key. Hive layout: release/{release}/size={size}/theme=buildings/region={county}/
-%   part_XXXXX.parquet. Tie the covering bbox + row-group statistics back to the block-level
-%   pruning mechanism (Section~\ref{background:geometry-and-indexing:spatial-indexing}) and the
-%   range-request access pattern — county-scoped pruning. NOTE: README says zstd is recommended
-%   but the writer uses snappy — report snappy as built.
+
+The buildings dataset is written to \acrshort{adls} as GeoParquet conforming to version 1.1.0 of the specification \parencite{ogc2024_geoparquet_specification_v110}. Each partition encodes geometry as \acrshort{wkb}, adds a covering bounding-box column as a struct of \texttt{xmin}, \texttt{ymin}, \texttt{xmax}, and \texttt{ymax}, and uses a row-group size of \num{100000} rows. Columns use snappy compression, and each partition's rows are sorted by \texttt{partition\_key} before they are written. A Hive-style path keyed by release, size, theme, and region organizes the files, taking the form \texttt{\url{release/{release}/size={size}/theme=buildings/region={county}/part\_XXXXX.parquet}}. One logical release therefore resolves to a tree of per-county GeoParquet files at a fixed size tier.
+
+This layout exposes the dataset to the block-level pruning mechanism described in Section~\ref{background:geometry-and-indexing:spatial-indexing}. The covering bounding box and the per-row-group statistics that Parquet records in the file footer let a reader compare a spatial predicate against each row group's extent and skip the groups that cannot satisfy it. This realizes the range-request access pattern established in Section~\ref{background:spatial-data-formats-and-storage-models:summary}. The region segment of the Hive path extends the same principle to whole files, so a query bounded to one county reads only the GeoParquet files written under that region rather than the national tree.
 
 \subsection{PostGIS on Azure PostgreSQL}
 \label{system-architecture-and-implementation:data-layer:postgis-on-azure-postgresql}
