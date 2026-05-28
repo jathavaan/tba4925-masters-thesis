@@ -15,12 +15,10 @@ This layout exposes the dataset to the block-level pruning mechanism described i
 
 \subsection{PostGIS on Azure PostgreSQL}
 \label{system-architecture-and-implementation:data-layer:postgis-on-azure-postgresql}
-% One buildings_{size} table per tier (buildings_small/medium/large), GiST index
-%   buildings_{size}_geometry_idx, ANALYZE after load. Loaded once by setup (streamed from blob
-%   via DuckDB fetch_df_chunk to avoid materializing the full dataset). Server params from README:
-%   shared_buffers=2097152 (\SI{2}{\gibi\byte}), effective_cache_size=6291456 (\SI{6}{\gibi\byte}),
-%   work_mem=65536 (\SI{64}{\mebi\byte}); azure.extensions=POSTGIS. \acrfull{gist} first body use
-%   if not expanded earlier. This is where the GiST/ANALYZE facts from Ch.4 threats table land.
+
+The PostGIS representation materializes the buildings dataset as one table per size tier: \texttt{buildings\_small}, \texttt{buildings\_medium}, and \texttt{buildings\_large}. All three are populated once during setup rather than per benchmark, so every PostGIS run reads from a server already in its final state. Each tier resolves to its own table reference at query time, and a single server backs every PostGIS workload across all tiers.
+
+PostGIS is enabled through the \texttt{azure.extensions} server parameter, which permits the extension to be installed at run time. Three memory parameters are tuned away from their defaults to suit the analytical workload: \texttt{shared\_buffers} set to \SI{2}{\gibi\byte}, \texttt{effective\_cache\_size} to \SI{6}{\gibi\byte}, and \texttt{work\_mem} to \SI{64}{\mebi\byte}. The server SKU, region, and compute sizing are fixed in Section~\ref{system-architecture-and-implementation:infrastructure:compute-platforms}. After each table is loaded, a \acrshort{gist} spatial index named \texttt{\url{buildings\_{size}\_geometry\_idx}} is built on the geometry column, providing the R-tree access method described in Section~\ref{background:spatial-data-formats-and-storage-models:full-database-engines:postgis}. An \texttt{ANALYZE} then refreshes the planner statistics over the freshly loaded rows. Together, building the index and refreshing statistics address the stale-statistics threat identified in Section~\ref{research-design-and-methodology:threats-to-validity}, where a planner working from pre-load statistics could misjudge the spatial join.
 
 \subsection{Shapefile bundle}
 \label{system-architecture-and-implementation:data-layer:shapefile-bundle}
