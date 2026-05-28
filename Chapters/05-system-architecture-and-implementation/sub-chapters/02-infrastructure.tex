@@ -12,16 +12,11 @@ Apache Sedona runs on Azure Databricks classic compute, with one fresh job clust
 
 PostGIS runs against an Azure Database for PostgreSQL Flexible Server provisioned in Norway East as a General Purpose \texttt{Standard\_D4ads\_v5} instance (4 vCores, \SI{16}{\gibi\byte} of memory, AMD processor). Storage is Premium SSD at the P10 performance tier, sized to \SI{128}{\gibi\byte}, with zonal high availability disabled and storage autogrow off. The General Purpose tier was selected over Burstable so that compute capacity is pre-allocated and billed at a flat hourly rate. A Burstable instance would otherwise introduce credit-driven variability in throughput across the long-running national-scale join. The same instance backs every PostGIS workload at every dataset tier, so all PostGIS results share one server configuration and the cost terms developed in Section~\ref{system-architecture-and-implementation:measurement-instrumentation-and-cost-model:cost-model-implementation} apply uniformly.
 
-\subsection{Storage and identity}
-\label{system-architecture-and-implementation:infrastructure:storage-and-identity}
-% Single \acrshort{adls} account `doppabs`, hierarchical namespace; blob vs dfs endpoints
-%   (DuckDB az:// / abfss:// for Sedona). Soft-delete disabled — README IMPORTANT: enabling it
-%   makes the Databricks ABFS driver fail with HTTP 409 on dfs.core.windows.net reads. State that
-%   as the stated rationale.
-% Identity: single user-assigned managed identity `doppa-uami`, Contributor on the RG, AcrPull/
-%   AcrPush on the registry; GitHub Actions federated credentials; no secret material baked into
-%   images (secrets via --secure-environment-variables from main.py / workflows).
-% Container registry `doppaacr`; images pushed by push-containers-to-acr.yml.
+\subsection{Storage and image registry}
+\label{system-architecture-and-implementation:infrastructure:storage-and-image-registry}
+A single Azure Blob Storage account backs the framework, holding the GeoParquet building dataset, the Shapefile copy, the municipality boundaries, and every benchmark output written by the entrypoints. Data protection is disabled at the account level, with neither blob nor container soft delete enabled, for an operational reason rather than an experimental one. With soft delete on, the Databricks ABFS driver fails with \acrshort{http}~409 on reads, so the Sedona configurations cannot reach the dataset. Disabling soft delete restores those reads at the cost of the recovery window that would otherwise sit between an accidental delete and its permanent removal. The loss of that recovery window is acceptable here because the framework rewrites its outputs from scratch on every run and the input dataset is reproducible from the setup pipeline.
+
+Container images for every experiment live in a dedicated Azure Container Registry, \texttt{doppaacr}. The \texttt{push-containers-to-acr.yml} GitHub Actions workflow builds and pushes them on merged pull requests and on manual dispatch, tagging each image as both \texttt{:latest} and the commit SHA so a benchmark run can be tied back to the exact source revision that produced it. \acrshort{aci} pulls the image from the registry at the start of each experiment, using the tag recorded in \texttt{benchmarks.yml}.
 
 \subsection{Determinism and reproducibility}
 \label{system-architecture-and-implementation:infrastructure:determinism-and-reproducibility}

@@ -1,7 +1,7 @@
 \section{Architecture overview}
 \label{system-architecture-and-implementation:architecture-overview}
 
-The experimental design in Chapter~\ref{ch:methodology} fixes what is varied, what is held constant, and how each outcome is measured; this chapter realizes that design as a running system on Azure. Each experiment runs as an isolated, short-lived containerized job. Every architectural choice answers a single constraint: a difference in elapsed time, transferred bytes, or cost must trace to the configuration under test rather than to the surrounding infrastructure.
+The experimental design in Chapter~\ref{ch:methodology} fixes what is varied, what is held constant, and how each outcome is c ; this chapter realizes that design as a running system on Azure. Each experiment runs as an isolated, short-lived containerized job. Every architectural choice answers a single constraint: a difference in elapsed time, transferred bytes, or cost must trace to the configuration under test rather than to the surrounding infrastructure.
 
 Figure~\ref{fig:system-overview} shows the run-time layout. An orchestrator (\texttt{main.py}) runs outside the cluster, reads the experiment manifest \texttt{benchmarks.yml}, and launches one \acrfull{aci} container group per experiment with a restart policy of \texttt{Never}, so each job runs once and is then torn down. Inside each container, a dispatcher (\texttt{benchmark\_runner.py}) matches the experiment's \texttt{script-id} to the entrypoint that implements it. Each entrypoint records its per-iteration samples and a per-benchmark cost row, both written as Parquet to the \texttt{benchmarks} container in Blob Storage for downstream analysis.
 
