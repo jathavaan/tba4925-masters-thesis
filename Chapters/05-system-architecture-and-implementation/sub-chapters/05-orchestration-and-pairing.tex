@@ -1,9 +1,7 @@
 \section{Orchestration and pairing}
 \label{system-architecture-and-implementation:orchestration-and-pairing}
 
-% LEAD: how the pairing protocol of
-%   Section~\ref{research-design-and-methodology:overview-and-experimental-design:replication-and-randomization}
-%   is realized as a serial-outer / parallel-inner orchestrator. Do not re-argue why pairing matters.
+The per-configuration implementations described so far execute under a single orchestrator, \texttt{main.py}, whose role is to realize the pairing protocol of Section~\ref{research-design-and-methodology:overview-and-experimental-design:replication-and-randomization}. Its control flow operates at two levels: a serial outer pass admits one batch of paired configurations at a time, and a parallel inner step runs that batch's members together as \acrshort{aci} container groups, so paired configurations share a single wall-clock window. The subsections that follow specify the dispatch loop, the constraints a batch must satisfy, and the resulting batch listing.
 
 \subsection{Dispatch loop and batch graph}
 \label{system-architecture-and-implementation:orchestration-and-pairing:dispatch-loop-and-batch-graph}
@@ -14,21 +12,68 @@ Failure is contained at the level of the individual member rather than the batch
 
 \subsection{Batching constraints}
 \label{system-architecture-and-implementation:orchestration-and-pairing:batching-constraints}
-% [NEW] Four simultaneous constraints (CLAUDE.md / README): (a) same query type, (b) same
-%   dataset_size, (c) at most one PostGIS member (shared Azure Postgres server), (d) Databricks
-%   cluster vCPU sum <= 200, computed as (workers+1)x4 per Sedona member on Standard_D4s_v3 =
-%   regional quota. DuckDB/Shapefile draw from a separate ACI quota. Each maps to a real shared
-%   resource being protected.
+
+Co-scheduling peers in one wall-clock window yields a fair comparison only when those peers do not perturb one another as they run, so the batch graph admits a group of experiments only when four conditions hold at once. The first two conditions keep every batch internally comparable. A batch is restricted to a single query type, so that no comparison spans a mismatch in workload, and to a single dataset-size tier, so that storage-cache state and the regional load on shared virtual-machine capacity remain comparable across the group rather than confounded by a size mismatch.
+
+The remaining two conditions cap contention on infrastructure that the members genuinely share. At most one PostGIS experiment may join a batch, because the managed PostgreSQL Flexible Server is a single shared instance and two PostGIS queries executing against it concurrently would contend for its shared buffers, operating-system page cache, and \acrshort{cpu}. The Databricks clusters impose the second shared limit. Each Sedona member provisions a cluster of \texttt{Standard\_D4s\_v3} nodes at four \acrshort{vcpu} each, so a cluster of $w$ workers consumes $(w + 1) \times 4$ \acrshort{vcpu} once its driver is included, and the sum over a batch must remain within the workspace's regional quota of 200 \acrshort{vcpu} for that node family. DuckDB, Shapefile, and PostGIS draw on a separate \acrshort{aci} quota and do not count toward this cap. Because DuckDB and Shapefile run process-local inside their own container groups and each Sedona variant provisions its own cluster on disjoint virtual machines, co-scheduled members share no runtime state beyond the regional \acrshort{vcpu} pool that the fourth condition already bounds. A candidate batch is therefore admissible only when all four conditions hold simultaneously, and the assignment of experiments to batches that satisfies them is listed in Section~\ref{system-architecture-and-implementation:orchestration-and-pairing:batch-listing}.
 
 \subsection{Batch listing}
 \label{system-architecture-and-implementation:orchestration-and-pairing:batch-listing}
-% [NEW] Reproduce the 17-batch table from README (P1,P2,K1,K2,B1,B2,A_S1,A_S2,A_M1..A_M3,
-%   A_L1..A_L6) with per-batch Databricks vCPU sum and members. RESOLVE THE COUNT DISCREPANCY:
-%   README says "51 experiments / 17 batches" in some places and "17 batches" with a body text
-%   that elsewhere says 20; benchmarks.yml is authoritative — derive counts from it and flag any
-%   mismatch with the README prose. Use booktabs; \label the table.
-\begin{table}[H]
-    % \centering / \begin{tabular} ... batch | type | size | databricks vCPU | members
-    \caption[Benchmark batch listing.]{...}
-    \label{tab:batch-listing}
-\end{table}
+
+The assignment of experiments to batches that satisfies the four conditions of Section~\ref{system-architecture-and-implementation:orchestration-and-pairing:batching-constraints} is enumerated in Table~\ref{tab:batch-listing}, which packs the \num{51} experiments into \num{17} batches: six hold the single-machine query types and contain no Sedona member, while the remaining eleven cover the national-scale spatial join and size their Sedona clusters to stay within the regional \acrshort{vcpu} quota.
+
+\begingroup
+\footnotesize
+\begin{longtable}{@{}l >{\raggedright\arraybackslash}p{0.20\textwidth} l r >{\raggedright\arraybackslash}p{0.40\textwidth}@{}}
+	\toprule
+	Batch & Type & Dataset size & \acrshort{vcpu} & Members \\
+	\midrule
+	\endfirsthead
+	\multicolumn{5}{@{}l}{\small\itshape Table~\thetable\ (continued)} \\
+	\toprule
+	Batch & Type & Dataset size & \acrshort{vcpu} & Members \\
+	\midrule
+	\endhead
+	\midrule
+	\multicolumn{5}{r@{}}{\small\itshape Continued on next page} \\
+	\endfoot
+	\bottomrule
+	\addlinespace[\abovecaptionskip]
+	\caption[Benchmark batch listing.]{Co-scheduled members of each batch and the summed Databricks-\acrshort{vcpu} demand. The \acrshort{vcpu} column adds $(w+1)\times 4$ over a batch's Sedona members; \texttt{duckdb}, \texttt{postgis}, and \texttt{local} draw on a separate \acrshort{aci} quota and contribute nothing.}
+	\label{tab:batch-listing} \\
+	\endlastfoot
+	$\mathrm{P}_1$ & point-in-polygon lookup & small & 0 & \texttt{duckdb}, \texttt{postgis}, \texttt{local} \\
+	\addlinespace
+	$\mathrm{P}_2$ & point-in-polygon lookup & large & 0 & \texttt{duckdb}, \texttt{postgis} \\
+	\addlinespace
+	$\mathrm{K}_1$ & k-nearest-neighbor search & small & 0 & \texttt{duckdb}, \texttt{postgis}, \texttt{local} \\
+	\addlinespace
+	$\mathrm{K}_2$ & k-nearest-neighbor search & large & 0 & \texttt{duckdb}, \texttt{postgis} \\
+	\addlinespace
+	$\mathrm{B}_1$ & bounding-box filtering & small & 0 & \texttt{duckdb}, \texttt{postgis}, \texttt{local} \\
+	\addlinespace
+	$\mathrm{B}_2$ & bounding-box filtering & large & 0 & \texttt{duckdb}, \texttt{postgis} \\
+	\addlinespace
+	$\mathrm{A}_{\mathrm{S1}}$ & national-scale spatial join & small & 200 & \texttt{broadcast-2}, \texttt{broadcast-8}, \texttt{broadcast-12}, \texttt{partitioned-2}, \texttt{partitioned-8}, \texttt{partitioned-12}, \texttt{duckdb}, \texttt{postgis} \\
+	\addlinespace
+	$\mathrm{A}_{\mathrm{S2}}$ & national-scale spatial join & small & 176 & \texttt{broadcast-4}, \texttt{broadcast-16}, \texttt{partitioned-4}, \texttt{partitioned-16} \\
+	\addlinespace
+	$\mathrm{A}_{\mathrm{M1}}$ & national-scale spatial join & medium & 176 & \texttt{broadcast-8}, \texttt{broadcast-12}, \texttt{partitioned-8}, \texttt{partitioned-12}, \texttt{duckdb}, \texttt{postgis} \\
+	\addlinespace
+	$\mathrm{A}_{\mathrm{M2}}$ & national-scale spatial join & medium & 176 & \texttt{broadcast-4}, \texttt{broadcast-16}, \texttt{partitioned-4}, \texttt{partitioned-16} \\
+	\addlinespace
+	$\mathrm{A}_{\mathrm{M3}}$ & national-scale spatial join & medium & 24 & \texttt{broadcast-2}, \texttt{partitioned-2} \\
+	\addlinespace
+	$\mathrm{A}_{\mathrm{L1}}$ & national-scale spatial join & large & 80 & \texttt{broadcast-16}, \texttt{broadcast-2} \\
+	\addlinespace
+	$\mathrm{A}_{\mathrm{L2}}$ & national-scale spatial join & large & 80 & \texttt{partitioned-16}, \texttt{partitioned-2} \\
+	\addlinespace
+	$\mathrm{A}_{\mathrm{L3}}$ & national-scale spatial join & large & 72 & \texttt{broadcast-12}, \texttt{broadcast-4} \\
+	\addlinespace
+	$\mathrm{A}_{\mathrm{L4}}$ & national-scale spatial join & large & 72 & \texttt{partitioned-12}, \texttt{partitioned-4} \\
+	\addlinespace
+	$\mathrm{A}_{\mathrm{L5}}$ & national-scale spatial join & large & 72 & \texttt{broadcast-8}, \texttt{partitioned-8} \\
+	\addlinespace
+	$\mathrm{A}_{\mathrm{L6}}$ & national-scale spatial join & large & 0 & \texttt{duckdb}, \texttt{postgis} \\
+\end{longtable}
+\endgroup
