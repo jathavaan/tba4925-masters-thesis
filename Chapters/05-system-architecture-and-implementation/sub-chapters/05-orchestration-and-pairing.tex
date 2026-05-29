@@ -7,11 +7,10 @@
 
 \subsection{Dispatch loop and batch graph}
 \label{system-architecture-and-implementation:orchestration-and-pairing:dispatch-loop-and-batch-graph}
-% [NEW] main.py outer loop is serial: pick next not-yet-completed experiment, fan out its peer
-%   batch in parallel (ThreadPoolExecutor max_workers=10), wait, mark all completed, advance.
-%   related_script_ids declared bidirectionally = the batch graph; orchestrator dedupes via
-%   completed_experiments so each batch runs once. _safe_run keeps a failed peer from aborting the
-%   batch; partial-batch warning logged. One ACI per member, restart-policy Never.
+
+The orchestrator in \texttt{main.py} drives the suite through a single serial loop, so that only one batch of experiments is ever in flight. It walks the experiment list in order, skips any entry already recorded in \texttt{completed\_experiments}, and treats the next remaining entry as the seed of a batch. The members of that batch are the experiments named in the seed's \texttt{related\_script\_ids} list, which every peer declares reciprocally, so the union of these reciprocal declarations forms the batch graph. The seed and its peers launch together across a thread pool capped at ten workers (\texttt{ThreadPoolExecutor} with \texttt{max\_workers=10}), one Azure Container Instance per member; the loop blocks until the whole batch has finished, marks every member completed, and only then advances. Because each member is appended to \texttt{completed\_experiments} once its batch returns, the reciprocal declarations are de-duplicated and each batch executes exactly once, independent of which member the outer loop reached first. Running the peers of a batch within one wall-clock window is what makes their measurements comparable, for the reasons established in Section~\ref{research-design-and-methodology:overview-and-experimental-design:replication-and-randomization}.
+
+Failure is contained at the level of the individual member rather than the batch. Each member runs inside \texttt{\_safe\_run}, which catches any exception raised while launching or monitoring that container, records the failed identifier, and lets the remaining peers run to completion instead of aborting the batch. After the batch returns, the orchestrator inspects the collected failures and logs whether the batch failed in part or in full, noting that surviving peers ran without their matched counterparts and that the fair-comparison assumption may not hold for that batch; the warning lets such batches be filtered out during analysis. Every member executes in its own container group provisioned with \texttt{restart-policy Never}, so a member that exits is never silently retried on the same instance and each measurement reflects a single clean execution.
 
 \subsection{Batching constraints}
 \label{system-architecture-and-implementation:orchestration-and-pairing:batching-constraints}
