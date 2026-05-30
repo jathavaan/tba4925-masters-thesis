@@ -1,7 +1,7 @@
 \section{Orchestration and pairing}
 \label{system-architecture-and-implementation:orchestration-and-pairing}
 
-The per-configuration implementations described so far execute under a single orchestrator, \texttt{main.py}, whose role is to realize the pairing protocol of Section~\ref{research-design-and-methodology:overview-and-experimental-design:replication-and-randomization}. Its control flow operates at two levels: a serial outer pass admits one batch of paired configurations at a time, and a parallel inner step runs that batch's members together as \acrshort{aci} container groups, so paired configurations share a single wall-clock window. The subsections that follow specify the dispatch loop, the constraints a batch must satisfy, and the resulting batch listing.
+A single orchestrator, \texttt{main.py}, runs the per-configuration implementations described so far and realizes the pairing protocol of Section~\ref{research-design-and-methodology:overview-and-experimental-design:replication-and-randomization}. Its control flow works at two levels. A serial outer pass admits one batch of paired configurations at a time, and a parallel inner step runs that batch's members together as \acrshort{aci} container groups, so the members of a batch share a single wall-clock window. The subsections that follow specify the dispatch loop, the constraints a batch must satisfy, and the resulting batch listing.
 
 \subsection{Dispatch loop and batch graph}
 \label{system-architecture-and-implementation:orchestration-and-pairing:dispatch-loop-and-batch-graph}
