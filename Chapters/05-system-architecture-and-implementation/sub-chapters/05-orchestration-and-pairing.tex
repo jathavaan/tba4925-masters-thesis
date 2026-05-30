@@ -27,7 +27,7 @@ The remaining two conditions cap contention on infrastructure that the members g
 \subsection{Batch listing}
 \label{system-architecture-and-implementation:orchestration-and-pairing:batch-listing}
 
-The assignment of experiments to batches that satisfies the four conditions of Section~\ref{system-architecture-and-implementation:orchestration-and-pairing:batching-constraints} is enumerated in Table~\ref{tab:batch-listing}, which packs the \num{51} experiments into \num{17} batches: six hold the single-machine query types and contain no Sedona member, while the remaining eleven cover the national-scale spatial join and size their Sedona clusters to stay within the regional \acrshort{vcpu} quota.
+Table~\ref{tab:batch-listing} packs the \num{51} experiments into \num{17} batches that satisfy the four conditions of Section~\ref{system-architecture-and-implementation:orchestration-and-pairing:batching-constraints}. Six batches hold the single-machine query types and contain no Sedona member; the remaining eleven cover the national-scale spatial join, sizing their Sedona clusters to stay within the regional \acrshort{vcpu} quota.
 
 \begingroup
 \footnotesize
