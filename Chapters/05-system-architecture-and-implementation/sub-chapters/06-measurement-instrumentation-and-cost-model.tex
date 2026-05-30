@@ -41,12 +41,10 @@ A separate metadata record summarizes each run. After the iteration loop ends, t
 
 \subsection{Execution outcomes and skipped cells}
 \label{system-architecture-and-implementation:measurement-instrumentation-and-cost-model:execution-outcomes-and-skipped-cells}
-% [NEW] Brief, factual "what did not run" grounded in benchmarks.yml skip: reasons —
-%   national-scale-spatial-join-duckdb-large (skip: timeout, exceeds 60-min per-iter), 
-%   -postgis-large (skip: failed, OOM on Azure PostgreSQL Flex Server), all partitioned
-%   medium+large Sedona (skip: failed, RangeJoin spatial index exceeds Standard_D4s_v3 memory).
-%   State as built-system facts (which cells produced no data and the recorded reason); leave
-%   interpretation to Ch.6 and the Ch.4 threats table — cross-ref, do not re-argue.
+
+Not every cell in the design matrix produced measurements. The \texttt{stop\_reason} carried forward from the preceding subsection also records cells that were marked never to execute: an experiment whose \texttt{benchmarks.yml} entry carries a \texttt{skip} key is detected before any iteration runs, writes a single metadata row with zero achieved and zero failed iterations and the declared reason, and returns without persisting any per-iteration sample. Two single-node cells at the large tier were withheld in this way. The national-scale spatial join on DuckDB at the large tier records \texttt{timeout}, because a single iteration exceeds the 60-minute per-iteration ceiling and the data collected in an earlier run was retained as sufficient rather than recomputed. The same join on PostGIS at the large tier records \texttt{failed}, having exhausted memory on the Azure Database for PostgreSQL Flexible Server instance at that scale.
+
+The partitioned Sedona configuration accounts for the remaining skipped cells. At both the medium and the large tier, every worker count from two to sixteen records \texttt{failed} with one cause: the \texttt{RangeJoin} spatial index built by the Sedona partitioner exceeds the memory available on a \texttt{Standard\_D4s\_v3} worker once the buildings dataset reaches that size, so the executors run out of memory before the join completes. Ten cells are affected, which leaves the partitioned strategy with measurements only at the small tier, while the broadcast strategy retains all three tiers. These outcomes are stated here as recorded facts about which cells yielded data; their bearing on the comparison is taken up in the results (Chapter~\ref{ch:results}) and collected among the design's threats in Table~\ref{tab:threats-validity-summary}, and is not re-argued at this point.
 
 \subsection{What is not measured}
 \label{system-architecture-and-implementation:measurement-instrumentation-and-cost-model:what-is-not-measured}
