@@ -42,13 +42,28 @@
 \usepackage{listings}        % Code listings
 
 % =============================================================================
+% Thesis color palette (single source of truth)
+% =============================================================================
+\definecolor{thesisteal}{HTML}{4F8985}
+\definecolor{thesiscoral}{HTML}{B7704D}
+\definecolor{thesissteel}{HTML}{5B8AAC}
+\definecolor{thesisamber}{HTML}{C9A36A}
+\definecolor{thesisviolet}{HTML}{8E7BA3}
+\definecolor{thesissage}{HTML}{6E8F76}
+\definecolor{thesisslate}{HTML}{2C3E50}
+\definecolor{thesisgray}{HTML}{7F7F7F}
+\definecolor{thesislight}{HTML}{E5E5E5}
+\definecolor{thesispale}{HTML}{F5F5F5}
+\definecolor{thesisbrick}{HTML}{A85A4A}
+
+% =============================================================================
 % Listings — XML style
 % =============================================================================
-\definecolor{lstbg}{HTML}{F5F5F5}
+\colorlet{lstbg}{thesispale}
 \definecolor{lstrule}{HTML}{CCCCCC}
-\definecolor{lstkey}{HTML}{2C3E50}
-\definecolor{lststring}{HTML}{B7704D}
-\definecolor{lstcomment}{HTML}{7F7F7F}
+\colorlet{lstkey}{thesisslate}
+\colorlet{lststring}{thesiscoral}
+\colorlet{lstcomment}{thesisgray}
 
 \lstdefinestyle{xmlstyle}{%
     extendedchars=true,
