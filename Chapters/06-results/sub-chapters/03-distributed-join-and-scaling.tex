@@ -1,0 +1,114 @@
+\section{Distributed join and scaling (RQ2)}
+\label{results:distributed-join-and-scaling}
+
+% TODO: section-opening placeholder. Present the distributed spatial join across
+% worker counts and the two join strategies: first the scaling behavior
+% (Section~\ref{results:distributed-join-and-scaling:scaling-behavior}), then the
+% absolute performance against the single-node baselines
+% (Section~\ref{results:distributed-join-and-scaling:absolute-performance-vs-single-node-baselines}),
+% then the execution-phase breakdown
+% (Section~\ref{results:distributed-join-and-scaling:execution-phase-breakdown}),
+% and finally the operational cost and the cost-time tradeoff
+% (Section~\ref{results:distributed-join-and-scaling:operational-cost-and-the-cost-time-tradeoff}).
+% Results only; interpretation is deferred to the Discussion
+% (Chapter~\ref{ch:discussion}).
+
+\subsection{Scaling behavior}
+\label{results:distributed-join-and-scaling:scaling-behavior}
+
+% TODO: prose placeholder describing speedup and parallel efficiency. Refer to
+% Figure~\ref{fig:distributed-speedup-efficiency}.
+
+\begin{figure}[H]
+    \centering
+    % TODO: two-panel subfloat (valign=t, width=0.45\textwidth each, [H] placement):
+    %   (a) speedup S(n) over worker counts {2, 4, 8, 12, 16}, one series for
+    %       broadcast and one for partitioned (\texttt{thesisteal} broadcast,
+    %       \texttt{thesiscoral} partitioned), with an ideal-linear reference line
+    %       in \texttt{thesisgray} (dashed).
+    %   (b) paired parallel efficiency E(n) = S(n)/n over the same worker counts,
+    %       same two series and colours, with the ideal E(n) = 1 reference in
+    %       \texttt{thesisgray} (dashed).
+    \caption[Speedup and parallel efficiency of the distributed join]{Scaling of
+    the distributed spatial join over worker counts $\{2, 4, 8, 12, 16\}$. Panel
+    (a) shows speedup $S(n)$ for the broadcast and partitioned strategies against
+    an ideal-linear reference; panel (b) shows the paired parallel efficiency
+    $E(n)$ against its ideal. Series colour encodes join strategy and the reference
+    line uses a neutral palette colour.}
+    \label{fig:distributed-speedup-efficiency}
+\end{figure}
+
+\subsection{Absolute performance vs. single-node baselines}
+\label{results:distributed-join-and-scaling:absolute-performance-vs-single-node-baselines}
+
+% TODO: prose placeholder. Refer to Figure~\ref{fig:distributed-wall-clock-vs-workers}.
+
+\begin{figure}[H]
+    \centering
+    % TODO: wall-clock time against worker count {2, 4, 8, 12, 16}, one series per
+    % size tier (\texttt{thesisteal}, \texttt{thesiscoral}, \texttt{thesissteel}),
+    % with the single-node PostGIS and DuckDB baselines drawn as horizontal
+    % reference lines (\texttt{thesisslate} PostGIS, \texttt{thesisgray} DuckDB,
+    % dashed).
+    \caption[Distributed wall-clock time versus single-node baselines]{Wall-clock
+    time of the distributed join as a function of worker count, one series per size
+    tier, with the single-node PostGIS and DuckDB baselines shown as horizontal
+    reference lines. Series colour encodes tier and the baseline lines use distinct
+    palette colours.}
+    \label{fig:distributed-wall-clock-vs-workers}
+\end{figure}
+
+\subsection{Execution-phase breakdown}
+\label{results:distributed-join-and-scaling:execution-phase-breakdown}
+
+% TODO: prose placeholder. Refer to
+% Figure~\ref{fig:distributed-execution-phase-breakdown}.
+
+\begin{figure}[H]
+    \centering
+    % TODO: two-panel subfloat (valign=t, width=0.45\textwidth each, [H] placement):
+    %   (a) stacked wall-clock time across the planning, shuffle, and collection
+    %       phases, per join strategy and worker count; phase colour from the
+    %       thesis palette (\texttt{thesisteal} planning, \texttt{thesiscoral}
+    %       shuffle, \texttt{thesisamber} collection).
+    %   (b) shuffle bytes across the same phases, strategies, and worker counts,
+    %       using the same palette mapping.
+    \caption[Execution-phase breakdown of the distributed join]{Decomposition of
+    the distributed join across the planning, shuffle, and collection phases. Panel
+    (a) stacks wall-clock time by phase for each join strategy and worker count;
+    panel (b) shows the corresponding shuffle bytes. Phase colour uses the thesis
+    palette.}
+    \label{fig:distributed-execution-phase-breakdown}
+\end{figure}
+
+\subsection{Operational cost and the cost-time tradeoff}
+\label{results:distributed-join-and-scaling:operational-cost-and-the-cost-time-tradeoff}
+
+% TODO: prose placeholder. Refer to Figure~\ref{fig:distributed-cost-time-pareto}
+% and Table~\ref{tab:distributed-join-descriptive-statistics}.
+
+\begin{figure}[H]
+    \centering
+    % TODO: cost-versus-time scatter tracing the Pareto frontier, one point per
+    % worker count {2, 4, 8, 12, 16}, separate series for broadcast and
+    % partitioned (\texttt{thesisteal} broadcast, \texttt{thesiscoral}
+    % partitioned); annotate the non-dominated frontier.
+    \caption[Cost-time tradeoff of the distributed join]{Operational cost against
+    wall-clock time for the distributed join, with one point per worker count and a
+    separate series for each join strategy. The non-dominated points trace the
+    cost-time Pareto frontier. Series colour encodes join strategy using the thesis
+    palette.}
+    \label{fig:distributed-cost-time-pareto}
+\end{figure}
+
+\begin{table}[H]
+    \centering
+    % TODO: descriptive statistics of the distributed join per
+    % configuration x size tier x worker count: minimum estimator, confidence
+    % interval, dispersion, and the cost terms. No invented values; structure only.
+    \caption[Distributed join descriptive statistics]{Descriptive statistics of the
+    distributed join for each configuration, size tier, and worker count, including
+    the minimum estimator, its confidence interval, dispersion, and the associated
+    cost terms.}
+    \label{tab:distributed-join-descriptive-statistics}
+\end{table}

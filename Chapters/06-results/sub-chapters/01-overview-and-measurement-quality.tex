@@ -1,0 +1,85 @@
+\section{Overview and measurement quality}
+\label{results:overview-and-measurement-quality}
+
+% TODO: section-opening placeholder. Introduce the three measurement-quality
+% checks that precede the research-question results: which configurations
+% completed
+% (Section~\ref{results:overview-and-measurement-quality:run-completeness-and-result-agreement}),
+% how the per-iteration timings are distributed and why the minimum is the
+% reported estimator
+% (Section~\ref{results:overview-and-measurement-quality:timing-distributions-and-estimator-behavior}),
+% and the achieved iteration counts and convergence
+% (Section~\ref{results:overview-and-measurement-quality:iteration-counts-and-convergence}).
+% No numbers here.
+
+\subsection{Run completeness and result agreement}
+\label{results:overview-and-measurement-quality:run-completeness-and-result-agreement}
+
+% TODO: prose placeholder. Report which configuration x pattern x tier cells
+% completed, and whether configurations that ran the same workload returned the
+% same result cardinality. Refer to Table~\ref{tab:completed-configurations-matrix}.
+
+\begin{table}[H]
+    \centering
+    % TODO: completed-configurations matrix. Rows = configuration (DuckDB,
+    % Apache Sedona, PostGIS, GeoPandas/Shapefile); columns = workload pattern x
+    % size tier. Each cell records whether the run completed in full, completed
+    % partially under the sequential stopping rule, or did not run. Leave the
+    % large-tier Shapefile cell empty by design (small tier only); do not mark it
+    % as a missing or failed cell.
+    \caption[Completed-configurations matrix]{Completion status of every
+    configuration across all workload patterns and size tiers. Each cell records
+    whether the run completed in full, completed partially under the sequential
+    stopping rule, or did not run for that combination. The large-tier Shapefile
+    combination is absent by design, as the Shapefile configuration was exercised
+    on the small tier only.}
+    \label{tab:completed-configurations-matrix}
+\end{table}
+
+\subsection{Timing distributions and estimator behavior}
+\label{results:overview-and-measurement-quality:timing-distributions-and-estimator-behavior}
+
+% TODO: prose placeholder. Describe the shape of the per-iteration timing
+% distributions and the warmup-to-steady-state decay, and explain how the shape
+% justifies reporting the minimum as the estimator. Refer to
+% Figure~\ref{fig:per-iteration-timing-distributions}.
+
+\begin{figure}[H]
+    \centering
+    % TODO: two-panel subfloat (valign=t, width=0.45\textwidth each, [H] placement):
+    %   (a) per-configuration distribution of per-iteration timings as an ECDF or
+    %       violin, one series per configuration, distinguished using the thesis
+    %       palette (\texttt{thesisteal}, \texttt{thesiscoral},
+    %       \texttt{thesissteel}, \texttt{thesisamber}); shows the one-sided,
+    %       right-skewed contamination that motivates the minimum estimator.
+    %   (b) warmup-to-steady-state decay: per-iteration time against iteration
+    %       index, with early iterations decaying to a steady floor.
+    % No invented timings; structure only.
+    \caption[Per-iteration timing distributions and warmup decay]{Per-iteration
+    timing behavior for each configuration. Panel (a) shows the distribution of
+    per-iteration elapsed times, illustrating the one-sided, right-skewed
+    contamination that motivates reporting the minimum rather than the mean. Panel
+    (b) shows the warmup-to-steady-state decay of per-iteration time across
+    iteration index. Series colour encodes configuration using the thesis palette.}
+    \label{fig:per-iteration-timing-distributions}
+\end{figure}
+
+\subsection{Iteration counts and convergence}
+\label{results:overview-and-measurement-quality:iteration-counts-and-convergence}
+
+% TODO: prose placeholder. Report the achieved iteration counts and whether each
+% workload met the convergence target of the sequential stopping rule. Refer to
+% Table~\ref{tab:iteration-counts-and-convergence}.
+
+\begin{table}[H]
+    \centering
+    % TODO: per configuration x pattern x tier, report the achieved iteration
+    % count, the minimum estimator, its confidence interval, and dispersion
+    % (interquartile range and coefficient of variation). No invented values;
+    % structure only.
+    \caption[Iteration counts and convergence]{Achieved iteration count, minimum
+    estimator, confidence interval, and dispersion (interquartile range and
+    coefficient of variation) for each configuration, workload pattern, and size
+    tier.}
+    \label{tab:iteration-counts-and-convergence}
+\end{table}
