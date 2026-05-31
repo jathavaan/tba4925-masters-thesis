@@ -32,17 +32,11 @@
     %   Equation~\ref{eq:speedup-parallel-efficiency}; the two strategies; and the
     %   ideal reference in each panel.
     % DESCRIPTIVE ONLY: report the curves; no interpretation (-> Discussion).
-    % Swap in when ready:
-    % \subfloat[Speedup $S(n)$.\label{fig:distributed-speedup}]{%
-    %     \includegraphics[valign=t, width=0.45\textwidth]{Chapters/06-results/sub-chapters/figures/06-distributed-speedup.png}}%
-    % \hfill
-    % \subfloat[Parallel efficiency $E(n)$.\label{fig:distributed-efficiency}]{%
-    %     \includegraphics[valign=t, width=0.45\textwidth]{Chapters/06-results/sub-chapters/figures/06-distributed-efficiency.png}}%
     \subfloat[Speedup $S(n)$.\label{fig:distributed-speedup}]{%
-        \scaffoldbox{0.42}{$S(n)=T_2/T_n$, broadcast vs.\ partitioned, ideal-linear $S(n)=n/2$ reference}}%
+        \includegraphics[valign=t, width=0.45\textwidth]{Chapters/06-results/sub-chapters/figures/06-distributed-speedup.png}}%
     \hfill
     \subfloat[Parallel efficiency $E(n)$.\label{fig:distributed-efficiency}]{%
-        \scaffoldbox{0.42}{$E(n)=(2/n)\,S(n)$, same two series, ideal $E(n)=1$ reference}}%
+        \includegraphics[valign=t, width=0.45\textwidth]{Chapters/06-results/sub-chapters/figures/06-distributed-efficiency.png}}%
     \caption[Speedup and parallel efficiency of the distributed join]{Scaling of
     the distributed spatial join over worker counts $\{2, 4, 8, 12, 16\}$, defined
     relative to the two-worker baseline ($n_0 = 2$) of
@@ -77,9 +71,7 @@
     %   plot both strategies, or pick the winning strategy and SAY SO in the
     %   caption. Keep this choice consistent with the speedup figure.
     % DESCRIPTIVE ONLY: report the crossover location; no interpretation.
-    % Swap in when ready:
-    % \includegraphics[width=0.8\textwidth]{Chapters/06-results/sub-chapters/figures/06-distributed-wall-clock-vs-workers.png}
-    \scaffoldbox{0.8}{Wall-clock vs.\ worker count; PostGIS \& DuckDB baselines as horizontal lines; crossover marked}
+    \includegraphics[width=0.8\textwidth]{Chapters/06-results/sub-chapters/figures/06-distributed-wall-clock-vs-workers.png}
     \caption[Distributed wall-clock time versus single-node baselines]{Wall-clock
     time of the distributed join as a function of worker count, with the
     single-node PostGIS and DuckDB baselines shown as horizontal reference lines.
@@ -110,17 +102,11 @@
     %   (executor read time, shuffle, driver collection -- driver collection is the
     %   clamped residual); the axes; that panel (b) is shuffle bytes.
     % DESCRIPTIVE ONLY: report the stacks; no interpretation (-> Discussion).
-    % Swap in when ready:
-    % \subfloat[Wall-clock time by phase.\label{fig:distributed-phase-time}]{%
-    %     \includegraphics[valign=t, width=0.45\textwidth]{Chapters/06-results/sub-chapters/figures/06-distributed-phase-time.png}}%
-    % \hfill
-    % \subfloat[Shuffle bytes.\label{fig:distributed-shuffle-bytes}]{%
-    %     \includegraphics[valign=t, width=0.45\textwidth]{Chapters/06-results/sub-chapters/figures/06-distributed-shuffle-bytes.png}}%
     \subfloat[Wall-clock time by phase.\label{fig:distributed-phase-time}]{%
-        \scaffoldbox{0.42}{Stacked time: executor-read / shuffle / driver-collection, vs.\ worker count}}%
+        \includegraphics[valign=t, width=0.45\textwidth]{Chapters/06-results/sub-chapters/figures/06-distributed-phase-time.png}}%
     \hfill
     \subfloat[Shuffle bytes.\label{fig:distributed-shuffle-bytes}]{%
-        \scaffoldbox{0.42}{Shuffle bytes vs.\ worker count (same strategy/series)}}%
+        \includegraphics[valign=t, width=0.45\textwidth]{Chapters/06-results/sub-chapters/figures/06-distributed-shuffle-bytes.png}}%
     \caption[Execution-phase breakdown of the distributed join]{Decomposition of
     the distributed join across the three instrumented phases of the distributed
     lifecycle -- executor read time, shuffle, and driver collection (the last
@@ -147,9 +133,7 @@
     % CAPTION MUST STATE: the two axes (time, cost); that each point is one worker
     %   count; the two strategies; and that the frontier is the non-dominated set.
     % DESCRIPTIVE ONLY: report which points are non-dominated; no interpretation.
-    % Swap in when ready:
-    % \includegraphics[width=0.75\textwidth]{Chapters/06-results/sub-chapters/figures/06-distributed-cost-time-pareto.png}
-    \scaffoldbox{0.75}{Cost vs.\ time scatter, one point per worker count, broadcast vs.\ partitioned; non-dominated frontier traced}
+    \includegraphics[width=0.75\textwidth]{Chapters/06-results/sub-chapters/figures/06-distributed-cost-time-pareto.png}
     \caption[Cost-time tradeoff of the distributed join]{Operational cost against
     wall-clock time for the distributed join, with one point per worker count and
     a separate series for each join strategy. The non-dominated points trace the

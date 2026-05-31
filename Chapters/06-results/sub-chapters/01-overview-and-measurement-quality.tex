@@ -51,9 +51,7 @@
     %   cells are absent BY DESIGN, not missing or failed. Mark did-not-run cells
     %   with an explicit hatch/label -- never an empty cell that reads as missing.
     % DESCRIPTIVE ONLY: read the grid; do not explain the omissions here.
-    % Swap in when ready:
-    % \includegraphics[width=0.85\textwidth]{Chapters/06-results/sub-chapters/figures/06-results-coverage.png}
-    \scaffoldbox{0.85}{Coverage heatmap: configuration $\times$ workload $\times$ tier completion grid; did-not-run-by-design cells explicitly marked}
+    \includegraphics[width=0.85\textwidth]{Chapters/06-results/sub-chapters/figures/06-results-coverage.png}
     \caption[Run-completeness coverage grid]{Completion status of every
     configuration across all workload patterns and size tiers. Each cell records
     whether the run completed in full, completed partially under the sequential
@@ -89,17 +87,11 @@
     % NOTE: this float MAY be merged with the convergence figure
     %   (Figure~\ref{fig:results-convergence}) into one multi-panel float, since
     %   \subfloat (subfig) is available.
-    % Swap in when ready:
-    % \subfloat[Per-iteration elapsed-time distribution.\label{fig:results-warmup-distribution}]{%
-    %     \includegraphics[valign=t, width=0.45\textwidth]{Chapters/06-results/sub-chapters/figures/06-results-warmup-distribution.png}}%
-    % \hfill
-    % \subfloat[Warmup-to-steady-state decay.\label{fig:results-warmup-decay}]{%
-    %     \includegraphics[valign=t, width=0.45\textwidth]{Chapters/06-results/sub-chapters/figures/06-results-warmup-decay.png}}%
     \subfloat[Per-iteration elapsed-time distribution.\label{fig:results-warmup-distribution}]{%
-        \scaffoldbox{0.42}{Distribution (ECDF/violin): hard lower bound, right-skewed contamination tail}}%
+        \includegraphics[valign=t, width=0.45\textwidth]{Chapters/06-results/sub-chapters/figures/06-results-warmup-distribution.png}}%
     \hfill
     \subfloat[Warmup-to-steady-state decay.\label{fig:results-warmup-decay}]{%
-        \scaffoldbox{0.42}{Elapsed time vs.\ iteration index decaying to a steady floor}}%
+        \includegraphics[valign=t, width=0.45\textwidth]{Chapters/06-results/sub-chapters/figures/06-results-warmup-decay.png}}%
     \caption[Per-iteration timing distribution and warmup decay]{Per-iteration
     timing behavior for one representative configuration, workload, and tier.
     Panel~(a) shows the distribution of per-iteration elapsed times, with its hard
@@ -131,9 +123,7 @@
     % DESCRIPTIVE ONLY: report where it crossed/stopped; no interpretation.
     % NOTE: may be merged with Figure~\ref{fig:results-warmup} into one
     %   multi-panel float (subfig is available).
-    % Swap in when ready:
-    % \includegraphics[width=0.7\textwidth]{Chapters/06-results/sub-chapters/figures/06-results-convergence.png}
-    \scaffoldbox{0.7}{Running bootstrap \num{95}\% CI half-width (fraction of mean) vs.\ iteration; \num{5}\% target line; marked stop point}
+    \includegraphics[width=0.7\textwidth]{Chapters/06-results/sub-chapters/figures/06-results-convergence.png}
     \caption[Sequential-stopping convergence]{Convergence of the sequential
     stopping rule for one representative configuration, workload, and tier. The
     running bootstrap \num{95}\% confidence-interval half-width, expressed as a fraction

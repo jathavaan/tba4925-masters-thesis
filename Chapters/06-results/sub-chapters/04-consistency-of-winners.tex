@@ -29,9 +29,7 @@
     %   configuration; and that Shapefile-beyond-small and kNN-large rows carry no
     %   winner where those cells did not run by design (not a missing cell).
     % DESCRIPTIVE ONLY: read the winners; no interpretation (-> Discussion).
-    % Swap in when ready:
-    % \includegraphics[width=0.85\textwidth]{Chapters/06-results/sub-chapters/figures/06-winners-matrix.png}
-    \scaffoldbox{0.85}{Winners matrix: pattern $\times$ tier (rows) $\times$ outcome dimension (cols); cell colour = winning config}
+    \includegraphics[width=0.85\textwidth]{Chapters/06-results/sub-chapters/figures/06-winners-matrix.png}
     \caption[Consistency of winners across dimensions]{Winning configuration for
     every workload pattern and size tier (rows) on each outcome dimension
     (columns: data transferred, wall-clock time, operational cost). Cell colour
@@ -100,9 +98,7 @@
     % NOTE: this is a SLOPEGRAPH where only two RQ1 tiers exist (small, large),
     %   and a BUMP chart only where three tiers exist (the join: small/medium/large).
     % DESCRIPTIVE ONLY: report the crossings; no interpretation (-> Discussion).
-    % Swap in when ready:
-    % \includegraphics[width=0.85\textwidth]{Chapters/06-results/sub-chapters/figures/06-ranking-stability.png}
-    \scaffoldbox{0.85}{Rank vs.\ tier per configuration (slopegraph at two tiers; bump where three tiers exist); crossings = inversions}
+    \includegraphics[width=0.85\textwidth]{Chapters/06-results/sub-chapters/figures/06-ranking-stability.png}
     \caption[Ranking stability across tiers]{Configuration rank as a function of
     size tier, one line per configuration. Lines that cross mark rank inversions
     between tiers. The chart is a slopegraph between the two single-machine tiers
@@ -142,9 +138,7 @@
     %       demsar2006_statistical_comparisons_classifiers (Demsar, JMLR 2006 --
     %       source of the mean-rank diagram convention). Placeholder keys below.
     % DESCRIPTIVE ONLY: report which configs share a clique; no interpretation.
-    % Swap in when ready:
-    % \includegraphics[width=0.8\textwidth]{Chapters/06-results/sub-chapters/figures/06-pairwise-significance-cliques.png}
-    \scaffoldbox{0.8}{Mean-rank axis; connectors = non-significance cliques (Holm-adjusted Wilcoxon). NOT a critical-difference/Nemenyi diagram}
+    \includegraphics[width=0.8\textwidth]{Chapters/06-results/sub-chapters/figures/06-pairwise-significance-cliques.png}
     \caption[Pairwise significance and non-significance cliques]{Configurations
     placed along a mean-rank axis, with connectors joining configurations whose
     pairwise difference is not statistically significant under Holm-adjusted
@@ -167,9 +161,7 @@
     %   PostGIS for RQ1, and Sedona vs. the best single-node engine for RQ2 -- not
     %   every possible pair.
     % DESCRIPTIVE ONLY: report which bands the effects fall in; no interpretation.
-    % Swap in when ready:
-    % \includegraphics[width=0.8\textwidth]{Chapters/06-results/sub-chapters/figures/06-vargha-delaney-forest.png}
-    \scaffoldbox{0.8}{$\hat{A}_{12}$ forest for key pairs (DuckDB vs.\ PostGIS; Sedona vs.\ best single-node); \num{0.5} line; \num{0.56}/\num{0.64}/\num{0.71} bands}
+    \includegraphics[width=0.8\textwidth]{Chapters/06-results/sub-chapters/figures/06-vargha-delaney-forest.png}
     \caption[Vargha--Delaney effect-size forest]{Vargha--Delaney $\hat{A}_{12}$
     effect size for the key pairwise comparisons -- DuckDB versus PostGIS for RQ1
     and Apache Sedona versus the best single-node engine for RQ2. The vertical line
