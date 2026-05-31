@@ -38,6 +38,36 @@
     \label{fig:winners-matrix}
 \end{figure}
 
+% TODO (prose): factual readout only -- trace each system's polyline across the four
+% outcome axes and name where polylines cross (outcome inversions). Refer to
+% Figure~\ref{fig:outcome-parallel-coordinates}. No interpretation (-> Discussion).
+
+\begin{figure}[H]
+    \centering
+    % WHAT IT SHOWS: parallel-coordinates plot. One polyline per system family
+    %   (DuckDB, PostGIS, GeoPandas+Shapefile, Sedona) across four outcome axes --
+    %   wall-clock time, bytes, operational cost, and mean rank. Each axis is scaled
+    %   independently with the best (lowest) value at the bottom; lines that cross
+    %   between axes are outcome inversions, surfaced in a single frame.
+    % CAPTION MUST STATE: that each polyline is one system; the four outcome axes;
+    %   that the time/bytes/cost axes use the geometric-mean normalized values of
+    %   Table~\ref{tab:geomean-normalized-performance}; that axes are independently
+    %   scaled (best at bottom) with their real extremes annotated; that crossings
+    %   denote inversions.
+    % DESCRIPTIVE ONLY: report the crossings; no interpretation (-> Discussion).
+    \includegraphics[width=0.9\textwidth]{Chapters/06-results/sub-chapters/figures/06-outcome-parallel-coordinates.png}
+    \caption[Per-system outcomes across dimensions]{Per-system outcomes across the
+    four outcome dimensions -- wall-clock time, bytes transferred, operational cost,
+    and mean rank -- drawn as a parallel-coordinates plot with one polyline per
+    system. The time, bytes, and cost axes use the geometric-mean normalized values
+    of Table~\ref{tab:geomean-normalized-performance}; each axis is scaled
+    independently with the best (lowest) value at the bottom and its real extremes
+    annotated. Polylines that cross between axes mark outcome inversions, where a
+    system that leads on one dimension trails on another. Colour encodes the system
+    using the thesis palette.}
+    \label{fig:outcome-parallel-coordinates}
+\end{figure}
+
 \subsection{Aggregate normalized performance}
 \label{results:consistency-of-winners:aggregate-normalized-performance}
 

@@ -24,27 +24,31 @@
 
 \begin{figure}[H]
     \centering
-    % WHAT IT SHOWS: bytes-transferred grid. Rows = workload pattern, columns =
-    %   size tier. Within each cell, grouped bars per configuration on a
-    %   logarithmic y-axis with bootstrap confidence-interval whiskers. Bytes
-    %   received and bytes sent shown separately (two grids or two panels).
-    % CAPTION MUST STATE: the grid layout (pattern x tier); log y-axis; that
-    %   whiskers are bootstrap CIs; that received and sent are separated; the
-    %   estimator (median for transfer metrics, per the methodology).
+    % WHAT IT SHOWS: bytes-received distributional grid. Rows = workload pattern,
+    %   columns = size tier. Within each cell, one raincloud per configuration
+    %   (half-violin + box + jittered sample of the per-iteration measurements) on
+    %   a logarithmic y-axis, with the median estimator and its 95% bootstrap CI
+    %   marked on each.
+    % CAPTION MUST STATE: the grid layout (pattern x tier); log y-axis; that the
+    %   body is a distributional (raincloud) view; that the marked point is the
+    %   median estimator (for transfer metrics, per the methodology) with a 95%
+    %   bootstrap CI; that only bytes RECEIVED are shown.
     % ANNOTATE: Shapefile is read from the LOCAL filesystem, so its network bytes
-    %   are ~0; label this explicitly so the near-zero bar is not misread as a
+    %   are ~0; label this explicitly so the near-zero cell is not misread as a
     %   missing cell. Leave the Shapefile-beyond-small and kNN-large slots as
     %   did-not-run-by-design.
-    % DESCRIPTIVE ONLY: report the bars; no interpretation (-> Discussion).
+    % DESCRIPTIVE ONLY: report the distributions; no interpretation (-> Discussion).
     \includegraphics[width=0.95\textwidth]{Chapters/06-results/sub-chapters/figures/06-single-machine-bytes-transferred.png}
-    \caption[Data transferred per single-machine configuration]{Bytes transferred
-    by each single-machine configuration, arranged as a grid with workload
-    patterns in rows and size tiers in columns. Within each cell, bars give the
-    per-configuration volume on a logarithmic axis with bootstrap
-    confidence-interval whiskers; bytes received and bytes sent are shown
-    separately. The Shapefile configuration reads from the local filesystem, so
-    its network transfer is approximately zero and is labelled as such rather than
-    left blank. Bar colour encodes configuration using the thesis palette.}
+    \caption[Data transferred per single-machine configuration]{Network bytes
+    received by each single-machine configuration, arranged as a grid with workload
+    patterns in rows and size tiers in columns. Within each cell, every
+    configuration is drawn as a raincloud -- a half-violin, box, and jittered sample
+    of the per-iteration measurements -- so the full distribution shape is visible
+    on a logarithmic axis; the median estimator used for transfer metrics and its
+    \num{95}\% bootstrap confidence interval are marked on each. The Shapefile
+    configuration reads from the local filesystem, so its network transfer is
+    approximately zero and is labelled as such rather than left blank. Colour
+    encodes configuration using the thesis palette.}
     \label{fig:single-machine-bytes-transferred}
 \end{figure}
 
@@ -72,22 +76,52 @@
 
 \begin{figure}[H]
     \centering
-    % WHAT IT SHOWS: wall-clock-time grid, SAME layout as the bytes grid
-    %   (Figure~\ref{fig:single-machine-bytes-transferred}): rows = pattern,
-    %   columns = tier, grouped bars per configuration, logarithmic y-axis,
-    %   bootstrap confidence-interval whiskers.
-    % CAPTION MUST STATE: the grid layout; that the bar height is the MINIMUM
-    %   estimator (per the methodology); log y-axis; bootstrap CI whiskers.
+    % WHAT IT SHOWS: wall-clock-time distributional grid, SAME layout as the bytes
+    %   grid (Figure~\ref{fig:single-machine-bytes-transferred}): rows = pattern,
+    %   columns = tier, one raincloud per configuration (half-violin + box +
+    %   jittered per-iteration sample), logarithmic y-axis, with the MINIMUM
+    %   estimator and its 95% bootstrap CI marked on each.
+    % CAPTION MUST STATE: the grid layout; that the body is a distributional
+    %   (raincloud) view; that the marked point is the MINIMUM estimator (per the
+    %   methodology) with a 95% bootstrap CI; log y-axis.
     % Leave the Shapefile-beyond-small and kNN-large slots as did-not-run-by-design.
-    % DESCRIPTIVE ONLY: report the bars; no interpretation (-> Discussion).
+    % DESCRIPTIVE ONLY: report the distributions; no interpretation (-> Discussion).
     \includegraphics[width=0.95\textwidth]{Chapters/06-results/sub-chapters/figures/06-single-machine-wall-clock-time.png}
     \caption[Wall-clock time per single-machine configuration]{Wall-clock time of
     each single-machine configuration, in the same grid layout as the
     bytes-transferred figure: workload patterns in rows, size tiers in columns.
-    Bar height is the minimum-estimator elapsed time on a logarithmic axis with
-    bootstrap confidence-interval whiskers. Bar colour encodes configuration using
-    the thesis palette.}
+    Within each cell, every configuration is drawn as a raincloud -- a half-violin,
+    box, and jittered sample of the per-iteration elapsed times -- so the full
+    distribution shape and its upper tail are visible on a logarithmic axis; the
+    minimum estimator and its \num{95}\% bootstrap confidence interval are marked on
+    each. Colour encodes configuration using the thesis palette.}
     \label{fig:single-machine-wall-clock-time}
+\end{figure}
+
+% TODO (prose): factual readout only of the latency-tail behaviour for the headline
+% cell -- the median-to-tail spread per configuration ($p_{50}$ vs.\ $p_{95}$/$p_{99}$)
+% and how the tails compare across configurations. Refer to
+% Figure~\ref{fig:single-machine-latency-ecdf}. No interpretation (-> Discussion).
+
+\begin{figure}[H]
+    \centering
+    % WHAT IT SHOWS: empirical CDF of per-iteration elapsed time for one headline
+    %   cell (point-in-polygon lookup, small tier -- the one cell where all three
+    %   single-machine configurations ran), one step curve per configuration on a
+    %   logarithmic time axis, with the p50/p95/p99 percentiles marked on each curve.
+    % CAPTION MUST STATE: that x is per-iteration elapsed time (log); that each curve
+    %   is one configuration's empirical CDF; that p50/p95/p99 are marked; and the
+    %   single workload x tier shown.
+    % DESCRIPTIVE ONLY: report the curves and the tail spread; no interpretation.
+    \includegraphics[width=0.8\textwidth]{Chapters/06-results/sub-chapters/figures/06-single-machine-latency-ecdf.png}
+    \caption[Latency distribution for the headline single-machine cell]{Empirical
+    cumulative distribution of per-iteration elapsed time for the point-in-polygon
+    lookup at the small tier, with one step curve per single-machine configuration on
+    a logarithmic time axis. The median ($p_{50}$), $p_{95}$, and $p_{99}$ percentiles
+    are marked on each curve, making the spread between the median and the upper tail
+    directly comparable across configurations. Colour encodes configuration using the
+    thesis palette.}
+    \label{fig:single-machine-latency-ecdf}
 \end{figure}
 
 \subsection{Operational cost}
