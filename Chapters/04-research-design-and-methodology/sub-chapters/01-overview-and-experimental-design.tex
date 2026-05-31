@@ -16,7 +16,7 @@ These commitments resolve into four design cells formed by crossing two axes: cl
 
 \subsection{Factors and levels}
 \label{research-design-and-methodology:overview-and-experimental-design:factors-and-levels}
-The two research questions vary different factors. \acrshort{rq}1 varies a single factor, the configuration, across four levels: DuckDB over GeoParquet, PostGIS, GeoPandas over Shapefile, and Sedona over GeoParquet. \acrshort{rq}2 varies the worker count of the distributed engine across four levels, from 2 to 16 nodes, tracing how the spatial join scales with increasing parallelism. Both questions treat the workload as a secondary factor, with the query patterns and their definitions given in Section~\ref{research-design-and-methodology:workloads}. The dataset, the regions it covers, the client compute sizing, the client process that issues each query, and the access protocol are held constant across every level. A difference in an outcome then reflects the factor under test rather than a difference in inputs or in the measurement apparatus. Table~\ref{tab:methodology:factors} summarizes the factors, their levels, and the question each addresses.
+The two research questions vary different factors. \acrshort{rq}1 varies a single factor, the configuration, across four levels: DuckDB over GeoParquet, PostGIS, GeoPandas over Shapefile, and Sedona over GeoParquet. \acrshort{rq}2 varies the worker count of the distributed engine across four levels, from \num{2} to \num{16} nodes, tracing how the spatial join scales with increasing parallelism. Both questions treat the workload as a secondary factor, with the query patterns and their definitions given in Section~\ref{research-design-and-methodology:workloads}. The dataset, the regions it covers, the client compute sizing, the client process that issues each query, and the access protocol are held constant across every level. A difference in an outcome then reflects the factor under test rather than a difference in inputs or in the measurement apparatus. Table~\ref{tab:methodology:factors} summarizes the factors, their levels, and the question each addresses.
 
 \begin{table}[H]
     \centering
@@ -25,7 +25,7 @@ The two research questions vary different factors. \acrshort{rq}1 varies a singl
         \textbf{Factor} & \textbf{Role} & \textbf{Levels} & \textbf{RQ} \\
         \midrule
         Configuration & Varied      & DuckDB + GeoParquet, PostGIS, GeoPandas + Shapefile, Sedona + GeoParquet & \acrshort{rq}1 \\
-        Worker count  & Varied      & 2, 4, 8, 12, 16 & \acrshort{rq}2 \\
+        Worker count  & Varied      & \num{2}, \num{4}, \num{8}, \num{12}, \num{16} & \acrshort{rq}2 \\
         Workload      & Varied      & See Section~\ref{research-design-and-methodology:workloads} & \acrshort{rq}1, \acrshort{rq}2 \\
         \midrule
         Dataset, regions & Constant & Identical inputs across every level & --- \\

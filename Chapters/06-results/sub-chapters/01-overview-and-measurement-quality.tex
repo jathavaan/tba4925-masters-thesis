@@ -10,7 +10,7 @@
 %   - the size tiers (small/large for single-machine, small/medium/large for the
 %     join) defined in Chapter~\ref{ch:system-architecture-and-implementation};
 %   - the reported location estimator is the per-cell MINIMUM, with a bootstrap
-%     95\% confidence interval (the BCa/percentile method actually used --
+%     \num{95}\% confidence interval (the BCa/percentile method actually used --
 %     state which) quantifying within-engine repeatability
 %     (Section~\ref{research-design-and-methodology:statistical-analysis:uncertainty-quantification}).
 % IMPORTANT framing rule for the whole chapter: the kNN-large and the
@@ -114,7 +114,7 @@
 \label{results:overview-and-measurement-quality:iteration-counts-and-convergence}
 
 % TODO (prose): factual readout only -- report the achieved iteration counts and
-% whether each cell met the 5\% relative-half-width convergence target of the
+% whether each cell met the \num{5}\% relative-half-width convergence target of the
 % sequential stopping rule, citing the achieved-n table. Refer to
 % Figure~\ref{fig:results-convergence} and Table~\ref{tab:results-achieved-n}.
 % No interpretation (-> Discussion).
@@ -122,23 +122,23 @@
 \begin{figure}[H]
     \centering
     % WHAT IT SHOWS: sequential-stopping convergence for one REPRESENTATIVE cell.
-    %   The running bootstrap 95\% confidence-interval half-width (as a fraction
+    %   The running bootstrap \num{95}\% confidence-interval half-width (as a fraction
     %   of the running mean) against iteration index, with a horizontal line at
-    %   the 5\% relative target and the achieved stop point marked.
+    %   the \num{5}\% relative target and the achieved stop point marked.
     % CAPTION MUST STATE: which representative cell; the y-axis (relative CI
-    %   half-width), the x-axis (iteration index); the 5\% target line; the
+    %   half-width), the x-axis (iteration index); the \num{5}\% target line; the
     %   bootstrap/resample basis of the interval; and the marked stop point.
     % DESCRIPTIVE ONLY: report where it crossed/stopped; no interpretation.
     % NOTE: may be merged with Figure~\ref{fig:results-warmup} into one
     %   multi-panel float (subfig is available).
     % Swap in when ready:
     % \includegraphics[width=0.7\textwidth]{Chapters/06-results/sub-chapters/figures/06-results-convergence.png}
-    \scaffoldbox{0.7}{Running bootstrap 95\% CI half-width (fraction of mean) vs.\ iteration; 5\% target line; marked stop point}
+    \scaffoldbox{0.7}{Running bootstrap \num{95}\% CI half-width (fraction of mean) vs.\ iteration; \num{5}\% target line; marked stop point}
     \caption[Sequential-stopping convergence]{Convergence of the sequential
     stopping rule for one representative configuration, workload, and tier. The
-    running bootstrap 95\% confidence-interval half-width, expressed as a fraction
+    running bootstrap \num{95}\% confidence-interval half-width, expressed as a fraction
     of the running mean elapsed time, is plotted against iteration index; the
-    horizontal line marks the 5\% relative target half-width
+    horizontal line marks the \num{5}\% relative target half-width
     \parencite{georges2007_statistically_rigorous_java_performance,laaber2019_software_microbenchmarking_cloud},
     and the marker indicates the iteration at which the rule stopped.}
     \label{fig:results-convergence}
@@ -172,7 +172,7 @@
     \end{tabular}
     \caption[Achieved iteration counts and convergence]{Achieved count of
     successful timed iterations, minimum-estimator elapsed time, final bootstrap
-    95\% confidence-interval half-width, and recorded stop reason for each
+    \num{95}\% confidence-interval half-width, and recorded stop reason for each
     configuration, workload pattern, and size tier. The reported $n$ is the
     achieved number of successful iterations recorded in the run metadata, not the
     configured ceiling. Cells that did not run by design carry an explicit
