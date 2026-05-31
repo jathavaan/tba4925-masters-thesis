@@ -1,9 +1,26 @@
 \section{Overview and measurement quality}
 \label{results:overview-and-measurement-quality}
 
-% TODO: section-opening placeholder. Introduce the three measurement-quality
-% checks that precede the research-question results: which configurations
-% completed
+% ORIENTING COMMENT (section intro prose -- TODO below). State, without numbers:
+%   - the four configurations under test: DuckDB over GeoParquet, PostGIS, and
+%     GeoPandas over Shapefile (small tier only) on a single node, and Apache
+%     Sedona on Databricks for the distributed join;
+%   - the workloads: point-in-polygon, k-nearest-neighbor, and bounding-box
+%     filter (single-machine), plus the national-scale spatial join (distributed);
+%   - the size tiers (small/large for single-machine, small/medium/large for the
+%     join) defined in Chapter~\ref{ch:system-architecture-and-implementation};
+%   - the reported location estimator is the per-cell MINIMUM, with a bootstrap
+%     95\% confidence interval (the BCa/percentile method actually used --
+%     state which) quantifying within-engine repeatability
+%     (Section~\ref{research-design-and-methodology:statistical-analysis:uncertainty-quantification}).
+% IMPORTANT framing rule for the whole chapter: the kNN-large and the
+%   Shapefile-beyond-small cells DID NOT RUN BY DESIGN. Everywhere they must read
+%   as "did not run by design", never as zero, blank, or a failed/missing cell.
+% This chapter is DESCRIPTIVE ONLY: report the factual readout; defer every
+%   interpretation to the Discussion (Chapter~\ref{ch:discussion}).
+
+% TODO (prose): section-opening paragraph. Introduce the three measurement-quality
+% checks that precede the research-question results: which cells completed
 % (Section~\ref{results:overview-and-measurement-quality:run-completeness-and-result-agreement}),
 % how the per-iteration timings are distributed and why the minimum is the
 % reported estimator
@@ -15,71 +32,150 @@
 \subsection{Run completeness and result agreement}
 \label{results:overview-and-measurement-quality:run-completeness-and-result-agreement}
 
-% TODO: prose placeholder. Report which configuration x pattern x tier cells
-% completed, and whether configurations that ran the same workload returned the
-% same result cardinality. Refer to Table~\ref{tab:completed-configurations-matrix}.
+% TODO (prose): factual readout only -- which configuration x workload x tier
+% cells completed in full, which completed partially under the sequential
+% stopping rule, and which did not run by design. State whether configurations
+% that ran the same workload returned the same result cardinality, and point to
+% the full cardinality-agreement table in the appendix
+% (Table~\ref{tab:appendix-cardinality-agreement}). Refer to
+% Figure~\ref{fig:results-coverage}. No interpretation (-> Discussion).
 
-\begin{table}[H]
+\begin{figure}[H]
     \centering
-    % TODO: completed-configurations matrix. Rows = configuration (DuckDB,
-    % Apache Sedona, PostGIS, GeoPandas/Shapefile); columns = workload pattern x
-    % size tier. Each cell records whether the run completed in full, completed
-    % partially under the sequential stopping rule, or did not run. Leave the
-    % large-tier Shapefile cell empty by design (small tier only); do not mark it
-    % as a missing or failed cell.
-    \caption[Completed-configurations matrix]{Completion status of every
+    % WHAT IT SHOWS: coverage/completeness heatmap over the full design grid --
+    %   configuration (rows) x workload x size tier (columns). Each cell encodes
+    %   its run status: completed in full, completed partially under the
+    %   sequential stopping rule, or did not run by design.
+    % CAPTION MUST STATE: that this is the completion-status grid; the three
+    %   status categories; and that the kNN-large and Shapefile-beyond-small
+    %   cells are absent BY DESIGN, not missing or failed. Mark did-not-run cells
+    %   with an explicit hatch/label -- never an empty cell that reads as missing.
+    % DESCRIPTIVE ONLY: read the grid; do not explain the omissions here.
+    % Swap in when ready:
+    % \includegraphics[width=0.85\textwidth]{Chapters/06-results/sub-chapters/figures/06-results-coverage.png}
+    \scaffoldbox{0.85}{Coverage heatmap: configuration $\times$ workload $\times$ tier completion grid; did-not-run-by-design cells explicitly marked}
+    \caption[Run-completeness coverage grid]{Completion status of every
     configuration across all workload patterns and size tiers. Each cell records
     whether the run completed in full, completed partially under the sequential
-    stopping rule, or did not run for that combination. The large-tier Shapefile
-    combination is absent by design, as the Shapefile configuration was exercised
-    on the small tier only.}
-    \label{tab:completed-configurations-matrix}
-\end{table}
+    stopping rule, or did not run for that combination. The kNN-large cells and
+    every Shapefile cell beyond the small tier are absent by design and are
+    marked as did-not-run rather than as missing or failed cells.}
+    \label{fig:results-coverage}
+\end{figure}
 
 \subsection{Timing distributions and estimator behavior}
 \label{results:overview-and-measurement-quality:timing-distributions-and-estimator-behavior}
 
-% TODO: prose placeholder. Describe the shape of the per-iteration timing
-% distributions and the warmup-to-steady-state decay, and explain how the shape
-% justifies reporting the minimum as the estimator. Refer to
-% Figure~\ref{fig:per-iteration-timing-distributions}.
+% TODO (prose): factual readout only -- describe the shape of the per-iteration
+% timing distribution and the warmup-to-steady-state decay for the representative
+% cell, and state that the one-sided (right-skewed) contamination is what the
+% minimum estimator rejects. Refer to Figure~\ref{fig:results-warmup}. No
+% interpretation (-> Discussion).
 
 \begin{figure}[H]
     \centering
-    % TODO: two-panel subfloat (valign=t, width=0.45\textwidth each, [H] placement):
-    %   (a) per-configuration distribution of per-iteration timings as an ECDF or
-    %       violin, one series per configuration, distinguished using the thesis
-    %       palette (\texttt{thesisteal}, \texttt{thesiscoral},
-    %       \texttt{thesissteel}, \texttt{thesisamber}); shows the one-sided,
-    %       right-skewed contamination that motivates the minimum estimator.
-    %   (b) warmup-to-steady-state decay: per-iteration time against iteration
-    %       index, with early iterations decaying to a steady floor.
-    % No invented timings; structure only.
-    \caption[Per-iteration timing distributions and warmup decay]{Per-iteration
-    timing behavior for each configuration. Panel (a) shows the distribution of
-    per-iteration elapsed times, illustrating the one-sided, right-skewed
-    contamination that motivates reporting the minimum rather than the mean. Panel
-    (b) shows the warmup-to-steady-state decay of per-iteration time across
-    iteration index. Series colour encodes configuration using the thesis palette.}
-    \label{fig:per-iteration-timing-distributions}
+    % WHAT IT SHOWS: warmup-to-steady-state timing behavior for one REPRESENTATIVE
+    %   query/cell, as a two-panel float:
+    %   (a) the per-iteration elapsed-time distribution (ECDF or violin), showing
+    %       the hard lower bound and the one-sided, right-skewed contamination
+    %       tail that motivates reporting the minimum rather than the mean;
+    %   (b) per-iteration elapsed time against iteration index, showing the early
+    %       warmup decaying to a steady floor.
+    % CAPTION MUST STATE: which representative cell (config x workload x tier);
+    %   the axes of each panel; that contamination is one-sided; and that this
+    %   motivates the minimum estimator (cite chen2016).
+    % DESCRIPTIVE ONLY: state the shape; do not argue the estimator choice here
+    %   (that argument lives in the methodology / Discussion).
+    % NOTE: this float MAY be merged with the convergence figure
+    %   (Figure~\ref{fig:results-convergence}) into one multi-panel float, since
+    %   \subfloat (subfig) is available.
+    % Swap in when ready:
+    % \subfloat[Per-iteration elapsed-time distribution.\label{fig:results-warmup-distribution}]{%
+    %     \includegraphics[valign=t, width=0.45\textwidth]{Chapters/06-results/sub-chapters/figures/06-results-warmup-distribution.png}}%
+    % \hfill
+    % \subfloat[Warmup-to-steady-state decay.\label{fig:results-warmup-decay}]{%
+    %     \includegraphics[valign=t, width=0.45\textwidth]{Chapters/06-results/sub-chapters/figures/06-results-warmup-decay.png}}%
+    \subfloat[Per-iteration elapsed-time distribution.\label{fig:results-warmup-distribution}]{%
+        \scaffoldbox{0.42}{Distribution (ECDF/violin): hard lower bound, right-skewed contamination tail}}%
+    \hfill
+    \subfloat[Warmup-to-steady-state decay.\label{fig:results-warmup-decay}]{%
+        \scaffoldbox{0.42}{Elapsed time vs.\ iteration index decaying to a steady floor}}%
+    \caption[Per-iteration timing distribution and warmup decay]{Per-iteration
+    timing behavior for one representative configuration, workload, and tier.
+    Panel~(a) shows the distribution of per-iteration elapsed times, with its hard
+    lower bound and the one-sided, right-skewed contamination that motivates
+    reporting the minimum rather than the mean \parencite{chen2016_robust_benchmarking_noisy_environments}.
+    Panel~(b) shows per-iteration elapsed time against iteration index, with the
+    early warmup decaying to a steady floor.}
+    \label{fig:results-warmup}
 \end{figure}
 
 \subsection{Iteration counts and convergence}
 \label{results:overview-and-measurement-quality:iteration-counts-and-convergence}
 
-% TODO: prose placeholder. Report the achieved iteration counts and whether each
-% workload met the convergence target of the sequential stopping rule. Refer to
-% Table~\ref{tab:iteration-counts-and-convergence}.
+% TODO (prose): factual readout only -- report the achieved iteration counts and
+% whether each cell met the 5\% relative-half-width convergence target of the
+% sequential stopping rule, citing the achieved-n table. Refer to
+% Figure~\ref{fig:results-convergence} and Table~\ref{tab:results-achieved-n}.
+% No interpretation (-> Discussion).
+
+\begin{figure}[H]
+    \centering
+    % WHAT IT SHOWS: sequential-stopping convergence for one REPRESENTATIVE cell.
+    %   The running bootstrap 95\% confidence-interval half-width (as a fraction
+    %   of the running mean) against iteration index, with a horizontal line at
+    %   the 5\% relative target and the achieved stop point marked.
+    % CAPTION MUST STATE: which representative cell; the y-axis (relative CI
+    %   half-width), the x-axis (iteration index); the 5\% target line; the
+    %   bootstrap/resample basis of the interval; and the marked stop point.
+    % DESCRIPTIVE ONLY: report where it crossed/stopped; no interpretation.
+    % NOTE: may be merged with Figure~\ref{fig:results-warmup} into one
+    %   multi-panel float (subfig is available).
+    % Swap in when ready:
+    % \includegraphics[width=0.7\textwidth]{Chapters/06-results/sub-chapters/figures/06-results-convergence.png}
+    \scaffoldbox{0.7}{Running bootstrap 95\% CI half-width (fraction of mean) vs.\ iteration; 5\% target line; marked stop point}
+    \caption[Sequential-stopping convergence]{Convergence of the sequential
+    stopping rule for one representative configuration, workload, and tier. The
+    running bootstrap 95\% confidence-interval half-width, expressed as a fraction
+    of the running mean elapsed time, is plotted against iteration index; the
+    horizontal line marks the 5\% relative target half-width
+    \parencite{georges2007_statistically_rigorous_java_performance,laaber2019_software_microbenchmarking_cloud},
+    and the marker indicates the iteration at which the rule stopped.}
+    \label{fig:results-convergence}
+\end{figure}
 
 \begin{table}[H]
     \centering
-    % TODO: per configuration x pattern x tier, report the achieved iteration
-    % count, the minimum estimator, its confidence interval, and dispersion
-    % (interquartile range and coefficient of variation). No invented values;
-    % structure only.
-    \caption[Iteration counts and convergence]{Achieved iteration count, minimum
-    estimator, confidence interval, and dispersion (interquartile range and
-    coefficient of variation) for each configuration, workload pattern, and size
-    tier.}
-    \label{tab:iteration-counts-and-convergence}
+    % WHAT IT SHOWS: per (configuration x workload x tier), the achieved count of
+    %   successful timed iterations, the minimum estimator, the final bootstrap CI
+    %   half-width (absolute and/or relative), and the recorded stop reason
+    %   (target met / budget / timeout / partial / skip).
+    % CAPTION MUST STATE: the columns and units; that n is the ACHIEVED count of
+    %   successful iterations (not the configured ceiling); the CI method; and
+    %   that did-not-run-by-design cells carry a "did not run" stop reason rather
+    %   than zero.
+    % DATA: leave every data row commented out below -- do NOT invent numbers.
+    % NOTE: if the grid overflows one page, convert table -> longtable.
+    \footnotesize
+    \setlength{\tabcolsep}{6pt}
+    \renewcommand{\arraystretch}{1.2}
+    \begin{tabular}{@{}l l l r r r l@{}}
+        \toprule
+        \textbf{Configuration} & \textbf{Workload} & \textbf{Tier} & \textbf{Achieved $n$} & \textbf{Min.\ (\si{\second})} & \textbf{CI half-width} & \textbf{Stop reason} \\
+        \midrule
+        % TODO: one row per (configuration x workload x tier). Example shape only,
+        % no real numbers -- fill from run metadata:
+        % DuckDB + GeoParquet & Point-in-polygon & Small & <n> & <min> & <hw> & target met \\
+        % DuckDB + GeoParquet & kNN            & Large & \multicolumn{4}{c}{did not run by design} \\
+        % ...
+        \bottomrule
+    \end{tabular}
+    \caption[Achieved iteration counts and convergence]{Achieved count of
+    successful timed iterations, minimum-estimator elapsed time, final bootstrap
+    95\% confidence-interval half-width, and recorded stop reason for each
+    configuration, workload pattern, and size tier. The reported $n$ is the
+    achieved number of successful iterations recorded in the run metadata, not the
+    configured ceiling. Cells that did not run by design carry an explicit
+    did-not-run stop reason rather than a zero count.}
+    \label{tab:results-achieved-n}
 \end{table}

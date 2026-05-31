@@ -171,6 +171,22 @@
 	\newpage
 } % Insert an empty page without page number or page counter increment
 
+% -----------------------------------------------------------------------------
+% TEMPORARY scaffolding placeholder -- REMOVE once the real figures are produced.
+% This project does not load todonotes/\missingfigure, so a not-yet-created
+% figure is stood in for by a visible framed box. Each box is paired with a
+% commented-out \includegraphics line giving the planned file path; swap the box
+% for that line when the artwork exists, then delete this macro.
+%   \scaffoldbox{<width as fraction of \textwidth>}{<one-line description>}
+% -----------------------------------------------------------------------------
+\newcommand{\scaffoldbox}[2]{{%
+	\setlength{\fboxsep}{6pt}%
+	\fbox{\begin{minipage}[t][0.20\textheight][c]{#1\textwidth}%
+		\centering\itshape\small\color{thesisgray}%
+		[\,placeholder -- not yet produced\,]\\[4pt]#2%
+	\end{minipage}}%
+}}
+
 % =============================================================================
 % Quotations
 % =============================================================================
