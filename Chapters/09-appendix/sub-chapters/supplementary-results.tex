@@ -26,7 +26,23 @@
 % DATA: leave every data row commented out -- do NOT invent numbers.
 % longtable (not a float) is used because this spans pages.
 % TODO: add bib entry for holm1979_simple_sequentially_rejective (placeholder key).
-\begin{longtable}{@{}l l l r r r@{}}
+{\footnotesize
+\setlength{\tabcolsep}{4pt}
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{0.22\textwidth} >{\raggedright\arraybackslash}p{0.17\textwidth} >{\raggedright\arraybackslash}p{0.14\textwidth} r r r@{}}
+    \toprule
+    \textbf{Comparison} & \textbf{Workload\,$\times$\,tier} & \textbf{Dimension} & \textbf{$W$} & \textbf{$p_\text{Holm}$} & \textbf{$\hat{A}_{12}$} \\
+    \midrule
+    \endfirsthead
+    \multicolumn{6}{@{}l}{\small\itshape Table~\thetable\ (continued)} \\
+    \toprule
+    \textbf{Comparison} & \textbf{Workload\,$\times$\,tier} & \textbf{Dimension} & \textbf{$W$} & \textbf{$p_\text{Holm}$} & \textbf{$\hat{A}_{12}$} \\
+    \midrule
+    \endhead
+    \midrule
+    \multicolumn{6}{r@{}}{\small\itshape Continued on next page} \\
+    \endfoot
+    \bottomrule
+    \addlinespace[\abovecaptionskip]
     \caption[Full pairwise statistics]{Full pairwise comparison statistics for
     every configuration pair, workload pattern, size tier, and outcome dimension:
     the Wilcoxon rank-sum statistic $W$, the Holm-adjusted $p$-value within each
@@ -34,18 +50,10 @@
     and the Vargha--Delaney $\hat{A}_{12}$ effect size with its magnitude band
     \parencite{arcuri2014_hitchhiker_statistical_tests}.}
     \label{tab:appendix-pairwise-statistics} \\
-    \toprule
-    \textbf{Comparison} & \textbf{Workload\,$\times$\,tier} & \textbf{Dimension} & \textbf{$W$} & \textbf{$p_\text{Holm}$} & \textbf{$\hat{A}_{12}$} \\
-    \midrule
-    \endfirsthead
-    \toprule
-    \textbf{Comparison} & \textbf{Workload\,$\times$\,tier} & \textbf{Dimension} & \textbf{$W$} & \textbf{$p_\text{Holm}$} & \textbf{$\hat{A}_{12}$} \\
-    \midrule
-    \endhead
-    \bottomrule
     \endlastfoot
     \input{Chapters/09-appendix/sub-chapters/tables/09-pairwise-statistics.tex}
 \end{longtable}
+}
 
 \subsection{Result-cardinality agreement}
 \label{appendix:supplementary-results:cardinality-agreement}

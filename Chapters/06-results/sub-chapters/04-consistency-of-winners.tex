@@ -64,12 +64,10 @@
         \toprule
         \textbf{Configuration} & \textbf{Time} & \textbf{Bytes} & \textbf{Cost} \\
         \midrule
-        % TODO: one row per configuration; values are geometric-mean slowdown vs.
-        % best (1.00 = best). No real numbers:
-        % DuckDB + GeoParquet      & <g> & <g> & <g> \\
-        % PostGIS                  & <g> & <g> & <g> \\
-        % GeoPandas + Shapefile    & <g> & <g> & <g> \\
-        % Apache Sedona            & <g> & <g> & <g> \\
+        DuckDB + GeoParquet & 398.45 & 8.23 & 2.00 \\
+        PostGIS & 1.66 & 5.26 & 1.70 \\
+        GeoPandas + Shapefile & 226.10 & 1.00 & 2.76 \\
+        Apache Sedona & 1.01 & 5.18 & 1.92 \\
         \bottomrule
     \end{tabular}
     \caption[Geometric-mean normalized performance]{Geometric-mean normalized
