@@ -70,7 +70,14 @@
         \toprule
         \textbf{Workload\,$\times$\,tier} & \textbf{DuckDB} & \textbf{PostGIS} & \textbf{Shapefile} & \textbf{Max.\ rel.\ disc.} \\
         \midrule
-        \input{Chapters/09-appendix/sub-chapters/tables/09-cardinality-agreement.tex}
+        Bounding-box, small & 2723 & 2682 & n/r & 1.53\% \\
+        Bounding-box, large & 3015 & 2970 &  & 1.52\% \\
+        kNN, small & 10 & 10 & 10 & 0.00\% \\
+        kNN, large & 10 & 10 &  & 0.00\% \\
+        National join, small & 357 & 357 &  & 0.00\% \\
+        National join, medium & 357 & 357 &  & 0.00\% \\
+        Point-in-polygon, small & 1 & 1 & 1 & 0.00\% \\
+        Point-in-polygon, large & 1 & 1 &  & 0.00\% \\
         \bottomrule
     \end{tabular}
     \caption[Result-cardinality agreement]{Returned result cardinality for each
