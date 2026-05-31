@@ -1,7 +1,5 @@
-\section{Project description}
-\label{introduction:project-description}
-\begin{itemize}
-    \item \textbf{RQ1:} How does the cloud-native combination of GeoParquet and DuckDB compare against the traditional alternatives PostGIS and Shapefile in wall-clock query time, network transfer, and operational cost across spatial intersection predicates, distance-based nearest-neighbor search, and bounding-box range filtering on Norwegian building data at small and large dataset tiers?
-    \item \textbf{RQ2:} For a national-scale spatial join on Norwegian building data, how do broadcast-join and partitioned-join execution strategies on Apache Sedona compare to single-node PostGIS and DuckDB in wall-clock time, scaling behavior, network transfer, and operational cost across small, medium, and large dataset tiers?
-    \item \textbf{RQ3:} Does the best-performing format-and-engine combination in RQ1 remain consistent, or do winners differ across query patterns and outcome dimensions?
-\end{itemize}
+\section{Problem statement and objectives}
+\label{introduction:problem-statement-and-objectives}
+This thesis evaluates how cloud-native geospatial technologies compare against traditional ones for vector workloads, along three dimensions: read performance, network transfer, and operational cost. The comparison spans two settings, single-machine queries over one dataset and a national-scale spatial join in which a distributed engine is set against single-node engines on the same data.
+
+These objectives are framed as three research questions. Because they follow from gaps in the existing benchmarking literature, the research questions are stated formally in Section~\ref{related-work:research-questions}, after the related work that motivates them (Chapter~\ref{ch:related-work}). In outline, the first compares the cloud-native combination of GeoParquet and DuckDB against the traditional alternatives PostGIS and Shapefile; the second extends the comparison to the horizontal scaling of Apache Sedona against single-node engines on a national-scale spatial join; and the third asks whether the best-performing configuration is consistent across query patterns and outcome dimensions.
