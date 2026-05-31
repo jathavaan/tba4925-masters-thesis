@@ -38,27 +38,54 @@
 % that ran the same workload returned the same result cardinality, and point to
 % the full cardinality-agreement table in the appendix
 % (Table~\ref{tab:appendix-cardinality-agreement}). Refer to
-% Figure~\ref{fig:results-coverage}. No interpretation (-> Discussion).
+% Figures~\ref{fig:results-coverage-single-machine} and~\ref{fig:results-coverage-distributed}.
+% No interpretation (-> Discussion).
+
+% NOTE: the coverage grid is split into two page-sized figures -- the
+%   single-machine patterns and the distributed join -- because the full design
+%   grid (all configurations, including every Sedona node-count variant) overflows
+%   a single page. The two share the same encoding and colour scale.
+\begin{figure}[H]
+    \centering
+    % WHAT IT SHOWS: coverage/completeness heatmap for the SINGLE-MACHINE patterns
+    %   -- configuration (rows, grouped by workload) x size tier (columns: small,
+    %   large). Each cell encodes its run status: completed in full, completed
+    %   partially under the sequential stopping rule, or did not run by design.
+    % CAPTION MUST STATE: that this is the single-machine completion-status grid; the
+    %   status categories; and that the kNN-large and Shapefile-beyond-small cells are
+    %   absent BY DESIGN, not missing or failed. Mark did-not-run cells with an
+    %   explicit label -- never an empty cell that reads as missing.
+    % DESCRIPTIVE ONLY: read the grid; do not explain the omissions here.
+    \includegraphics[width=0.85\textwidth]{Chapters/06-results/sub-chapters/figures/06-results-coverage-single-machine.png}
+    \caption[Run-completeness coverage grid (single-machine)]{Completion status of
+    every single-machine configuration across the three query patterns and the small
+    and large tiers. Each cell records whether the run completed in full, completed
+    partially under the sequential stopping rule, or did not run for that
+    combination. The kNN-large cells and every Shapefile cell beyond the small tier
+    are absent by design and are marked as did-not-run rather than as missing or
+    failed cells.}
+    \label{fig:results-coverage-single-machine}
+\end{figure}
 
 \begin{figure}[H]
     \centering
-    % WHAT IT SHOWS: coverage/completeness heatmap over the full design grid --
-    %   configuration (rows) x workload x size tier (columns). Each cell encodes
-    %   its run status: completed in full, completed partially under the
-    %   sequential stopping rule, or did not run by design.
-    % CAPTION MUST STATE: that this is the completion-status grid; the three
-    %   status categories; and that the kNN-large and Shapefile-beyond-small
-    %   cells are absent BY DESIGN, not missing or failed. Mark did-not-run cells
-    %   with an explicit hatch/label -- never an empty cell that reads as missing.
+    % WHAT IT SHOWS: coverage/completeness heatmap for the DISTRIBUTED national-scale
+    %   join -- configuration (rows: DuckDB, PostGIS, and the Sedona broadcast and
+    %   partitioned node-count variants) x size tier (columns: small, medium, large).
+    %   Each cell encodes its run status: completed in full, partially, or failed /
+    %   did not run for that combination.
+    % CAPTION MUST STATE: that this is the distributed-join completion-status grid; the
+    %   status categories; and that failed cells (e.g. executor OOM) are marked
+    %   explicitly and are distinct from cells that did not run.
     % DESCRIPTIVE ONLY: read the grid; do not explain the omissions here.
-    \includegraphics[width=0.85\textwidth]{Chapters/06-results/sub-chapters/figures/06-results-coverage.png}
-    \caption[Run-completeness coverage grid]{Completion status of every
-    configuration across all workload patterns and size tiers. Each cell records
+    \includegraphics[width=0.85\textwidth]{Chapters/06-results/sub-chapters/figures/06-results-coverage-distributed.png}
+    \caption[Run-completeness coverage grid (distributed join)]{Completion status of
+    every configuration for the national-scale spatial join -- the single-node DuckDB
+    and PostGIS engines and the Apache Sedona broadcast and partitioned variants at
+    each worker count -- across the small, medium, and large tiers. Each cell records
     whether the run completed in full, completed partially under the sequential
-    stopping rule, or did not run for that combination. The kNN-large cells and
-    every Shapefile cell beyond the small tier are absent by design and are
-    marked as did-not-run rather than as missing or failed cells.}
-    \label{fig:results-coverage}
+    stopping rule, or failed or did not run for that combination.}
+    \label{fig:results-coverage-distributed}
 \end{figure}
 
 \subsection{Timing distributions and estimator behavior}
