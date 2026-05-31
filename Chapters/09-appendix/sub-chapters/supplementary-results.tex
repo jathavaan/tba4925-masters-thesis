@@ -44,9 +44,7 @@
     \endhead
     \bottomrule
     \endlastfoot
-    % TODO: one row per comparison. Example shape only, no real numbers:
-    % DuckDB vs.\ PostGIS & Point-in-polygon, small & Time & <W> & <p> & <a12> \\
-    % ...
+    \input{Chapters/09-appendix/sub-chapters/tables/09-pairwise-statistics.tex}
 \end{longtable}
 
 \subsection{Result-cardinality agreement}
@@ -72,10 +70,7 @@
         \toprule
         \textbf{Workload\,$\times$\,tier} & \textbf{DuckDB} & \textbf{PostGIS} & \textbf{Shapefile} & \textbf{Max.\ rel.\ disc.} \\
         \midrule
-        % TODO: one row per workload x tier; values are returned row counts. No
-        % real numbers:
-        % Point-in-polygon, small & <n> & <n> & <n> & <pct> \\
-        % ...
+        \input{Chapters/09-appendix/sub-chapters/tables/09-cardinality-agreement.tex}
         \bottomrule
     \end{tabular}
     \caption[Result-cardinality agreement]{Returned result cardinality for each
