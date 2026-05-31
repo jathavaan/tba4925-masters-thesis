@@ -1,9 +1,9 @@
 \section{Research questions}
 \label{related-work:research-questions}
-This thesis addresses three research questions.
+This thesis addresses three research questions, each following from the gaps identified above.
 
-\paragraph{RQ1:} How does the cloud-native combination of GeoParquet and DuckDB compare against the traditional alternatives PostGIS and Shapefile in wall-clock query time, network transfer, and operational cost across spatial intersection predicates, distance-based nearest-neighbor search, and bounding-box range filtering on Norwegian building data at small and large dataset tiers?
+The first concerns single-machine query performance. \textbf{RQ1:} How does the cloud-native combination of GeoParquet and DuckDB compare against the traditional alternatives PostGIS and Shapefile in wall-clock query time, network transfer, and operational cost across spatial intersection predicates, distance-based nearest-neighbor search, and bounding-box range filtering on Norwegian building data at small and large dataset tiers?
 
-\paragraph{RQ2:} For a national-scale spatial join on Norwegian building data, how do broadcast-join and partitioned-join execution strategies on Apache Sedona compare to single-node PostGIS and DuckDB in wall-clock time, scaling behavior, network transfer, and operational cost across small, medium, and large dataset tiers?
+The second turns to distributed execution and scaling. \textbf{RQ2:} For a national-scale spatial join on Norwegian building data, how do broadcast-join and partitioned-join execution strategies on Apache Sedona compare to single-node PostGIS and DuckDB in wall-clock time, scaling behavior, network transfer, and operational cost across small, medium, and large dataset tiers?
 
-\paragraph{RQ3:} Does the best-performing format-and-engine combination in RQ1 remain consistent, or do winners differ across query patterns and outcome dimensions?
+The third examines whether a single winner holds across the comparison. \textbf{RQ3:} Does the best-performing format-and-engine combination in RQ1 remain consistent, or do winners differ across query patterns and outcome dimensions?
