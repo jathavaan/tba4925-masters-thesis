@@ -85,8 +85,7 @@
     operational cost. The partitioned strategy completed only at the small tier; the
     medium and large partitioned runs did not complete (executor out-of-memory) and
     are noted as such from Table~\ref{tab:distributed-join-descriptive-statistics}
-    rather than drawn from the cache. Series colour encodes the join strategy using
-    the thesis palette.}
+    rather than drawn from the cache.}
     \label{fig:distributed-strategy-contrast}
 \end{figure}
 
@@ -167,7 +166,7 @@
     wall-clock time phases -- executor run time (the executor read phase) and driver
     collection time -- against worker count; panel~(b) shows the shuffle volume, in bytes,
     over the same worker counts. Shuffle is reported as a data volume rather than as a
-    stacked time component. Phase colour uses the thesis palette.}
+    stacked time component.}
     \label{fig:distributed-execution-phase-breakdown}
 \end{figure}
 
@@ -206,8 +205,7 @@
     and its \num{95}\% bootstrap confidence interval marked on each direction. This is
     the distributed analogue of the single-machine directional figure
     (Figure~\ref{fig:single-machine-bytes-directional}); unlike the shuffle bytes of
-    the phase breakdown, it measures transfer at the driver/client boundary. Colour
-    encodes the distributed configuration using the thesis palette.}
+    the phase breakdown, it measures transfer at the driver/client boundary.}
     \label{fig:distributed-client-boundary}
 \end{figure}
 
@@ -235,8 +233,7 @@
     \caption[Cost-time tradeoff of the distributed join]{Operational cost against
     wall-clock time for the distributed join, with one point per worker count and
     a separate series for each join strategy. The non-dominated points trace the
-    cost-time Pareto frontier. Series colour encodes join strategy using the
-    thesis palette.}
+    cost-time Pareto frontier.}
     \label{fig:distributed-cost-time-pareto}
 \end{figure}
 

@@ -186,8 +186,7 @@
     \caption[Run-to-run dispersion]{Run-to-run dispersion of per-iteration
     elapsed time, reported as the coefficient of variation: one point per
     workload-by-tier cell grouped by configuration, with the per-configuration
-    median marked and a reference band at \num{0.10}. Marker colour encodes
-    configuration using the thesis palette.}
+    median marked and a reference band at \num{0.10}.}
     \label{fig:appendix-cv-dispersion}
 \end{figure}
 
@@ -214,8 +213,7 @@
     \num{30} benchmark passes for a few representative cells (the line), with the
     within-pass \num{95}\% bootstrap confidence-interval half-width on the minimum
     shaded behind each line, on a logarithmic axis. The line traces between-pass
-    reproducibility and the band the within-pass repeatability. Colour encodes
-    configuration using the thesis palette.}
+    reproducibility and the band the within-pass repeatability.}
     \label{fig:appendix-reproducibility}
 \end{figure}
 
@@ -267,7 +265,7 @@
     across the query patterns and size tiers, drawn as a dumbbell: a filled marker
     is the median user CPU time and an open marker the median system CPU time,
     joined by a stem, on a logarithmic axis (which a bar, lacking a valid baseline,
-    cannot use). Marker colour encodes the configuration using the thesis palette;
+    cannot use). Marker colour encodes the configuration;
     the source counter is \texttt{psutil.Process.cpu\_times}.}
     \label{fig:appendix-cpu-decomposition}
 \end{figure}
@@ -298,7 +296,7 @@
     from per-cell sums of CPU and wall-clock time to be robust to the sub-millisecond
     resolution of the per-iteration CPU counters. A ratio above \num{1.0} indicates
     multi-core compute-bound execution; below \num{1.0} indicates transfer- or
-    IO-bound execution. Colour encodes configuration using the thesis palette; the
+    IO-bound execution. Colour encodes configuration; the
     source counter is \texttt{psutil.Process.cpu\_times}.}
     \label{fig:appendix-cpu-wall-ratio}
 \end{figure}
@@ -332,8 +330,7 @@
     with the \num{95}\% bootstrap confidence interval. Each multi-tier line is
     annotated with its growth factor (the largest tier divided by the smallest tier).
     The Shapefile configuration ran at the small tier only and is shown as a single
-    small-tier point rather than a slope. Colour encodes configuration using the
-    thesis palette.}
+    small-tier point rather than a slope.}
     \label{fig:appendix-size-scaling-slope}
 \end{figure}
 
