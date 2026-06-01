@@ -95,6 +95,47 @@
     \label{tab:appendix-cardinality-agreement}
 \end{table}
 
+\subsection{Per-cell summary statistics}
+\label{appendix:supplementary-results:summary-statistics}
+
+% TODO (prose): one sentence -- this is the fuller dispersion companion to the body
+% achieved-n table (Table~\ref{tab:results-achieved-n}); the per-cell CV and IQR show
+% the right-skew is general, not specific to the estimator-illustration cell.
+
+\begin{table}[H]
+    \centering
+    % WHAT IT SHOWS: per single-machine (configuration x workload x tier) cell, the
+    %   achieved n, minimum, median, IQR, coefficient of variation, and relative
+    %   bootstrap-CI half-width. Dispersion is IQR and CV (not the standard
+    %   deviation) because the timings are right-skewed and one-sidedly contaminated.
+    % CAPTION STATES: the columns and units; that n is the achieved count; that
+    %   dispersion is IQR and CV; that rows are grouped by workload.
+    % DATA: rows are \input from the analysis pipeline -- do NOT edit by hand.
+    \scriptsize
+    \setlength{\tabcolsep}{5pt}
+    \renewcommand{\arraystretch}{1.2}
+    \begin{tabular}{@{}l l l S S S S S S@{}}
+        \toprule
+        \textbf{Workload} & \textbf{Configuration} & \textbf{Tier} & {\textbf{$n$}} & {\textbf{Min.\ (\si{\second})}} & {\textbf{Median (\si{\second})}} & {\textbf{IQR (\si{\second})}} & {\textbf{CV}} & {\textbf{CI hw.\ (\%)}} \\
+        \midrule
+        \input{Chapters/09-appendix/sub-chapters/tables/08-summary-statistics.tex}
+        \bottomrule
+    \end{tabular}
+    \caption[Per-cell summary statistics]{Per-cell summary statistics for every
+    single-machine configuration, query pattern, and size tier that ran: the
+    achieved count of successful timed iterations $n$, the minimum and median
+    elapsed time, the interquartile range, the coefficient of variation, and the
+    relative half-width of the \num{95}\% bootstrap confidence interval on the
+    minimum. Dispersion is reported as the IQR and the CV rather than the standard
+    deviation, because the per-iteration timings are right-skewed and one-sidedly
+    contaminated, so a symmetric standard deviation would misrepresent the spread.
+    Rows are grouped by workload pattern. This is the fuller companion to the
+    achieved-iteration table (Table~\ref{tab:results-achieved-n}); the
+    distributed-join configurations are summarised separately in
+    Table~\ref{tab:distributed-join-descriptive-statistics}.}
+    \label{tab:appendix-summary-statistics}
+\end{table}
+
 \subsection{Estimator behavior}
 \label{appendix:supplementary-results:estimator-illustration}
 
@@ -104,17 +145,24 @@
 
 \begin{figure}[H]
     \centering
-    % WHAT IT SHOWS: minimum-vs-mean estimator illustration for one representative
-    %   query -- the per-iteration elapsed-time distribution with the minimum and
-    %   the mean marked, showing how the contamination tail separates them.
-    % CAPTION MUST STATE: the representative cell; the axis; that both the minimum
-    %   and the mean are marked; cite chen2016 for the minimum rationale.
+    % WHAT IT SHOWS: empirical CDF of the per-iteration elapsed time for one
+    %   representative cell on a log axis, with the minimum, median and mean marked
+    %   and the minimum-to-mean span shaded -- the curve rises off a hard lower
+    %   bound then trails across a long right tail (the one-sided contamination).
+    % CAPTION STATES: the representative cell; the log axis; the marked estimators;
+    %   the numbers; cite chen2016 for the minimum rationale.
     % DESCRIPTIVE ONLY.
-    \includegraphics[width=0.7\textwidth]{Chapters/09-appendix/sub-chapters/figures/09-estimator-illustration.png}
-    \caption[Minimum-versus-mean estimator illustration]{Per-iteration
-    elapsed-time distribution for one representative query, with the minimum and
-    the mean estimators marked. The separation between them is the one-sided
-    contamination that motivates reporting the minimum
+    \includegraphics[width=0.75\textwidth]{Chapters/09-appendix/sub-chapters/figures/09-estimator-illustration.png}
+    \caption[Per-iteration ECDF and estimator choice]{Empirical cumulative
+    distribution of the per-iteration elapsed time for one representative cell
+    (point-in-polygon lookup, DuckDB + GeoParquet, small tier) on a logarithmic
+    time axis, with the minimum, median, and mean marked and the
+    minimum-to-mean span shaded. The distribution rises almost vertically off a
+    hard lower bound and then trails across a long right tail: the mean
+    (\num{1.68}~\si{\second}) sits \num{27}\% above the minimum
+    (\num{1.33}~\si{\second}), with the median (\num{1.53}~\si{\second}) between
+    them. That one-sided separation is the contamination that motivates reporting
+    the minimum rather than the mean
     \parencite{chen2016_robust_benchmarking_noisy_environments}.}
     \label{fig:appendix-estimator-illustration}
 \end{figure}
@@ -127,16 +175,48 @@
 \begin{figure}[H]
     \centering
     % WHAT IT SHOWS: run-to-run dispersion -- the coefficient of variation (CV) of
-    %   per-iteration elapsed time per configuration (optionally faceted by
-    %   workload/tier).
-    % CAPTION MUST STATE: that the y-axis is the CV; the per-configuration grouping;
-    %   the workload/tier facet if used.
+    %   per-iteration elapsed time, one point per workload-by-tier cell grouped by
+    %   configuration, with the per-configuration median marked and a reference band
+    %   at CV = 0.10.
+    % CAPTION STATES: that the y-axis is the CV; one point per cell; the median tick;
+    %   the 0.10 reference band; the per-configuration grouping.
     % DESCRIPTIVE ONLY.
     \includegraphics[width=0.75\textwidth]{Chapters/09-appendix/sub-chapters/figures/09-cv-dispersion.png}
     \caption[Run-to-run dispersion]{Run-to-run dispersion of per-iteration
-    elapsed time, reported as the coefficient of variation per configuration. Bar
-    colour encodes configuration using the thesis palette.}
+    elapsed time, reported as the coefficient of variation: one point per
+    workload-by-tier cell grouped by configuration, with the per-configuration
+    median marked and a reference band at \num{0.10}. Marker colour encodes
+    configuration using the thesis palette.}
     \label{fig:appendix-cv-dispersion}
+\end{figure}
+
+\subsection{Time-of-day stability}
+\label{appendix:supplementary-results:time-of-day-stability}
+
+% TODO (prose): one sentence -- the flat trend is the evidence that no time-of-day
+% / noisy-neighbour effect contaminates the paired comparisons; a slope would be a
+% finding.
+
+\begin{figure}[H]
+    \centering
+    % WHAT IT SHOWS: each execution's elapsed time normalised to the median of its
+    %   own configuration-workload-tier cell (relative runtime), against the start
+    %   time-of-day in UTC, coloured by system family, with a per-system trend line.
+    %   A flat trend means no time-of-day / noisy-neighbour effect.
+    % CAPTION STATES: the axes; the per-cell-median normalisation; the trend lines
+    %   and the Spearman correlation; what the flat trend indicates.
+    % DESCRIPTIVE ONLY.
+    \includegraphics[width=0.85\textwidth]{Chapters/09-appendix/sub-chapters/figures/08-time-of-day-stability.png}
+    \caption[Runtime versus time-of-day]{Per-iteration elapsed time, each normalised
+    to the median of its own configuration, workload, and tier cell (relative
+    runtime, reference line at \num{1.0}), plotted against the start time-of-day in
+    UTC and coloured by system family, with a per-system ordinary-least-squares
+    trend line. Because the \num{30} passes started at different wall-clock times,
+    each cell's timed iterations spread across the clock; the trend lines are flat
+    (overall Spearman $\rho = -0.01$, and $\lvert\rho\rvert \le 0.15$ within every
+    system), indicating that no time-of-day or noisy-neighbour effect contaminates
+    the measured runtimes.}
+    \label{fig:appendix-time-of-day-stability}
 \end{figure}
 
 \subsection{CPU decomposition}
@@ -146,14 +226,20 @@
 
 \begin{figure}[H]
     \centering
-    % WHAT IT SHOWS: CPU-time decomposition into user and system seconds per
-    %   configuration (from psutil.Process.cpu_times), optionally per workload.
-    % CAPTION MUST STATE: that bars split CPU time into user and system components;
-    %   the per-configuration grouping; the source counter.
+    % WHAT IT SHOWS: median CPU time (from psutil.Process.cpu_times) per
+    %   configuration across workload x tier cells, as a dumbbell -- a filled marker
+    %   for median user CPU and an open marker for median system CPU joined by a
+    %   stem, on a log axis (a bar has no valid baseline on a log scale).
+    % CAPTION STATES: that the filled/open markers are user/system median CPU; the
+    %   log axis; the per-configuration colour; the source counter.
     % DESCRIPTIVE ONLY.
-    \includegraphics[width=0.75\textwidth]{Chapters/09-appendix/sub-chapters/figures/09-cpu-decomposition.png}
-    \caption[CPU-time decomposition]{Process CPU time per configuration, split
-    into user and system seconds. Component colour uses the thesis palette.}
+    \includegraphics[width=0.85\textwidth]{Chapters/09-appendix/sub-chapters/figures/09-cpu-decomposition.png}
+    \caption[CPU-time decomposition]{Median process CPU time per configuration
+    across the query patterns and size tiers, drawn as a dumbbell: a filled marker
+    is the median user CPU time and an open marker the median system CPU time,
+    joined by a stem, on a logarithmic axis (which a bar, lacking a valid baseline,
+    cannot use). Marker colour encodes the configuration using the thesis palette;
+    the source counter is \texttt{psutil.Process.cpu\_times}.}
     \label{fig:appendix-cpu-decomposition}
 \end{figure}
 
@@ -165,21 +251,21 @@
 
 \begin{figure}[H]
     \centering
-    % WHAT IT SHOWS: the auto-generated per-cell chart grid -- one panel per
-    %   (workload x tier) cell, each panel carrying the median bars, the violin of
-    %   the per-iteration distribution, network I/O, and cost.
-    % CAPTION MUST STATE: that this is the auto-generated completeness grid; the
-    %   per-cell panel contents; that it absorbs within-configuration size-scaling
-    %   and the cross-workload median bars.
+    % WHAT IT SHOWS: the auto-generated per-cell grid -- one panel per (workload x
+    %   tier) cell, each plotting the minimum wall-clock time of every configuration
+    %   that ran the cell as a point with its 95% bootstrap CI whisker, on a log axis.
+    % CAPTION STATES: that this is the auto-generated completeness grid; the per-cell
+    %   panel contents (minimum time + CI per configuration); the log axis.
     % NOTE: this is the auto-generated completeness grid; it is large and may span
-    %   a full page (consider a dedicated landscape page when the artwork exists).
+    %   a full page (consider a dedicated landscape page if needed).
     % DESCRIPTIVE ONLY.
     \includegraphics[width=\textwidth]{Chapters/09-appendix/sub-chapters/figures/09-cell-grid.png}
-    \caption[Per-cell chart grid]{Auto-generated per-cell chart grid, one panel per
-    workload pattern and size tier, each carrying the median bars, the per-iteration
-    distribution violin, the network I/O, and the cost. The grid is the
-    completeness view that absorbs within-configuration size-scaling and the
-    cross-workload median bars.}
+    \caption[Per-cell chart grid]{Auto-generated per-cell grid, one panel per
+    workload pattern and size tier. Each panel plots the minimum wall-clock time of
+    every configuration that ran the cell as a point with its \num{95}\% bootstrap
+    confidence interval as a whisker, on a logarithmic time axis. The grid is the
+    completeness view behind the chapter's per-configuration figures, spanning every
+    workload pattern and size tier in one frame.}
     \label{fig:appendix-cell-grid}
 \end{figure}
 
