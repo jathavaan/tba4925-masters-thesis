@@ -7,9 +7,11 @@
 %   Report which configuration wins per (workload pattern, outcome dimension),
 %   how separable the rankings are, and the magnitude of the effects. Results
 %   only; interpretation is deferred to the Discussion (Chapter~\ref{ch:discussion}).
-% IMPORTANT: the Friedman chi-squared omnibus test is reported as a SENTENCE plus
-%   its statistic in the prose below -- it is NOT a float. Do not wrap it in a
-%   figure or table.
+% IMPORTANT: the Friedman chi-squared omnibus test, once available, is reported as a
+%   SENTENCE plus its statistic in the prose below -- it is NOT a float. The statistic
+%   currently on file is the wrong test (see the statistical-separability subsection): the
+%   omnibus sentence is MISSING pending a recomputed cross-cell Friedman. Do not wrap it in a
+%   figure or table when it lands.
 
 % TODO (prose): section-opening paragraph per the orienting comment above.
 
@@ -19,6 +21,16 @@
 % TODO (prose): factual readout only -- which configuration wins each cell and
 % where the winner changes across patterns/tiers/dimensions. Refer to
 % Figure~\ref{fig:winners-matrix}. No interpretation (-> Discussion).
+% OBSERVATIONS (from the per-cell winners data): on RUN-TIME, PostGIS wins every
+%   single-machine cell; on the national join, Apache Sedona wins the medium and large
+%   tiers. On BYTES, the local Shapefile path wins the small single-machine cells it ran
+%   (its network transfer is approximately zero), with PostGIS or DuckDB winning the large
+%   cells. On COST, the winner is mixed (DuckDB on some small cells, PostGIS on the large
+%   single-machine cells, Sedona on the medium and large join). FLAG THE TIES: at the join
+%   small tier the PostGIS-vs-Sedona difference on time and bytes is NOT statistically
+%   significant, and the join medium tier is likewise not significant -- report these cells
+%   as statistically tied rather than naming a winner. The chapter must say "tied" where a
+%   test is not significant.
 
 \begin{figure}[H]
     \centering
@@ -42,6 +54,11 @@
 % TODO (prose): factual readout only -- trace each system's polyline across the four
 % outcome axes and name where polylines cross (outcome inversions). Refer to
 % Figure~\ref{fig:outcome-parallel-coordinates}. No interpretation (-> Discussion).
+% OBSERVATIONS (from the geometric-mean normalized values): the polylines cross between
+%   axes -- PostGIS and Sedona lead on time and cost but trail the local Shapefile path on
+%   bytes, while the local path leads on bytes but trails badly on time. Name these
+%   crossings as outcome inversions (a system that leads one dimension trails another);
+%   do not interpret why.
 
 \begin{figure}[H]
     \centering
@@ -75,6 +92,11 @@
 % TODO (prose): factual readout only -- the geometric-mean normalized score per
 % configuration. Refer to Table~\ref{tab:geomean-normalized-performance}. No
 % interpretation (-> Discussion).
+% COVERAGE CAVEAT (state it): the single-machine configurations (DuckDB, PostGIS, local
+%   Shapefile) are normalized over the single-machine query patterns, while Apache Sedona is
+%   normalized over the national-join workloads; the per-workload "best" baseline therefore
+%   differs and the configurations are not all measured on the same workload set. Report the
+%   scores and this scope; do not read the table as a single common ranking.
 
 \begin{table}[H]
     \centering
@@ -85,17 +107,15 @@
     % CAPTION MUST STATE: the normalization (per-workload slowdown vs. the best,
     %   then geometric mean across workloads, so 1.0 is best); and cite the
     %   geometric-mean rationale (Fleming--Wallace).
-    % DATA: leave every data row commented out -- do NOT invent numbers.
+    % DATA: single-sourced via \inputtablebody from the analysis fragment
+    %   (tables/06-rq3-geomean.tex) -- do NOT edit rows by hand. Header, caption, label stay here.
     \setlength{\tabcolsep}{8pt}
     \renewcommand{\arraystretch}{1.2}
     \begin{tabular}{@{}l r r r@{}}
         \toprule
         \textbf{Configuration} & \textbf{Time} & \textbf{Bytes} & \textbf{Cost} \\
         \midrule
-        DuckDB + GeoParquet & 398.45 & 8.23 & 2.00 \\
-        PostGIS & 1.66 & 5.26 & 1.70 \\
-        GeoPandas + Shapefile & 226.10 & 1.00 & 2.76 \\
-        Apache Sedona & 1.01 & 5.18 & 1.92 \\
+        \inputtablebody{Chapters/06-results/sub-chapters/tables/06-rq3-geomean.tex}
         \bottomrule
     \end{tabular}
     \caption[Geometric-mean normalized performance]{Geometric-mean normalized
@@ -112,6 +132,9 @@
 
 % TODO (prose): factual readout only -- whether configuration rankings hold across
 % tiers, and where inversions occur. Refer to Figure~\ref{fig:ranking-stability}.
+% NOTE: the figure is faceted per workload pattern, with rank (1 = fastest) against tier;
+%   the single-machine patterns span two tiers (slopegraph) and the national join spans
+%   three (bump). Report whether each line stays flat (stable rank) or crosses (inversion).
 % No interpretation (-> Discussion).
 
 \begin{figure}[H]
@@ -196,11 +219,19 @@
 \subsection{Statistical separability}
 \label{results:consistency-of-winners:statistical-separability}
 
-% TODO (prose): factual readout only. Report the Friedman chi-squared OMNIBUS as a
-% sentence plus its statistic IN PROSE (chi-squared value, degrees of freedom,
-% p-value, number of configurations and blocks) -- this is NOT a float. Then refer
-% to the per-comparison separability in Figure~\ref{fig:pairwise-significance-cliques}
-% and the effect magnitudes in Figure~\ref{fig:vargha-delaney-forest}.
+% TODO (prose): factual readout only. The Friedman OMNIBUS sentence is currently MISSING:
+%   the statistic on file is the WRONG TEST for RQ3. It was computed on a single cell
+%   (point-in-polygon, small tier) blocking by ITERATION (chi-squared 2564, df 2, 3 configs,
+%   1282 blocks), which only tests whether the three single-machine configs differ within
+%   that one cell. RQ3's cross-pattern omnibus
+%   (Section~\ref{research-design-and-methodology:statistical-analysis:answering-rq3-consistency-across-patterns})
+%   must instead block by workload x tier CELL across configurations. Do NOT report the
+%   on-file chi-squared/df/p as the RQ3 omnibus; leave the sentence out until the correct
+%   cross-cell Friedman is recomputed in the analysis repo, then state its statistic in prose
+%   (NOT a float). The per-comparison separability and effect magnitudes below are correct
+%   and unaffected: refer to Figure~\ref{fig:pairwise-significance-cliques} and
+%   Figure~\ref{fig:vargha-delaney-forest}, and the full pairwise table in the appendix
+%   (Table~\ref{tab:appendix-pairwise-statistics}).
 % No interpretation (-> Discussion).
 
 \begin{figure}[H]

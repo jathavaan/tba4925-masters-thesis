@@ -18,6 +18,11 @@
 % TODO (prose): factual readout only of speedup and parallel efficiency -- the
 % curve shapes and where they depart from ideal. Refer to
 % Figure~\ref{fig:distributed-speedup-efficiency}. No interpretation (-> Discussion).
+% OBSERVATIONS (broadcast, relative to the 2-worker baseline, from the descriptive table):
+%   speedup is sub-linear and improves with tier -- S(16) is about 2.3x at the small tier,
+%   5.3x at the medium tier, and 6.5x at the large tier against the ideal of 8x, so parallel
+%   efficiency falls well below one at the small tier and is highest at the large tier.
+%   Report the curve shapes and the departure from the ideal-linear reference; no cause.
 
 \begin{figure}[H]
     \centering
@@ -53,6 +58,12 @@
 % partitioned medium/large runs did not complete, referring to
 % Figure~\ref{fig:distributed-strategy-contrast} and
 % Table~\ref{tab:distributed-join-descriptive-statistics}. No interpretation.
+% OBSERVATION (small tier, from the descriptive table): the partitioned strategy ran two to
+%   three orders of magnitude slower than broadcast (partitioned about 2540 to 2760 seconds
+%   across worker counts versus broadcast about 14 to 32 seconds) and far costlier
+%   (partitioned roughly USD 11.9 to 56.8 versus broadcast roughly USD 0.38 to 1.59); the
+%   partitioned medium and large runs did not complete (executor out-of-memory). Format the
+%   numbers per the thesis number/unit style when drafting.
 
 \begin{figure}[H]
     \centering
@@ -83,55 +94,68 @@
 \label{results:distributed-join-and-scaling:absolute-performance-vs-single-node-baselines}
 
 % TODO (prose): factual readout only -- absolute wall-clock at each worker count
-% against the PostGIS and DuckDB baselines, and the worker count (if any, within
-% 2--16) at which the distributed join first overtakes the best single-node
-% engine. Refer to Figure~\ref{fig:distributed-wall-clock-vs-workers}. No
-% interpretation (-> Discussion).
+% against the PostGIS and DuckDB single-node baselines, per tier, and where (if at all,
+% within 2--16 workers) the distributed broadcast join overtakes the best single-node
+% engine. Refer to Figure~\ref{fig:distributed-wall-clock-vs-workers}. No interpretation.
+% OBSERVATIONS (broadcast; the crossover is READ OFF where a curve meets a baseline, not
+%   annotated on the figure -- the figure draws no crossover marker):
+%     - small tier: the best single-node engine is PostGIS at about \SI{13.4}{\second};
+%       broadcast falls only to \SI{13.747}{\second} at 16 workers, so it does NOT overtake
+%       PostGIS within 2--16 workers (and the small-tier PostGIS-vs-Sedona difference is not
+%       statistically significant -- report it as tied, not as a PostGIS win);
+%     - medium tier: the best single-node engine is DuckDB at about \SI{1386}{\second};
+%       broadcast is already far below it at 2 workers (\SI{203.4}{\second}), so the
+%       distributed join leads at every tested worker count;
+%     - large tier: single-node DuckDB and PostGIS did not complete, so no baseline exists
+%       and only the distributed join is plotted.
+% No interpretation (-> Discussion).
 
 \begin{figure}[H]
     \centering
     % WHAT IT SHOWS: wall-clock time (minimum estimator) against worker count
-    %   {2, 4, 8, 12, 16} for the distributed join, with the single-node PostGIS
-    %   and DuckDB baselines drawn as horizontal reference lines, and the crossover
-    %   point -- where the distributed curve first drops below the best single-node
-    %   baseline -- explicitly marked (or stated as "no crossover within 2--16").
-    % CAPTION MUST STATE: the axes; that baselines are horizontal single-node
-    %   reference lines; that the crossover is marked; the tier shown; the
-    %   estimator.
-    % STRATEGY: treat the broadcast/partitioned dimension consistently -- either
-    %   plot both strategies, or pick the winning strategy and SAY SO in the
-    %   caption. Keep this choice consistent with the speedup figure.
-    % DESCRIPTIVE ONLY: report the crossover location; no interpretation.
+    %   {2, 4, 8, 12, 16} for the distributed BROADCAST join at all three tiers, with the
+    %   single-node PostGIS and DuckDB baselines drawn as per-tier horizontal reference lines
+    %   where they exist. The crossover is read off where a broadcast curve meets a baseline;
+    %   the figure does NOT draw a crossover marker.
+    % CAPTION MUST STATE: the axes; that the baselines are per-tier horizontal single-node
+    %   reference lines; that the broadcast strategy is shown (the partitioned strategy ran
+    %   the small tier only and is covered in the strategy-contrast figure); that the
+    %   large-tier single-node baselines are absent because those runs did not complete; the
+    %   minimum estimator.
+    % DESCRIPTIVE ONLY: report where the curves sit relative to the baselines; no interpretation.
     \includegraphics[width=0.8\textwidth]{Chapters/06-results/sub-chapters/figures/06-distributed-wall-clock-vs-workers.pdf}
     \caption[Distributed wall-clock time versus single-node baselines]{Wall-clock
-    time of the distributed join as a function of worker count, with the
-    single-node PostGIS and DuckDB baselines shown as horizontal reference lines.
-    The worker count at which the distributed join first overtakes the best
-    single-node baseline is marked as the crossover point. Bar/line height is the
-    minimum-estimator elapsed time; the join strategy shown is stated consistently
-    with the scaling figure.}
+    time of the distributed broadcast join as a function of worker count, at the small,
+    medium, and large tiers, with the single-node PostGIS and DuckDB baselines drawn as
+    per-tier horizontal reference lines. Line height is the minimum-estimator elapsed time,
+    and the worker count at which a broadcast curve drops below its best single-node baseline
+    can be read off where the curve crosses that line. The large-tier single-node baselines
+    are absent because the single-node engines did not complete the large join.}
     \label{fig:distributed-wall-clock-vs-workers}
 \end{figure}
 
 \subsection{Execution-phase breakdown}
 \label{results:distributed-join-and-scaling:execution-phase-breakdown}
 
-% TODO (prose): factual readout only of where the distributed time and bytes go
-% across phases, vs. worker count. Refer to
+% TODO (prose): factual readout only of where the distributed TIME goes (executor run vs.
+% driver collection) and where the shuffle VOLUME goes, vs. worker count. Refer to
 % Figure~\ref{fig:distributed-execution-phase-breakdown}. No interpretation.
+% IMPORTANT: panel (a) stacks only the TWO time phases -- executor run time and driver
+%   collection time; shuffle is a data VOLUME, not a duration, and appears as bytes in
+%   panel (b). Do NOT describe shuffle as a stacked time component (an earlier draft did).
 
 \begin{figure}[H]
     \centering
-    % WHAT IT SHOWS: two-panel execution-phase breakdown vs. worker count, using
-    %   the three phases of the distributed lifecycle as instrumented
+    % WHAT IT SHOWS: two-panel execution breakdown vs. worker count, from the distributed
+    %   phase metrics
     %   (Section~\ref{research-design-and-methodology:metrics-and-cost-model:distributed-phase-metrics}):
-    %   executor read time, shuffle, and driver collection.
-    %   (a) stacked wall-clock time across executor-read / shuffle / driver-collection,
-    %       per worker count (and strategy);
-    %   (b) shuffle bytes across the same worker counts (and strategy).
-    % CAPTION MUST STATE: the three phases by their instrumented names
-    %   (executor read time, shuffle, driver collection -- driver collection is the
-    %   clamped residual); the axes; that panel (b) is shuffle bytes.
+    %   (a) stacked wall-clock TIME across the two time phases -- executor run time (the
+    %       executor read phase of the methodology) and driver collection time -- per worker
+    %       count;
+    %   (b) shuffle BYTES (a data volume) across the same worker counts.
+    % CAPTION MUST STATE: that panel (a) stacks the two time phases (executor run time and
+    %   driver collection time) and panel (b) is the shuffle volume in bytes; that shuffle is
+    %   a volume, not a stacked time component; the axes and the worker-count axis.
     % DESCRIPTIVE ONLY: report the stacks; no interpretation (-> Discussion).
     \subfloat[Wall-clock time by phase.\label{fig:distributed-phase-time}]{%
         \includegraphics[valign=t, width=0.45\textwidth]{Chapters/06-results/sub-chapters/figures/06-distributed-phase-time.pdf}}%
@@ -139,11 +163,11 @@
     \subfloat[Shuffle bytes.\label{fig:distributed-shuffle-bytes}]{%
         \includegraphics[valign=t, width=0.45\textwidth]{Chapters/06-results/sub-chapters/figures/06-distributed-shuffle-bytes.pdf}}%
     \caption[Execution-phase breakdown of the distributed join]{Decomposition of
-    the distributed join across the three instrumented phases of the distributed
-    lifecycle -- executor read time, shuffle, and driver collection (the last
-    recovered as the clamped wall-clock residual). Panel~(a) stacks wall-clock
-    time by phase against worker count; panel~(b) shows the corresponding shuffle
-    bytes. Phase colour uses the thesis palette.}
+    the distributed join from its instrumented phase metrics. Panel~(a) stacks the two
+    wall-clock time phases -- executor run time (the executor read phase) and driver
+    collection time -- against worker count; panel~(b) shows the shuffle volume, in bytes,
+    over the same worker counts. Shuffle is reported as a data volume rather than as a
+    stacked time component. Phase colour uses the thesis palette.}
     \label{fig:distributed-execution-phase-breakdown}
 \end{figure}
 
@@ -151,6 +175,10 @@
 % distributed client boundary (received dominates; sent is a small fraction) and
 % how it scales across the size tiers, referring to
 % Figure~\ref{fig:distributed-client-boundary}. No interpretation (-> Discussion).
+% OBSERVATION: at the driver/client boundary the returned join result is small in absolute
+%   terms (tens of kilobytes received) and grows modestly with tier; received bytes dominate
+%   sent bytes, as in the single-machine directional figure. This boundary is distinct from
+%   the shuffle volume of the phase breakdown.
 
 \begin{figure}[H]
     \centering
@@ -190,6 +218,9 @@
 % which points lie on the frontier. Refer to
 % Figure~\ref{fig:distributed-cost-time-pareto} and
 % Table~\ref{tab:distributed-join-descriptive-statistics}. No interpretation.
+% OBSERVATION: the non-dominated (Pareto) points are all broadcast worker counts; the
+%   partitioned points are dominated, being both slower and costlier at the small tier.
+%   Report which broadcast worker counts are non-dominated; no recommendation.
 
 \begin{figure}[H]
     \centering
@@ -215,7 +246,10 @@
     %   join per (configuration x size tier x worker count): achieved n, minimum
     %   estimator, CI half-width, dispersion, and the cost terms.
     % CAPTION MUST STATE: the columns and units; the estimator and CI method.
-    % DATA: leave every data row commented out -- do NOT invent numbers.
+    % DATA: single-sourced via \inputtablebody from the analysis fragment
+    %   (tables/06-distributed-descriptive-stats.tex) -- do NOT edit rows by hand. This also
+    %   fixes the four CI half-widths that had drifted from a bootstrap re-run. The header
+    %   row, caption, and label stay here.
     % NOTE: if the grid overflows one page, convert table -> longtable.
     \footnotesize
     \setlength{\tabcolsep}{6pt}
@@ -225,36 +259,7 @@
         \toprule
         \textbf{Tier} & \textbf{Strategy} & \textbf{Workers} & \textbf{Achieved $n$} & \textbf{Min.\ (\si{\second})} & \textbf{CI half-width} & \textbf{Cost (USD)} \\
         \midrule
-        Small & Broadcast & 2 & 9 & 31.981 & 1.139 & 0.3800 \\
-        Small & Broadcast & 4 & 9 & 20.712 & 0.9727 & 0.5257 \\
-        Small & Broadcast & 8 & 9 & 16.782 & 0.5082 & 0.9069 \\
-        Small & Broadcast & 12 & 6 & 14.182 & 0.7322 & 0.8586 \\
-        Small & Broadcast & 16 & 9 & 13.747 & 0.4861 & 1.5875 \\
-        Medium & Broadcast & 2 & 9 & 203.4 & 1.010 & 1.1546 \\
-        Medium & Broadcast & 4 & 9 & 103.6 & 5.104 & 1.0929 \\
-        Medium & Broadcast & 8 & 9 & 59.613 & 2.807 & 1.4599 \\
-        Medium & Broadcast & 12 & 6 & 49.793 & 2.140 & 1.3396 \\
-        Medium & Broadcast & 16 & 9 & 38.181 & 0.7997 & 2.1633 \\
-        Large & Broadcast & 2 & 9 & 452.2 & 3.200 & 2.2530 \\
-        Large & Broadcast & 4 & 9 & 239.1 & 11.791 & 2.1167 \\
-        Large & Broadcast & 8 & 9 & 142.3 & 1.451 & 2.2771 \\
-        Large & Broadcast & 12 & 6 & 88.576 & 0.5556 & 1.5992 \\
-        Large & Broadcast & 16 & 6 & 69.763 & 1.043 & 1.9153 \\
-        Small & Partitioned & 2 & 9 & 2714.3 & 23.023 & 11.8858 \\
-        Small & Partitioned & 4 & 9 & 2676.3 & 21.089 & 17.9782 \\
-        Small & Partitioned & 8 & 9 & 2539.1 & 103.2 & 29.6119 \\
-        Small & Partitioned & 12 & 6 & 2758.9 & 0.8623 & 28.1492 \\
-        Small & Partitioned & 16 & 9 & 2693.8 & 31.273 & 56.8062 \\
-        Medium & Partitioned & 2 & \multicolumn{4}{c}{failed (executor OOM)} \\
-        Medium & Partitioned & 4 & \multicolumn{4}{c}{failed (executor OOM)} \\
-        Medium & Partitioned & 8 & \multicolumn{4}{c}{failed (executor OOM)} \\
-        Medium & Partitioned & 12 & \multicolumn{4}{c}{failed (executor OOM)} \\
-        Medium & Partitioned & 16 & \multicolumn{4}{c}{failed (executor OOM)} \\
-        Large & Partitioned & 2 & \multicolumn{4}{c}{failed (executor OOM)} \\
-        Large & Partitioned & 4 & \multicolumn{4}{c}{failed (executor OOM)} \\
-        Large & Partitioned & 8 & \multicolumn{4}{c}{failed (executor OOM)} \\
-        Large & Partitioned & 12 & \multicolumn{4}{c}{failed (executor OOM)} \\
-        Large & Partitioned & 16 & \multicolumn{4}{c}{failed (executor OOM)} \\
+        \inputtablebody{Chapters/06-results/sub-chapters/tables/06-distributed-descriptive-stats.tex}
         \bottomrule
     \end{tabular}}
     \caption[Distributed join descriptive statistics]{Descriptive statistics of the

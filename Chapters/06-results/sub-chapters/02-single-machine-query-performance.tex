@@ -24,6 +24,13 @@
 % and orderings per cell, with CIs. Refer to
 % Figure~\ref{fig:single-machine-bytes-transferred} and, optionally,
 % Figure~\ref{fig:single-machine-bytes-vs-time}. No interpretation (-> Discussion).
+% OBSERVATIONS (median bytes received, from the RQ1 transfer data): the local Shapefile
+%   path reads from disk so its network transfer is approximately zero; DuckDB over object
+%   storage receives a roughly constant tens-of-kilobytes payload per query at the small
+%   tier, dropping to about ten kilobytes at the large tier; PostGIS spans from under two
+%   kilobytes up to the low megabytes for the bounding-box filter at the large tier. Report
+%   the per-cell ordering and the order-of-magnitude separations on the log axis; the marked
+%   point is the median with its \num{95}\% bootstrap CI (transfer metrics use the median).
 
 \begin{figure}[H]
     \centering
@@ -58,6 +65,10 @@
 % TODO (prose): in the data-transferred readout, add a sentence on the
 % received-versus-sent asymmetry per configuration (received dominates; sent is a
 % small fraction), referring to Figure~\ref{fig:single-machine-bytes-directional}.
+% OBSERVATION: for both DuckDB and PostGIS, bytes received exceed bytes sent by orders of
+%   magnitude (sent is typically sub-kilobyte request traffic, at most low tens of kilobytes
+%   for the PostGIS bounding-box filter); the local Shapefile path is near zero in both
+%   directions and is annotated as not like-for-like.
 % No interpretation (-> Discussion).
 
 \begin{figure}[H]
@@ -141,6 +152,15 @@
 
 % TODO (prose): factual readout only of the wall-clock-time results. Refer to
 % Figure~\ref{fig:single-machine-wall-clock-time}. No interpretation (-> Discussion).
+% OBSERVATIONS (minimum-estimator run-time, from the achieved-iterations table): PostGIS
+%   recorded the lowest run-time in every single-machine cell, on the order of one to a few
+%   milliseconds (e.g. point-in-polygon \SI{0.0016}{\second} small, \SI{0.0015}{\second}
+%   large), while DuckDB ran in the seconds-to-tens-of-seconds range (point-in-polygon
+%   \SI{1.327}{\second} small, \SI{29.919}{\second} large) and the local Shapefile path sat
+%   between them at the small tier (point-in-polygon \SI{0.3427}{\second}; kNN
+%   \SI{47.816}{\second}). Report the per-cell ordering and the separation as read off the
+%   log axis, with the minimum estimator and its CI; significance is reported in the RQ3
+%   separability subsection, not here.
 
 \begin{figure}[H]
     \centering
@@ -198,6 +218,13 @@
 
 % TODO (prose): factual readout only of the operational-cost results, broken into
 % the four cost terms. Refer to Figure~\ref{fig:single-machine-operational-cost}.
+% TERM NAMES (confirmed against the methodology cost-model equation and the figure legend):
+%   compute, storage, operations, and egress -- "egress" is the canonical fourth term, not
+%   "network". OBSERVATION: at these data sizes the compute term dominates the stack for the
+%   single-node engines, with storage a thin sliver and operations/egress near zero; the
+%   local Shapefile path reads from the local filesystem and so draws compute and storage
+%   only, with no object-storage operations or egress. Report the stack composition per
+%   configuration and pattern; defer cost/time interpretation to the Discussion.
 % No interpretation (-> Discussion).
 
 \begin{figure}[H]

@@ -9,10 +9,13 @@
 %     filter (single-machine), plus the national-scale spatial join (distributed);
 %   - the size tiers (small/large for single-machine, small/medium/large for the
 %     join) defined in Chapter~\ref{ch:system-architecture-and-implementation};
-%   - the reported location estimator is the per-cell MINIMUM, with a bootstrap
-%     \num{95}\% confidence interval (the BCa/percentile method actually used --
-%     state which) quantifying within-engine repeatability
+%   - the reported location estimator is the per-cell MINIMUM for run-time (the
+%     MEDIAN for transferred bytes), with a \num{95}\% PERCENTILE bootstrap confidence
+%     interval over \num{10000} resamples quantifying within-engine repeatability
 %     (Section~\ref{research-design-and-methodology:statistical-analysis:uncertainty-quantification}).
+%     PROVENANCE: the chapter figures call scipy's bootstrap with method="percentile"
+%     (src/plotting/thesis_figures.py); the methodology's uncertainty-quantification
+%     section does not yet NAME the method and should say "percentile" for consistency.
 % IMPORTANT framing rule for the whole chapter: the kNN-large and the
 %   Shapefile-beyond-small cells DID NOT RUN BY DESIGN. Everywhere they must read
 %   as "did not run by design", never as zero, blank, or a failed/missing cell.
@@ -39,6 +42,12 @@
 % the full cardinality-agreement table in the appendix
 % (Table~\ref{tab:appendix-cardinality-agreement}). Refer to
 % Figures~\ref{fig:results-coverage-single-machine} and~\ref{fig:results-coverage-distributed}.
+% OBSERVATION (from the cardinality-agreement data): configurations that ran the same
+%   workload returned the same returned-row count to within a small margin -- exact
+%   agreement (max relative discrepancy \num{0}\%) for kNN, point-in-polygon, and the
+%   national join, and agreement to within about \num{1.5}\% for the bounding-box filter
+%   (the only workload whose returned set differs measurably between engines). State this
+%   as the agreement readout; the per-cell counts are in the appendix table.
 % No interpretation (-> Discussion).
 
 % NOTE: the coverage grid is split into two page-sized figures -- the
@@ -96,6 +105,11 @@
 % cell, and state that the one-sided (right-skewed) contamination is what the
 % minimum estimator rejects. Refer to Figure~\ref{fig:results-warmup}. No
 % interpretation (-> Discussion).
+% REPRESENTATIVE CELL: DuckDB + GeoParquet, point-in-polygon, small tier. The distribution
+%   rises off a hard lower bound and trails a long right tail; the quantified min/median/mean
+%   separation for this same cell is shown in the appendix estimator figure
+%   (Figure~\ref{fig:appendix-estimator-illustration}) -- keep the body description qualitative
+%   and leave the numeric separation to the appendix.
 
 \begin{figure}[H]
     \centering
@@ -171,7 +185,9 @@
     %   successful iterations (not the configured ceiling); the CI method; and
     %   that did-not-run-by-design cells carry a "did not run" stop reason rather
     %   than zero.
-    % DATA: leave every data row commented out below -- do NOT invent numbers.
+    % DATA: single-sourced via \inputtablebody from the analysis fragment
+    %   (tables/06-achieved-iterations.tex) -- do NOT edit rows by hand; regenerate in the
+    %   analysis repo and re-copy. The header row, caption, and label stay here.
     % NOTE: if the grid overflows one page, convert table -> longtable.
     \footnotesize
     \setlength{\tabcolsep}{6pt}
@@ -181,24 +197,7 @@
         \toprule
         \textbf{Configuration} & \textbf{Workload} & \textbf{Tier} & \textbf{Achieved $n$} & \textbf{Min.\ (\si{\second})} & \textbf{CI half-width} & \textbf{Stop reason} \\
         \midrule
-        DuckDB + GeoParquet & Point-in-polygon & Small & 1282 & 1.327 & 0.0502 & precision target \\
-        DuckDB + GeoParquet & Point-in-polygon & Large & 345 & 29.919 & 1.309 & precision target \\
-        DuckDB + GeoParquet & kNN & Small & 2041 & 0.7460 & 0.0217 & precision target \\
-        DuckDB + GeoParquet & kNN & Large & 439 & 15.736 & 0.6984 & precision target \\
-        DuckDB + GeoParquet & Bounding-box & Small & 1571 & 1.055 & 0.0258 & precision target \\
-        DuckDB + GeoParquet & Bounding-box & Large & 382 & 22.826 & 1.101 & precision target \\
-        PostGIS & Point-in-polygon & Small & 79186 & 0.0016 & 0.0000 & precision target \\
-        PostGIS & Point-in-polygon & Large & 75052 & 0.0015 & 0.0001 & precision target \\
-        PostGIS & kNN & Small & 76103 & 0.0017 & 0.0001 & precision target \\
-        PostGIS & kNN & Large & 76521 & 0.0016 & 0.0001 & precision target \\
-        PostGIS & Bounding-box & Small & 30785 & 0.0273 & 0.0008 & precision target \\
-        PostGIS & Bounding-box & Large & 24805 & 0.0389 & 0.0012 & precision target \\
-        GeoPandas + Shapefile & Point-in-polygon & Small & 4491 & 0.3427 & 0.0081 & precision target \\
-        GeoPandas + Shapefile & Point-in-polygon & Large & \multicolumn{4}{c}{did not run by design} \\
-        GeoPandas + Shapefile & kNN & Small & 445 & 47.816 & 2.298 & precision target \\
-        GeoPandas + Shapefile & kNN & Large & \multicolumn{4}{c}{did not run by design} \\
-        GeoPandas + Shapefile & Bounding-box & Small & 21185 & 0.0521 & 0.0018 & precision target \\
-        GeoPandas + Shapefile & Bounding-box & Large & \multicolumn{4}{c}{did not run by design} \\
+        \inputtablebody{Chapters/06-results/sub-chapters/tables/06-achieved-iterations.tex}
         \bottomrule
     \end{tabular}}
     \caption[Achieved iteration counts and convergence]{Achieved count of
