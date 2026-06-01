@@ -1,3 +1,10 @@
+% --- Appendix layout: start each subsection on a fresh page. The first subsection
+% stays with the section title; every later \subsection is preceded by \clearpage
+% (which also flushes any pending floats). Restored at the end of this file. ---
+\newif\ifapxfirstsub \apxfirstsubtrue
+\let\apxorigsubsection\subsection
+\renewcommand{\subsection}{\ifapxfirstsub\apxfirstsubfalse\else\clearpage\fi\apxorigsubsection}
+
 \section{Supplementary results}
 \label{appendix:supplementary-results}
 
@@ -297,3 +304,6 @@ The same per-stage decomposition at the other cluster configurations is shown in
     \caption[Spark per-stage profiles at the remaining cluster configurations]{Median duration of each Spark stage, one panel per worker count $\{2, 4, 8, 12, 16\}$, complementing the broadcast/large profile of Figure~\ref{fig:appendix-spark-stage-profile}. The panels show the broadcast strategy at the small and medium tiers and the partitioned strategy at the small tier. For broadcast, stage~2 dominates and shrinks with added workers; for partitioned, a single range-join stage of roughly \SI{2800}{\second} dominates and is insensitive to worker count. The medium and large partitioned tiers did not complete (executor OOM).}
     \label{fig:spark-stage-extra}
 \end{figure}
+
+% --- restore default \subsection (appendix new-page layout ends here) ---
+\let\subsection\apxorigsubsection
