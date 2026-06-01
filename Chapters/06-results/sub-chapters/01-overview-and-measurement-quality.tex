@@ -1,36 +1,9 @@
 \section{Overview and measurement quality}
 \label{results:overview-and-measurement-quality}
 
-% ORIENTING COMMENT (section intro prose -- TODO below). State, without numbers:
-%   - the four configurations under test: DuckDB over GeoParquet, PostGIS, and
-%     GeoPandas over Shapefile (small tier only) on a single node, and Apache
-%     Sedona on Databricks for the distributed join;
-%   - the workloads: point-in-polygon, k-nearest-neighbor, and bounding-box
-%     filter (single-machine), plus the national-scale spatial join (distributed);
-%   - the size tiers (small/large for single-machine, small/medium/large for the
-%     join) defined in Chapter~\ref{ch:system-architecture-and-implementation};
-%   - the reported location estimator is the per-cell MINIMUM for run-time (the
-%     MEDIAN for transferred bytes), with a \num{95}\% PERCENTILE bootstrap confidence
-%     interval over \num{10000} resamples quantifying within-engine repeatability
-%     (Section~\ref{research-design-and-methodology:statistical-analysis:uncertainty-quantification}).
-%     PROVENANCE: the chapter figures call scipy's bootstrap with method="percentile"
-%     (src/plotting/thesis_figures.py); the methodology's uncertainty-quantification
-%     section does not yet NAME the method and should say "percentile" for consistency.
-% IMPORTANT framing rule for the whole chapter: the kNN-large and the
-%   Shapefile-beyond-small cells DID NOT RUN BY DESIGN. Everywhere they must read
-%   as "did not run by design", never as zero, blank, or a failed/missing cell.
-% This chapter is DESCRIPTIVE ONLY: report the factual readout; defer every
-%   interpretation to the Discussion (Chapter~\ref{ch:discussion}).
+The measurements reported here were collected from four configurations. On a single node, DuckDB over GeoParquet, PostGIS, and GeoPandas over Shapefile were exercised on three query patterns: the point-in-polygon test, k-nearest-neighbor search, and the bounding-box range filter. The national-scale spatial join was run on the single-node DuckDB and PostGIS engines and, as the distributed configuration, on Apache Sedona on Databricks. The single-machine patterns were measured at the small and large dataset tiers and the join at the small, medium, and large tiers, defined in Chapter~\ref{ch:system-architecture-and-implementation}. Two parts of this grid did not run by design rather than failing: k-nearest-neighbor search at the large tier, and the GeoPandas over Shapefile configuration beyond the small tier.
 
-% TODO (prose): section-opening paragraph. Introduce the three measurement-quality
-% checks that precede the research-question results: which cells completed
-% (Section~\ref{results:overview-and-measurement-quality:run-completeness-and-result-agreement}),
-% how the per-iteration timings are distributed and why the minimum is the
-% reported estimator
-% (Section~\ref{results:overview-and-measurement-quality:timing-distributions-and-estimator-behavior}),
-% and the achieved iteration counts and convergence
-% (Section~\ref{results:overview-and-measurement-quality:iteration-counts-and-convergence}).
-% No numbers here.
+Throughout the chapter, run-time is summarized by the minimum estimator and transferred bytes by the median, and each summary carries a bootstrap confidence interval that quantifies within-engine repeatability (Section~\ref{research-design-and-methodology:statistical-analysis:uncertainty-quantification}). Three measurement-quality checks precede the results reported for each research question. Section~\ref{results:overview-and-measurement-quality:run-completeness-and-result-agreement} reports which configuration, workload, and tier cells completed and whether the configurations that ran a given workload returned matching result counts. Section~\ref{results:overview-and-measurement-quality:timing-distributions-and-estimator-behavior} describes how the per-iteration timings are distributed and why the minimum is the reported location estimator. Section~\ref{results:overview-and-measurement-quality:iteration-counts-and-convergence} reports the achieved iteration counts and the convergence of the sequential stopping rule.
 
 \subsection{Run completeness and result agreement}
 \label{results:overview-and-measurement-quality:run-completeness-and-result-agreement}
