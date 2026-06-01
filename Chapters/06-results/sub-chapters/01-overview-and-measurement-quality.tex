@@ -1,167 +1,88 @@
 \section{Overview and measurement quality}
 \label{results:overview-and-measurement-quality}
 
-The measurements reported here were collected from four configurations. On a single node, DuckDB over GeoParquet, PostGIS, and GeoPandas over Shapefile were exercised on three query patterns: the point-in-polygon test, k-nearest-neighbor search, and the bounding-box range filter. The national-scale spatial join was run on the single-node DuckDB and PostGIS engines and, as the distributed configuration, on Apache Sedona on Databricks. The single-machine patterns were measured at the small and large dataset tiers and the join at the small, medium, and large tiers, defined in Chapter~\ref{ch:system-architecture-and-implementation}. Two parts of this grid did not run by design rather than failing: k-nearest-neighbor search at the large tier, and the GeoPandas over Shapefile configuration beyond the small tier.
+The measurements reported here were collected from four configurations. On a single node, DuckDB over GeoParquet, PostGIS, and GeoPandas over Shapefile were exercised on three query patterns: the point-in-polygon test, k-nearest-neighbor search, and the bounding-box range filter. The national-scale spatial join was run on the single-node DuckDB and PostGIS engines and, as the distributed configuration, on Apache Sedona on Databricks. The single-machine patterns were measured at the small and large dataset tiers and the join at the small, medium, and large tiers, defined in Chapter~\ref{ch:system-architecture-and-implementation}.
 
 Throughout the chapter, run-time is summarized by the minimum estimator and transferred bytes by the median, and each summary carries a bootstrap confidence interval that quantifies within-engine repeatability (Section~\ref{research-design-and-methodology:statistical-analysis:uncertainty-quantification}). Three measurement-quality checks precede the results reported for each research question. Section~\ref{results:overview-and-measurement-quality:run-completeness-and-result-agreement} reports which configuration, workload, and tier cells completed and whether the configurations that ran a given workload returned matching result counts. Section~\ref{results:overview-and-measurement-quality:timing-distributions-and-estimator-behavior} describes how the per-iteration timings are distributed and why the minimum is the reported location estimator. Section~\ref{results:overview-and-measurement-quality:iteration-counts-and-convergence} reports the achieved iteration counts and the convergence of the sequential stopping rule.
 
 \subsection{Run completeness and result agreement}
 \label{results:overview-and-measurement-quality:run-completeness-and-result-agreement}
 
-% TODO (prose): factual readout only -- which configuration x workload x tier
-% cells completed in full, which completed partially under the sequential
-% stopping rule, and which did not run by design. State whether configurations
-% that ran the same workload returned the same result cardinality, and point to
-% the full cardinality-agreement table in the appendix
-% (Table~\ref{tab:appendix-cardinality-agreement}). Refer to
-% Figures~\ref{fig:results-coverage-single-machine} and~\ref{fig:results-coverage-distributed}.
-% OBSERVATION (from the cardinality-agreement data): configurations that ran the same
-%   workload returned the same returned-row count to within a small margin -- exact
-%   agreement (max relative discrepancy \num{0}\%) for kNN, point-in-polygon, and the
-%   national join, and agreement to within about \num{1.5}\% for the bounding-box filter
-%   (the only workload whose returned set differs measurably between engines). State this
-%   as the agreement readout; the per-cell counts are in the appendix table.
-% No interpretation (-> Discussion).
+Figures~\ref{fig:results-coverage-single-machine} and~\ref{fig:results-coverage-distributed} record the completion status of every configuration, workload, and tier cell. On a single node, DuckDB over GeoParquet and PostGIS completed all three query patterns at both the small and large tiers, and GeoPandas over Shapefile completed all three at the small tier; the Shapefile cells beyond the small tier did not run by design and are marked as such rather than as failures. For the national-scale spatial join, the single-node DuckDB and PostGIS engines completed the small and medium tiers but did not complete the large tier, and the Apache Sedona broadcast strategy completed every tier at all worker counts. The partitioned strategy completed the small tier only; its medium- and large-tier runs did not complete, recording an executor out-of-memory failure at every worker count.
 
-% NOTE: the coverage grid is split into two page-sized figures -- the
-%   single-machine patterns and the distributed join -- because the full design
-%   grid (all configurations, including every Sedona node-count variant) overflows
-%   a single page. The two share the same encoding and colour scale.
+Where more than one configuration ran the same workload, the returned result counts agreed closely. Table~\ref{tab:appendix-cardinality-agreement} reports the per-cell counts. The k-nearest-neighbor search, the point-in-polygon lookup, and the national-scale join returned identical counts across the engines that ran them, a maximum relative discrepancy of \num{0}\% in each case (\num{10}, one, and \num{357} rows respectively). The bounding-box filter was the only workload whose returned set differed measurably between engines, with DuckDB returning slightly more rows than PostGIS at both tiers and a maximum relative discrepancy of \num{1.53}\%.
+
 \begin{figure}[H]
     \centering
-    % WHAT IT SHOWS: coverage/completeness heatmap for the SINGLE-MACHINE patterns
-    %   -- configuration (rows, grouped by workload) x size tier (columns: small,
-    %   large). Each cell encodes its run status: completed in full, completed
-    %   partially under the sequential stopping rule, or did not run by design.
-    % CAPTION MUST STATE: that this is the single-machine completion-status grid; the
-    %   status categories; and that the kNN-large and Shapefile-beyond-small cells are
-    %   absent BY DESIGN, not missing or failed. Mark did-not-run cells with an
-    %   explicit label -- never an empty cell that reads as missing.
-    % DESCRIPTIVE ONLY: read the grid; do not explain the omissions here.
     \includegraphics[width=0.85\textwidth]{Chapters/06-results/sub-chapters/figures/06-results-coverage-single-machine.pdf}
     \caption[Run-completeness coverage grid (single-machine)]{Completion status of
     every single-machine configuration across the three query patterns and the small
     and large tiers. Each cell records whether the run completed in full, completed
     partially under the sequential stopping rule, or did not run for that
-    combination. The kNN-large cells and every Shapefile cell beyond the small tier
-    are absent by design and are marked as did-not-run rather than as missing or
-    failed cells.}
+    combination. Every Shapefile cell beyond the small tier is absent by design and
+    is marked as did-not-run rather than as missing or failed cells.}
     \label{fig:results-coverage-single-machine}
 \end{figure}
 
 \begin{figure}[H]
     \centering
-    % WHAT IT SHOWS: coverage/completeness heatmap for the DISTRIBUTED national-scale
-    %   join -- configuration (rows: DuckDB, PostGIS, and the Sedona broadcast and
-    %   partitioned node-count variants) x size tier (columns: small, medium, large).
-    %   Each cell encodes its run status: completed in full, partially, or failed /
-    %   did not run for that combination.
-    % CAPTION MUST STATE: that this is the distributed-join completion-status grid; the
-    %   status categories; and that failed cells (e.g. executor OOM) are marked
-    %   explicitly and are distinct from cells that did not run.
-    % DESCRIPTIVE ONLY: read the grid; do not explain the omissions here.
     \includegraphics[width=0.85\textwidth]{Chapters/06-results/sub-chapters/figures/06-results-coverage-distributed.pdf}
     \caption[Run-completeness coverage grid (distributed join)]{Completion status of
     every configuration for the national-scale spatial join -- the single-node DuckDB
     and PostGIS engines and the Apache Sedona broadcast and partitioned variants at
     each worker count -- across the small, medium, and large tiers. Each cell records
-    whether the run completed in full, completed partially under the sequential
-    stopping rule, or failed or did not run for that combination.}
+    whether the run completed in full, completed partially, or failed or did not run
+    for that combination.}
     \label{fig:results-coverage-distributed}
 \end{figure}
 
 \subsection{Timing distributions and estimator behavior}
 \label{results:overview-and-measurement-quality:timing-distributions-and-estimator-behavior}
 
-% TODO (prose): factual readout only -- describe the shape of the per-iteration
-% timing distribution and the warmup-to-steady-state decay for the representative
-% cell, and state that the one-sided (right-skewed) contamination is what the
-% minimum estimator rejects. Refer to Figure~\ref{fig:results-warmup}. No
-% interpretation (-> Discussion).
-% REPRESENTATIVE CELL: DuckDB + GeoParquet, point-in-polygon, small tier. The distribution
-%   rises off a hard lower bound and trails a long right tail; the quantified min/median/mean
-%   separation for this same cell is shown in the appendix estimator figure
-%   (Figure~\ref{fig:appendix-estimator-illustration}) -- keep the body description qualitative
-%   and leave the numeric separation to the appendix.
+Figure~\ref{fig:results-warmup} shows the per-iteration timing behavior for a representative cell, the point-in-polygon lookup on DuckDB over GeoParquet at the small tier. The distribution in panel~(a) rises off a hard lower bound and trails a long right tail, so the mean and the median both sit above the fastest observed iteration. This one-sided, right-skewed contamination is the shape the minimum estimator is chosen to reject (Section~\ref{research-design-and-methodology:statistical-analysis:summary-statistics-and-the-choice-of-estimator}); the quantified separation between the minimum, the median, and the mean for this same cell is shown in Figure~\ref{fig:appendix-estimator-illustration}. Panel~(b) plots elapsed time against iteration index within a single measurement pass, where the per-iteration times scatter within a narrow band above the steady-state minimum without a pronounced warmup ramp.
 
 \begin{figure}[H]
     \centering
-    % WHAT IT SHOWS: warmup-to-steady-state timing behavior for one REPRESENTATIVE
-    %   query/cell, as a two-panel float:
-    %   (a) the per-iteration elapsed-time distribution (ECDF or violin), showing
-    %       the hard lower bound and the one-sided, right-skewed contamination
-    %       tail that motivates reporting the minimum rather than the mean;
-    %   (b) per-iteration elapsed time against iteration index, showing the early
-    %       warmup decaying to a steady floor.
-    % CAPTION MUST STATE: which representative cell (config x workload x tier);
-    %   the axes of each panel; that contamination is one-sided; and that this
-    %   motivates the minimum estimator (cite chen2016).
-    % DESCRIPTIVE ONLY: state the shape; do not argue the estimator choice here
-    %   (that argument lives in the methodology / Discussion).
-    % NOTE: this float MAY be merged with the convergence figure
-    %   (Figure~\ref{fig:results-convergence}) into one multi-panel float, since
-    %   \subfloat (subfig) is available.
     \subfloat[Per-iteration elapsed-time distribution.\label{fig:results-warmup-distribution}]{%
         \includegraphics[valign=t, width=0.45\textwidth]{Chapters/06-results/sub-chapters/figures/06-results-warmup-distribution.pdf}}%
     \hfill
     \subfloat[Warmup-to-steady-state decay.\label{fig:results-warmup-decay}]{%
         \includegraphics[valign=t, width=0.45\textwidth]{Chapters/06-results/sub-chapters/figures/06-results-warmup-decay.pdf}}%
-    \caption[Per-iteration timing distribution and warmup decay]{Per-iteration
-    timing behavior for one representative configuration, workload, and tier.
-    Panel~(a) shows the distribution of per-iteration elapsed times, with its hard
-    lower bound and the one-sided, right-skewed contamination that motivates
-    reporting the minimum rather than the mean \parencite{chen2016_robust_benchmarking_noisy_environments}.
-    Panel~(b) shows per-iteration elapsed time against iteration index, with the
-    early warmup decaying to a steady floor.}
+    \caption[Per-iteration timing distribution and warmup behavior]{Per-iteration
+    timing behavior for one representative configuration, workload, and tier (DuckDB
+    over GeoParquet, point-in-polygon, small tier). Panel~(a) shows the distribution
+    of per-iteration elapsed times, with its hard lower bound and the one-sided,
+    right-skewed contamination that motivates reporting the minimum rather than the
+    mean \parencite{chen2016_robust_benchmarking_noisy_environments}. Panel~(b) shows
+    per-iteration elapsed time against iteration index within one measurement pass,
+    fluctuating within a narrow band above the steady-state minimum (dashed).}
     \label{fig:results-warmup}
 \end{figure}
 
 \subsection{Iteration counts and convergence}
 \label{results:overview-and-measurement-quality:iteration-counts-and-convergence}
 
-% TODO (prose): factual readout only -- report the achieved iteration counts and
-% whether each cell met the \num{5}\% relative-half-width convergence target of the
-% sequential stopping rule, citing the achieved-n table. Refer to
-% Figure~\ref{fig:results-convergence} and Table~\ref{tab:results-achieved-n}.
-% No interpretation (-> Discussion).
+Figure~\ref{fig:results-convergence} traces the sequential stopping rule for the same representative cell over a single measurement pass. The running half-width of the bootstrap confidence interval, as a fraction of the running minimum, first reaches the \num{5}\% relative target within the first iterations of the pass and remains close to it across the pass.
+
+Table~\ref{tab:results-achieved-n} reports, for each single-machine cell, the achieved count of successful iterations, the minimum-estimator elapsed time, the final confidence-interval half-width, and the recorded stop reason. Every cell that ran reached the precision target rather than a budget or timeout limit. The achieved counts varied widely across cells, from \num{345} iterations for the point-in-polygon lookup on DuckDB at the large tier to \num{79186} for the same pattern on PostGIS at the small tier. The national-scale join took the fixed-iteration branch of the protocol rather than the sequential rule (Section~\ref{research-design-and-methodology:workloads:iteration-counts}), so its per-cell counts are reported with the distributed results in Table~\ref{tab:distributed-join-descriptive-statistics}.
 
 \begin{figure}[H]
     \centering
-    % WHAT IT SHOWS: sequential-stopping convergence for one REPRESENTATIVE cell.
-    %   The running bootstrap \num{95}\% confidence-interval half-width (as a fraction
-    %   of the running mean) against iteration index, with a horizontal line at
-    %   the \num{5}\% relative target and the achieved stop point marked.
-    % CAPTION MUST STATE: which representative cell; the y-axis (relative CI
-    %   half-width), the x-axis (iteration index); the \num{5}\% target line; the
-    %   bootstrap/resample basis of the interval; and the marked stop point.
-    % DESCRIPTIVE ONLY: report where it crossed/stopped; no interpretation.
-    % NOTE: may be merged with Figure~\ref{fig:results-warmup} into one
-    %   multi-panel float (subfig is available).
     \includegraphics[width=0.7\textwidth]{Chapters/06-results/sub-chapters/figures/06-results-convergence.pdf}
-    \caption[Sequential-stopping convergence]{Convergence of the sequential
-    stopping rule for one representative configuration, workload, and tier. The
-    running bootstrap \num{95}\% confidence-interval half-width, expressed as a fraction
-    of the running mean elapsed time, is plotted against iteration index; the
-    horizontal line marks the \num{5}\% relative target half-width
-    \parencite{georges2007_statistically_rigorous_java_performance,laaber2019_software_microbenchmarking_cloud},
-    and the marker indicates the iteration at which the rule stopped.}
+    \caption[Sequential-stopping convergence]{Convergence of the sequential stopping
+    rule for one representative configuration, workload, and tier (DuckDB over
+    GeoParquet, point-in-polygon, small tier), over a single measurement pass. The
+    running bootstrap \num{95}\% confidence-interval half-width, expressed as a
+    fraction of the running minimum elapsed time, is plotted against the number of
+    accumulated iterations; the horizontal line marks the \num{5}\% relative target
+    half-width \parencite{georges2007_statistically_rigorous_java_performance,laaber2019_software_microbenchmarking_cloud},
+    and the marker indicates the first iteration at which the running half-width meets
+    that target.}
     \label{fig:results-convergence}
 \end{figure}
 
 \begin{table}[H]
     \centering
-    % WHAT IT SHOWS: per (configuration x workload x tier), the achieved count of
-    %   successful timed iterations, the minimum estimator, the final bootstrap CI
-    %   half-width (absolute and/or relative), and the recorded stop reason
-    %   (target met / budget / timeout / partial / skip).
-    % CAPTION MUST STATE: the columns and units; that n is the ACHIEVED count of
-    %   successful iterations (not the configured ceiling); the CI method; and
-    %   that did-not-run-by-design cells carry a "did not run" stop reason rather
-    %   than zero.
-    % DATA: single-sourced via \inputtablebody from the analysis fragment
-    %   (tables/06-achieved-iterations.tex) -- do NOT edit rows by hand; regenerate in the
-    %   analysis repo and re-copy. The header row, caption, and label stay here.
-    % NOTE: if the grid overflows one page, convert table -> longtable.
     \footnotesize
     \setlength{\tabcolsep}{6pt}
     \renewcommand{\arraystretch}{1.2}
@@ -173,12 +94,12 @@ Throughout the chapter, run-time is summarized by the minimum estimator and tran
         \inputtablebody{Chapters/06-results/sub-chapters/tables/06-achieved-iterations.tex}
         \bottomrule
     \end{tabular}}
-    \caption[Achieved iteration counts and convergence]{Achieved count of
-    successful timed iterations, minimum-estimator elapsed time, final bootstrap
-    \num{95}\% confidence-interval half-width, and recorded stop reason for each
-    configuration, workload pattern, and size tier. The reported $n$ is the
-    achieved number of successful iterations recorded in the run metadata, not the
-    configured ceiling. Cells that did not run by design carry an explicit
-    did-not-run stop reason rather than a zero count.}
+    \caption[Achieved iteration counts and convergence]{Achieved count of successful
+    timed iterations, minimum-estimator elapsed time, final bootstrap \num{95}\%
+    confidence-interval half-width, and recorded stop reason for each single-machine
+    configuration, query pattern, and size tier. The reported $n$ is the achieved
+    number of successful iterations recorded in the run metadata, not the configured
+    ceiling. Cells that did not run by design carry an explicit did-not-run stop
+    reason rather than a zero count.}
     \label{tab:results-achieved-n}
 \end{table}
