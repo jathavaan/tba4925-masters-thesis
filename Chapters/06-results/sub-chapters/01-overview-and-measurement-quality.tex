@@ -56,7 +56,7 @@
     %   absent BY DESIGN, not missing or failed. Mark did-not-run cells with an
     %   explicit label -- never an empty cell that reads as missing.
     % DESCRIPTIVE ONLY: read the grid; do not explain the omissions here.
-    \includegraphics[width=0.85\textwidth]{Chapters/06-results/sub-chapters/figures/06-results-coverage-single-machine.png}
+    \includegraphics[width=0.85\textwidth]{Chapters/06-results/sub-chapters/figures/06-results-coverage-single-machine.pdf}
     \caption[Run-completeness coverage grid (single-machine)]{Completion status of
     every single-machine configuration across the three query patterns and the small
     and large tiers. Each cell records whether the run completed in full, completed
@@ -78,7 +78,7 @@
     %   status categories; and that failed cells (e.g. executor OOM) are marked
     %   explicitly and are distinct from cells that did not run.
     % DESCRIPTIVE ONLY: read the grid; do not explain the omissions here.
-    \includegraphics[width=0.85\textwidth]{Chapters/06-results/sub-chapters/figures/06-results-coverage-distributed.png}
+    \includegraphics[width=0.85\textwidth]{Chapters/06-results/sub-chapters/figures/06-results-coverage-distributed.pdf}
     \caption[Run-completeness coverage grid (distributed join)]{Completion status of
     every configuration for the national-scale spatial join -- the single-node DuckDB
     and PostGIS engines and the Apache Sedona broadcast and partitioned variants at
@@ -115,10 +115,10 @@
     %   (Figure~\ref{fig:results-convergence}) into one multi-panel float, since
     %   \subfloat (subfig) is available.
     \subfloat[Per-iteration elapsed-time distribution.\label{fig:results-warmup-distribution}]{%
-        \includegraphics[valign=t, width=0.45\textwidth]{Chapters/06-results/sub-chapters/figures/06-results-warmup-distribution.png}}%
+        \includegraphics[valign=t, width=0.45\textwidth]{Chapters/06-results/sub-chapters/figures/06-results-warmup-distribution.pdf}}%
     \hfill
     \subfloat[Warmup-to-steady-state decay.\label{fig:results-warmup-decay}]{%
-        \includegraphics[valign=t, width=0.45\textwidth]{Chapters/06-results/sub-chapters/figures/06-results-warmup-decay.png}}%
+        \includegraphics[valign=t, width=0.45\textwidth]{Chapters/06-results/sub-chapters/figures/06-results-warmup-decay.pdf}}%
     \caption[Per-iteration timing distribution and warmup decay]{Per-iteration
     timing behavior for one representative configuration, workload, and tier.
     Panel~(a) shows the distribution of per-iteration elapsed times, with its hard
@@ -150,7 +150,7 @@
     % DESCRIPTIVE ONLY: report where it crossed/stopped; no interpretation.
     % NOTE: may be merged with Figure~\ref{fig:results-warmup} into one
     %   multi-panel float (subfig is available).
-    \includegraphics[width=0.7\textwidth]{Chapters/06-results/sub-chapters/figures/06-results-convergence.png}
+    \includegraphics[width=0.7\textwidth]{Chapters/06-results/sub-chapters/figures/06-results-convergence.pdf}
     \caption[Sequential-stopping convergence]{Convergence of the sequential
     stopping rule for one representative configuration, workload, and tier. The
     running bootstrap \num{95}\% confidence-interval half-width, expressed as a fraction

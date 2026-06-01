@@ -33,10 +33,10 @@
     %   ideal reference in each panel.
     % DESCRIPTIVE ONLY: report the curves; no interpretation (-> Discussion).
     \subfloat[Speedup $S(n)$.\label{fig:distributed-speedup}]{%
-        \includegraphics[valign=t, width=0.45\textwidth]{Chapters/06-results/sub-chapters/figures/06-distributed-speedup.png}}%
+        \includegraphics[valign=t, width=0.45\textwidth]{Chapters/06-results/sub-chapters/figures/06-distributed-speedup.pdf}}%
     \hfill
     \subfloat[Parallel efficiency $E(n)$.\label{fig:distributed-efficiency}]{%
-        \includegraphics[valign=t, width=0.45\textwidth]{Chapters/06-results/sub-chapters/figures/06-distributed-efficiency.png}}%
+        \includegraphics[valign=t, width=0.45\textwidth]{Chapters/06-results/sub-chapters/figures/06-distributed-efficiency.pdf}}%
     \caption[Speedup and parallel efficiency of the distributed join]{Scaling of
     the distributed spatial join over worker counts $\{2, 4, 8, 12, 16\}$, defined
     relative to the two-worker baseline ($n_0 = 2$) of
@@ -66,7 +66,7 @@
     %   sourced from Table~\ref{tab:distributed-join-descriptive-statistics}, not the
     %   measurement cache.
     % DESCRIPTIVE ONLY: report the magnitude gap; no interpretation.
-    \includegraphics[width=\textwidth]{Chapters/06-results/sub-chapters/figures/06-distributed-strategy-contrast.png}
+    \includegraphics[width=\textwidth]{Chapters/06-results/sub-chapters/figures/06-distributed-strategy-contrast.pdf}
     \caption[Broadcast versus partitioned strategy at the small tier]{Broadcast versus
     partitioned join strategy at the small tier across worker counts
     $\{2, 4, 8, 12, 16\}$: the left panel shows the wall-clock minimum (logarithmic,
@@ -102,7 +102,7 @@
     %   plot both strategies, or pick the winning strategy and SAY SO in the
     %   caption. Keep this choice consistent with the speedup figure.
     % DESCRIPTIVE ONLY: report the crossover location; no interpretation.
-    \includegraphics[width=0.8\textwidth]{Chapters/06-results/sub-chapters/figures/06-distributed-wall-clock-vs-workers.png}
+    \includegraphics[width=0.8\textwidth]{Chapters/06-results/sub-chapters/figures/06-distributed-wall-clock-vs-workers.pdf}
     \caption[Distributed wall-clock time versus single-node baselines]{Wall-clock
     time of the distributed join as a function of worker count, with the
     single-node PostGIS and DuckDB baselines shown as horizontal reference lines.
@@ -134,10 +134,10 @@
     %   clamped residual); the axes; that panel (b) is shuffle bytes.
     % DESCRIPTIVE ONLY: report the stacks; no interpretation (-> Discussion).
     \subfloat[Wall-clock time by phase.\label{fig:distributed-phase-time}]{%
-        \includegraphics[valign=t, width=0.45\textwidth]{Chapters/06-results/sub-chapters/figures/06-distributed-phase-time.png}}%
+        \includegraphics[valign=t, width=0.45\textwidth]{Chapters/06-results/sub-chapters/figures/06-distributed-phase-time.pdf}}%
     \hfill
     \subfloat[Shuffle bytes.\label{fig:distributed-shuffle-bytes}]{%
-        \includegraphics[valign=t, width=0.45\textwidth]{Chapters/06-results/sub-chapters/figures/06-distributed-shuffle-bytes.png}}%
+        \includegraphics[valign=t, width=0.45\textwidth]{Chapters/06-results/sub-chapters/figures/06-distributed-shuffle-bytes.pdf}}%
     \caption[Execution-phase breakdown of the distributed join]{Decomposition of
     the distributed join across the three instrumented phases of the distributed
     lifecycle -- executor read time, shuffle, and driver collection (the last
@@ -164,7 +164,7 @@
     % CAPTION MUST STATE: the two axes (time, cost); that each point is one worker
     %   count; the two strategies; and that the frontier is the non-dominated set.
     % DESCRIPTIVE ONLY: report which points are non-dominated; no interpretation.
-    \includegraphics[width=0.75\textwidth]{Chapters/06-results/sub-chapters/figures/06-distributed-cost-time-pareto.png}
+    \includegraphics[width=0.75\textwidth]{Chapters/06-results/sub-chapters/figures/06-distributed-cost-time-pareto.pdf}
     \caption[Cost-time tradeoff of the distributed join]{Operational cost against
     wall-clock time for the distributed join, with one point per worker count and
     a separate series for each join strategy. The non-dominated points trace the

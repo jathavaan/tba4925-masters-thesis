@@ -30,7 +30,7 @@
     %   that ran it -- Shapefile ran the small tier only (not a candidate at the large
     %   tier), while kNN DID run at both tiers for DuckDB and PostGIS.
     % DESCRIPTIVE ONLY: read the winners; no interpretation (-> Discussion).
-    \includegraphics[width=0.85\textwidth]{Chapters/06-results/sub-chapters/figures/06-winners-matrix.png}
+    \includegraphics[width=0.85\textwidth]{Chapters/06-results/sub-chapters/figures/06-winners-matrix.pdf}
     \caption[Consistency of winners across dimensions]{Winning configuration for
     every workload pattern and size tier (rows) on each outcome dimension
     (columns: data transferred, wall-clock time, operational cost). Cell colour
@@ -56,7 +56,7 @@
     %   scaled (best at bottom) with their real extremes annotated; that crossings
     %   denote inversions.
     % DESCRIPTIVE ONLY: report the crossings; no interpretation (-> Discussion).
-    \includegraphics[width=0.9\textwidth]{Chapters/06-results/sub-chapters/figures/06-outcome-parallel-coordinates.png}
+    \includegraphics[width=0.9\textwidth]{Chapters/06-results/sub-chapters/figures/06-outcome-parallel-coordinates.pdf}
     \caption[Per-system outcomes across dimensions]{Per-system outcomes across the
     four outcome dimensions -- wall-clock time, bytes transferred, operational cost,
     and mean rank -- drawn as a parallel-coordinates plot with one polyline per
@@ -83,7 +83,7 @@
     %   bootstrap CI; that the Shapefile configuration ran the small tier only and is
     %   labelled did-not-run-by-design at the large tier.
     % DESCRIPTIVE ONLY: report the per-pattern orderings; no interpretation.
-    \includegraphics[width=\textwidth]{Chapters/06-results/sub-chapters/figures/06-single-machine-cross-pattern.png}
+    \includegraphics[width=\textwidth]{Chapters/06-results/sub-chapters/figures/06-single-machine-cross-pattern.pdf}
     \caption[Cross-pattern single-machine comparison by tier]{Wall-clock minimum of
     each single-machine configuration across the query patterns, one panel per size
     tier, on a logarithmic axis with the \num{95}\% bootstrap confidence interval as a
@@ -152,7 +152,7 @@
     % NOTE: this is a SLOPEGRAPH where only two RQ1 tiers exist (small, large),
     %   and a BUMP chart only where three tiers exist (the join: small/medium/large).
     % DESCRIPTIVE ONLY: report the crossings; no interpretation (-> Discussion).
-    \includegraphics[width=0.85\textwidth]{Chapters/06-results/sub-chapters/figures/06-ranking-stability.png}
+    \includegraphics[width=0.85\textwidth]{Chapters/06-results/sub-chapters/figures/06-ranking-stability.pdf}
     \caption[Ranking stability across tiers]{Configuration rank as a function of
     size tier, one line per configuration. Lines that cross mark rank inversions
     between tiers. The chart is a slopegraph between the two single-machine tiers
@@ -178,7 +178,7 @@
     %   from the rank-vs-tier ranking-stability figure.
     % DESCRIPTIVE ONLY: report the rank crossings and the magnitude spread; no
     %   interpretation.
-    \includegraphics[width=\textwidth]{Chapters/06-results/sub-chapters/figures/06-rank-portability.png}
+    \includegraphics[width=\textwidth]{Chapters/06-results/sub-chapters/figures/06-rank-portability.pdf}
     \caption[Rank portability versus absolute magnitude]{Per-system outcomes across
     the three dimensions -- time, bytes, and cost -- in two panels. The left panel is
     a slopegraph of each system's rank on each dimension (\num{1} = best), so a
@@ -222,7 +222,7 @@
     %       demsar2006_statistical_comparisons_classifiers (Demsar, JMLR 2006 --
     %       source of the mean-rank diagram convention). Placeholder keys below.
     % DESCRIPTIVE ONLY: report which configs share a clique; no interpretation.
-    \includegraphics[width=0.8\textwidth]{Chapters/06-results/sub-chapters/figures/06-pairwise-significance-cliques.png}
+    \includegraphics[width=0.8\textwidth]{Chapters/06-results/sub-chapters/figures/06-pairwise-significance-cliques.pdf}
     \caption[Pairwise significance and non-significance cliques]{Configurations
     placed along a mean-rank axis, with connectors joining configurations whose
     pairwise difference is not statistically significant under Holm-adjusted
@@ -245,7 +245,7 @@
     %   PostGIS for RQ1, and Sedona vs. the best single-node engine for RQ2 -- not
     %   every possible pair.
     % DESCRIPTIVE ONLY: report which bands the effects fall in; no interpretation.
-    \includegraphics[width=0.8\textwidth]{Chapters/06-results/sub-chapters/figures/06-vargha-delaney-forest.png}
+    \includegraphics[width=0.8\textwidth]{Chapters/06-results/sub-chapters/figures/06-vargha-delaney-forest.pdf}
     \caption[Vargha--Delaney effect-size forest]{Vargha--Delaney $\hat{A}_{12}$
     effect size for the key pairwise comparisons -- DuckDB versus PostGIS for RQ1
     and Apache Sedona versus the best single-node engine for RQ2. The vertical line

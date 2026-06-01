@@ -41,7 +41,7 @@
     %   missing cell. Leave the Shapefile-beyond-small slots as did-not-run-by-design
     %   (kNN DID run at the large tier for DuckDB and PostGIS).
     % DESCRIPTIVE ONLY: report the distributions; no interpretation (-> Discussion).
-    \includegraphics[width=0.95\textwidth]{Chapters/06-results/sub-chapters/figures/06-single-machine-bytes-transferred.png}
+    \includegraphics[width=0.95\textwidth]{Chapters/06-results/sub-chapters/figures/06-single-machine-bytes-transferred.pdf}
     \caption[Data transferred per single-machine configuration]{Network bytes
     received by each single-machine configuration, arranged as a grid with workload
     patterns in rows and size tiers in columns. Within each cell, every
@@ -76,7 +76,7 @@
     %   Sedona client boundary shown for context.
     % DESCRIPTIVE ONLY: report the magnitudes and the received/sent asymmetry; no
     %   interpretation (-> Discussion).
-    \includegraphics[width=0.95\textwidth]{Chapters/06-results/sub-chapters/figures/06-single-machine-bytes-directional.png}
+    \includegraphics[width=0.95\textwidth]{Chapters/06-results/sub-chapters/figures/06-single-machine-bytes-directional.pdf}
     \caption[Directional network transfer per single-machine configuration]{Network
     bytes received versus sent for each single-machine configuration, in the same
     workload-pattern (rows) by size-tier (columns) grid as the received-only figure.
@@ -100,7 +100,7 @@
     %   relationship; logarithmic axes; point colour by configuration.
     % CAPTION MUST STATE: the two axes and that each point is one cell.
     % DESCRIPTIVE ONLY.
-    \includegraphics[width=0.7\textwidth]{Chapters/06-results/sub-chapters/figures/06-single-machine-bytes-vs-time.png}
+    \includegraphics[width=0.7\textwidth]{Chapters/06-results/sub-chapters/figures/06-single-machine-bytes-vs-time.pdf}
     \caption[Bytes transferred versus wall-clock time]{Relationship between bytes
     transferred and wall-clock time across single-machine configurations, with one
     point per configuration, workload pattern, and size tier on logarithmic axes.
@@ -124,7 +124,7 @@
     %   cardinality of the local Shapefile path (-1) is excluded; that the diagonals
     %   are constant bytes-per-row guidelines.
     % DESCRIPTIVE ONLY: report the placement of cells; no interpretation.
-    \includegraphics[width=0.8\textwidth]{Chapters/06-results/sub-chapters/figures/06-bytes-vs-cardinality.png}
+    \includegraphics[width=0.8\textwidth]{Chapters/06-results/sub-chapters/figures/06-bytes-vs-cardinality.pdf}
     \caption[Network transfer versus result cardinality]{Median network bytes
     received against result cardinality (the returned row count) on logarithmic axes,
     with one marker per workload pattern, size tier, and configuration cell. Colour
@@ -155,7 +155,7 @@
     % Leave the Shapefile-beyond-small slots as did-not-run-by-design (kNN DID run
     %   at the large tier for DuckDB and PostGIS).
     % DESCRIPTIVE ONLY: report the distributions; no interpretation (-> Discussion).
-    \includegraphics[width=0.95\textwidth]{Chapters/06-results/sub-chapters/figures/06-single-machine-wall-clock-time.png}
+    \includegraphics[width=0.95\textwidth]{Chapters/06-results/sub-chapters/figures/06-single-machine-wall-clock-time.pdf}
     \caption[Wall-clock time per single-machine configuration]{Wall-clock time of
     each single-machine configuration, in the same grid layout as the
     bytes-transferred figure: workload patterns in rows, size tiers in columns.
@@ -182,7 +182,7 @@
     %   is one configuration's empirical CDF; that p50/p95/p99 are marked; and the
     %   single workload x tier shown.
     % DESCRIPTIVE ONLY: report the curves and the tail spread; no interpretation.
-    \includegraphics[width=0.8\textwidth]{Chapters/06-results/sub-chapters/figures/06-single-machine-latency-ecdf.png}
+    \includegraphics[width=0.8\textwidth]{Chapters/06-results/sub-chapters/figures/06-single-machine-latency-ecdf.pdf}
     \caption[Latency distribution for the headline single-machine cell]{Empirical
     cumulative distribution of per-iteration elapsed time for the point-in-polygon
     lookup at the small tier, with one step curve per single-machine configuration on
@@ -217,7 +217,7 @@
     % Leave the Shapefile-beyond-small slots as did-not-run-by-design (kNN DID run
     %   at the large tier for DuckDB and PostGIS).
     % DESCRIPTIVE ONLY: report the stacks; no interpretation (-> Discussion).
-    \includegraphics[width=0.9\textwidth]{Chapters/06-results/sub-chapters/figures/06-single-machine-operational-cost.png}
+    \includegraphics[width=0.9\textwidth]{Chapters/06-results/sub-chapters/figures/06-single-machine-operational-cost.pdf}
     \caption[Operational cost per single-machine configuration]{Operational cost
     of each single-machine configuration, faceted by workload pattern. Each bar is
     stacked into the four terms of the cost model -- compute, storage, operations,
@@ -245,7 +245,7 @@
     %   Sedona best-worker anchor in the national-scale panel; that this is the
     %   single-machine analogue of the distributed cost-time Pareto.
     % DESCRIPTIVE ONLY: report quadrant membership; no interpretation.
-    \includegraphics[width=0.95\textwidth]{Chapters/06-results/sub-chapters/figures/06-single-machine-cost-time-quadrant.png}
+    \includegraphics[width=0.95\textwidth]{Chapters/06-results/sub-chapters/figures/06-single-machine-cost-time-quadrant.pdf}
     \caption[Single-machine cost-time decision quadrant]{Operational cost against
     wall-clock time for the single-machine configurations, one panel per workload
     pattern, on logarithmic axes. Marker glyph encodes the configuration and colour
