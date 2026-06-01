@@ -1,30 +1,11 @@
 \section{Supplementary results}
 \label{appendix:supplementary-results}
 
-% ORIENTING COMMENT: this appendix collects the supporting detail behind
-%   Chapter~\ref{ch:results}: the full pairwise statistics, cardinality-agreement
-%   evidence, estimator and dispersion diagnostics, the CPU and per-cell grids,
-%   storage footprint, and the raw Spark-internal distributions. It is
-%   DESCRIPTIVE ONLY -- factual readout, no interpretation (-> Discussion,
-%   Chapter~\ref{ch:discussion}). Do NOT invent numbers, rows, or graphics.
-% NOTE: the cost-model rate constants are NOT repeated here -- they are already
-%   given in the methodology as Table~\ref{tab:cost-model-unit-prices} (region,
-%   date, and per-rate source). Add a cost-rates table here ONLY if that table is
-%   removed from the methods chapter.
-
 \subsection{Full pairwise statistics}
 \label{appendix:supplementary-results:pairwise-statistics}
 
-% TODO (prose): one sentence pointing the reader to the full pairwise table that
-% backs the RQ3 separability figure (Figure~\ref{fig:pairwise-significance-cliques}).
+Table~\ref{tab:appendix-pairwise-statistics} lists the full pairwise comparison behind the separability grouping of Figure~\ref{fig:pairwise-significance-cliques}, reporting the Wilcoxon rank-sum statistic, the Holm-adjusted $p$-value, and the Vargha--Delaney $\hat{A}_{12}$ effect size for each configuration pair across every query pattern, size tier, and outcome dimension (Section~\ref{research-design-and-methodology:statistical-analysis:pairwise-comparison-and-effect-size}).
 
-% WHAT IT SHOWS: every pairwise comparison (configuration A vs. B, per workload x
-%   tier x outcome dimension) with the Wilcoxon test statistic W, the
-%   Holm-adjusted p-value, and the Vargha--Delaney A_12 effect size.
-% CAPTION MUST STATE: the columns and their meaning; that p-values are
-%   Holm-adjusted within their comparison family; the A_12 estimator and bands.
-% DATA: single-sourced via \input from the analysis fragment
-%   (tables/09-pairwise-statistics.tex) -- do NOT edit rows by hand.
 % longtable (not a float) is used because this spans pages.
 {\footnotesize
 \setlength{\tabcolsep}{4pt}
@@ -43,12 +24,13 @@
     \endfoot
     \bottomrule
     \addlinespace[\abovecaptionskip]
-    \caption[Full pairwise statistics]{Full pairwise comparison statistics for
-    every configuration pair, workload pattern, size tier, and outcome dimension:
-    the Wilcoxon rank-sum statistic $W$, the Holm-adjusted $p$-value within each
-    comparison family \parencite{laaber2019_software_microbenchmarking_cloud,holm1979_simple_sequentially_rejective},
+    \caption[Full pairwise statistics]{Pairwise comparison statistics for every
+    configuration pair, query pattern, size tier, and outcome dimension: the Wilcoxon
+    rank-sum statistic $W$, the Holm-adjusted $p$-value within each comparison family
+    \parencite{laaber2019_software_microbenchmarking_cloud,holm1979_simple_sequentially_rejective},
     and the Vargha--Delaney $\hat{A}_{12}$ effect size with its magnitude band
-    \parencite{arcuri2014_hitchhiker_statistical_tests}.}
+    (Section~\ref{research-design-and-methodology:statistical-analysis:pairwise-comparison-and-effect-size},
+    Table~\ref{tab:vargha-delaney-thresholds}) \parencite{arcuri2014_hitchhiker_statistical_tests}.}
     \label{tab:appendix-pairwise-statistics} \\
     \endlastfoot
     \input{Chapters/09-appendix/sub-chapters/tables/09-pairwise-statistics.tex}
@@ -58,21 +40,10 @@
 \subsection{Result-cardinality agreement}
 \label{appendix:supplementary-results:cardinality-agreement}
 
-% TODO (prose): one sentence -- whether configurations that ran the same workload
-% returned the same row counts, backing the agreement claim in
-% Section~\ref{results:overview-and-measurement-quality:run-completeness-and-result-agreement}.
+Table~\ref{tab:appendix-cardinality-agreement} gives the returned row count for the configurations that ran each workload, backing the agreement check of Section~\ref{results:overview-and-measurement-quality:run-completeness-and-result-agreement}: the point-in-polygon lookup, the k-nearest-neighbor search, and the national-scale join returned identical counts across the engines that ran them, and the bounding-box filter was the only pattern whose returned set differed between engines, at a maximum relative discrepancy of \num{1.53}\%.
 
 \begin{table}[H]
     \centering
-    % WHAT IT SHOWS: result-cardinality agreement -- the returned row count per
-    %   (workload x configuration) and the maximum relative discrepancy across the
-    %   configurations that ran each workload.
-    % CAPTION MUST STATE: that cells are returned row counts; that the last column
-    %   is the maximum relative discrepancy across configurations on that workload;
-    %   that did-not-run-by-design cells are blank by design.
-    % DATA: single-sourced via \inputtablebody from the analysis fragment
-    %   (tables/08-cardinality-agreement.tex) -- do NOT edit rows by hand. Header, caption,
-    %   and label stay here. Did-not-run-by-design cells are blank by design.
     \footnotesize
     \setlength{\tabcolsep}{6pt}
     \renewcommand{\arraystretch}{1.2}
@@ -83,32 +54,20 @@
         \inputtablebody{Chapters/09-appendix/sub-chapters/tables/08-cardinality-agreement.tex}
         \bottomrule
     \end{tabular}
-    \caption[Result-cardinality agreement]{Returned result cardinality for each
-    workload pattern and size tier across the configurations that ran it, with the
-    maximum relative discrepancy between configurations in the final column. Cells
-    that did not run by design are left blank.}
+    \caption[Result-cardinality agreement]{Returned result cardinality for each query
+    pattern and size tier across the configurations that ran it, with the maximum
+    relative discrepancy between configurations in the final column. Cells that did not
+    run by design are left blank.}
     \label{tab:appendix-cardinality-agreement}
 \end{table}
 
 \subsection{Per-cell summary statistics}
 \label{appendix:supplementary-results:summary-statistics}
 
-% TODO (prose): one sentence -- this is the fuller dispersion companion to the body
-% achieved-n table (Table~\ref{tab:results-achieved-n}); the per-cell CV and IQR show
-% the right-skew is general, not specific to the estimator-illustration cell.
-% OBSERVATION: the coefficient of variation sits roughly between 0.17 and 0.50 across the
-%   cells (lowest for DuckDB, highest for PostGIS), so the right-skewed spread is general
-%   rather than confined to one cell.
+Table~\ref{tab:appendix-summary-statistics} is the fuller dispersion companion to the achieved-iteration table (Table~\ref{tab:results-achieved-n}): the coefficient of variation ranged from about \num{0.17} to about \num{0.50} across the single-machine cells, with the smallest values recorded for DuckDB over GeoParquet and the largest for PostGIS, so the right-skewed spread is general rather than confined to the estimator-illustration cell.
 
 \begin{table}[H]
     \centering
-    % WHAT IT SHOWS: per single-machine (configuration x workload x tier) cell, the
-    %   achieved n, minimum, median, IQR, coefficient of variation, and relative
-    %   bootstrap-CI half-width. Dispersion is IQR and CV (not the standard
-    %   deviation) because the timings are right-skewed and one-sidedly contaminated.
-    % CAPTION STATES: the columns and units; that n is the achieved count; that
-    %   dispersion is IQR and CV; that rows are grouped by workload.
-    % DATA: rows are \input from the analysis pipeline -- do NOT edit by hand.
     \scriptsize
     \setlength{\tabcolsep}{5pt}
     \renewcommand{\arraystretch}{1.2}
@@ -123,47 +82,35 @@
         \bottomrule
     \end{tabular}
     \caption[Per-cell summary statistics]{Per-cell summary statistics for every
-    single-machine configuration, query pattern, and size tier that ran: the
-    achieved count of successful timed iterations $n$, the minimum and median
-    elapsed time, the interquartile range, the coefficient of variation, and the
-    relative half-width of the \num{95}\% bootstrap confidence interval on the
-    minimum. Dispersion is reported as the IQR and the CV rather than the standard
-    deviation, because the per-iteration timings are right-skewed and one-sidedly
-    contaminated, so a symmetric standard deviation would misrepresent the spread.
-    Rows are grouped by workload pattern. This is the fuller companion to the
-    achieved-iteration table (Table~\ref{tab:results-achieved-n}); the
-    distributed-join configurations are summarised separately in
-    Table~\ref{tab:distributed-join-descriptive-statistics}.}
+    single-machine configuration, query pattern, and size tier that ran: the achieved
+    count of successful timed iterations $n$, the minimum and median elapsed time, the
+    interquartile range, the coefficient of variation, and the relative half-width of
+    the \num{95}\% bootstrap confidence interval on the minimum. Dispersion is the IQR
+    and the CV rather than the standard deviation, because the per-iteration timings are
+    right-skewed and one-sidedly contaminated. Rows are grouped by query pattern. This
+    is the fuller companion to the achieved-iteration table
+    (Table~\ref{tab:results-achieved-n}); the distributed-join configurations are
+    summarized separately in Table~\ref{tab:distributed-join-descriptive-statistics}.}
     \label{tab:appendix-summary-statistics}
 \end{table}
 
 \subsection{Estimator behavior}
 \label{appendix:supplementary-results:estimator-illustration}
 
-% TODO (prose): one sentence -- the minimum-vs-mean illustration that supports the
-% estimator choice summarized in
-% Section~\ref{results:overview-and-measurement-quality:timing-distributions-and-estimator-behavior}.
+Figure~\ref{fig:appendix-estimator-illustration} quantifies the minimum-to-mean separation for one representative cell, supporting the estimator choice of Section~\ref{results:overview-and-measurement-quality:timing-distributions-and-estimator-behavior}: the mean (\SI{1.68}{\second}) sat about \num{27}\% above the minimum (\SI{1.33}{\second}), with the median (\SI{1.53}{\second}) between them.
 
 \begin{figure}[H]
     \centering
-    % WHAT IT SHOWS: empirical CDF of the per-iteration elapsed time for one
-    %   representative cell on a log axis, with the minimum, median and mean marked
-    %   and the minimum-to-mean span shaded -- the curve rises off a hard lower
-    %   bound then trails across a long right tail (the one-sided contamination).
-    % CAPTION STATES: the representative cell; the log axis; the marked estimators;
-    %   the numbers; cite chen2016 for the minimum rationale.
-    % DESCRIPTIVE ONLY.
     \includegraphics[width=0.75\textwidth]{Chapters/09-appendix/sub-chapters/figures/09-estimator-illustration.pdf}
-    \caption[Per-iteration ECDF and estimator choice]{Empirical cumulative
-    distribution of the per-iteration elapsed time for one representative cell
-    (point-in-polygon lookup, DuckDB + GeoParquet, small tier) on a logarithmic
-    time axis, with the minimum, median, and mean marked and the
-    minimum-to-mean span shaded. The distribution rises almost vertically off a
-    hard lower bound and then trails across a long right tail: the mean
-    (\num{1.68}~\si{\second}) sits \num{27}\% above the minimum
-    (\num{1.33}~\si{\second}), with the median (\num{1.53}~\si{\second}) between
-    them. That one-sided separation is the contamination that motivates reporting
-    the minimum rather than the mean
+    \caption[Per-iteration ECDF and estimator choice]{Empirical cumulative distribution
+    of the per-iteration elapsed time for one representative cell (point-in-polygon
+    lookup, DuckDB over GeoParquet, small tier) on a logarithmic time axis, with the
+    minimum, median, and mean marked and the minimum-to-mean span shaded. The
+    distribution rises almost vertically off a hard lower bound and then trails across a
+    long right tail: the mean (\SI{1.68}{\second}) sits about \num{27}\% above the
+    minimum (\SI{1.33}{\second}), with the median (\SI{1.53}{\second}) between them. That
+    one-sided separation motivates reporting the minimum rather than the mean
+    (Section~\ref{research-design-and-methodology:statistical-analysis:summary-statistics-and-the-choice-of-estimator})
     \parencite{chen2016_robust_benchmarking_noisy_environments}.}
     \label{fig:appendix-estimator-illustration}
 \end{figure}
@@ -171,43 +118,25 @@
 \subsection{Run-to-run dispersion}
 \label{appendix:supplementary-results:dispersion}
 
-% TODO (prose): one sentence on the spread per configuration.
+Figure~\ref{fig:appendix-cv-dispersion} plots the coefficient of variation for every cell grouped by configuration: the single-machine query cells sat between about \num{0.17} and \num{0.50}, above the \num{0.10} reference band, while the distributed-join configurations clustered lower, mostly below about \num{0.13}.
 
 \begin{figure}[H]
     \centering
-    % WHAT IT SHOWS: run-to-run dispersion -- the coefficient of variation (CV) of
-    %   per-iteration elapsed time, one point per workload-by-tier cell grouped by
-    %   configuration, with the per-configuration median marked and a reference band
-    %   at CV = 0.10.
-    % CAPTION STATES: that the y-axis is the CV; one point per cell; the median tick;
-    %   the 0.10 reference band; the per-configuration grouping.
-    % DESCRIPTIVE ONLY.
     \includegraphics[width=0.75\textwidth]{Chapters/09-appendix/sub-chapters/figures/09-cv-dispersion.pdf}
-    \caption[Run-to-run dispersion]{Run-to-run dispersion of per-iteration
-    elapsed time, reported as the coefficient of variation: one point per
-    workload-by-tier cell grouped by configuration, with the per-configuration
-    median marked and a reference band at \num{0.10}.}
+    \caption[Run-to-run dispersion]{Run-to-run dispersion of per-iteration elapsed time,
+    reported as the coefficient of variation: one point per query-pattern-by-tier cell,
+    grouped by configuration, with the per-configuration median marked and a reference
+    band at \num{0.10}.}
     \label{fig:appendix-cv-dispersion}
 \end{figure}
 
 \subsection{Run-to-run reproducibility}
 \label{appendix:supplementary-results:reproducibility}
 
-% TODO (prose): one sentence contrasting between-pass reproducibility (the lines stay
-% flat across passes) with within-pass repeatability (the shaded bands are thin),
-% referring to Figure~\ref{fig:appendix-reproducibility}.
+Figure~\ref{fig:appendix-reproducibility} separates the two: across the \num{30} passes the per-pass minimum stayed close to its central value (a between-pass coefficient of variation from about \num{0.02} to \num{0.25} across the representative cells), while the within-pass confidence-interval half-width stayed under about \num{3}\% of each cell's median.
 
 \begin{figure}[H]
     \centering
-    % WHAT IT SHOWS: for a few representative cells, the per-pass minimum elapsed time
-    %   across benchmark passes 1-30 (line; between-pass reproducibility) with the
-    %   within-pass bootstrap CI half-width on the minimum shaded behind it (within-
-    %   pass repeatability), on a log y-axis.
-    % CAPTION MUST STATE: that the x-axis is the benchmark pass (1-30); that the line
-    %   is the per-pass minimum and the shaded band the within-pass bootstrap CI
-    %   half-width; the representative cells; the log axis; that this contrasts
-    %   between-pass reproducibility with within-pass repeatability.
-    % DESCRIPTIVE ONLY.
     \includegraphics[width=0.8\textwidth]{Chapters/09-appendix/sub-chapters/figures/09-reproducibility.pdf}
     \caption[Run-to-run reproducibility]{Per-pass minimum elapsed time across the
     \num{30} benchmark passes for a few representative cells (the line), with the
@@ -220,220 +149,113 @@
 \subsection{Time-of-day stability}
 \label{appendix:supplementary-results:time-of-day-stability}
 
-% TODO (prose): one sentence -- the flat trend is the evidence that no time-of-day
-% / noisy-neighbour effect contaminates the paired comparisons; a slope would be a
-% finding.
+Figure~\ref{fig:appendix-time-of-day-stability} plots each iteration's relative run-time against its start time-of-day: the per-system trend lines were flat (overall Spearman $\rho = -0.01$, and $\lvert\rho\rvert \le 0.16$ within every system), and no time-of-day trend was detectable in the normalized run-times.
 
 \begin{figure}[H]
     \centering
-    % WHAT IT SHOWS: each execution's elapsed time normalised to the median of its
-    %   own configuration-workload-tier cell (relative runtime), against the start
-    %   time-of-day in UTC, coloured by system family, with a per-system trend line.
-    %   A flat trend means no time-of-day / noisy-neighbour effect.
-    % CAPTION STATES: the axes; the per-cell-median normalisation; the trend lines
-    %   and the Spearman correlation; what the flat trend indicates.
-    % DESCRIPTIVE ONLY.
     \includegraphics[width=0.85\textwidth]{Chapters/09-appendix/sub-chapters/figures/08-time-of-day-stability.pdf}
-    \caption[Runtime versus time-of-day]{Per-iteration elapsed time, each normalised
-    to the median of its own configuration, workload, and tier cell (relative
-    runtime, reference line at \num{1.0}), plotted against the start time-of-day in
-    UTC and coloured by system family, with a per-system ordinary-least-squares
-    trend line. Because the \num{30} passes started at different wall-clock times,
-    each cell's timed iterations spread across the clock; the trend lines are flat
-    (overall Spearman $\rho = -0.01$, and $\lvert\rho\rvert \le 0.16$ within every
-    system), indicating that no time-of-day or noisy-neighbour effect contaminates
-    the measured runtimes.}
+    \caption[Run-time versus time-of-day]{Per-iteration elapsed time, each normalized to
+    the median of its own configuration, query pattern, and size tier cell (relative
+    run-time, reference line at \num{1.0}), plotted against the start time-of-day in UTC
+    and colored by system family, with a per-system ordinary-least-squares trend line.
+    Because the \num{30} passes started at different wall-clock times, each cell's timed
+    iterations spread across the clock; the trend lines are flat (overall Spearman
+    $\rho = -0.01$, and $\lvert\rho\rvert \le 0.16$ within every system), so no
+    time-of-day or noisy-neighbor trend was detectable in the measured run-times.}
     \label{fig:appendix-time-of-day-stability}
 \end{figure}
 
 \subsection{CPU decomposition}
 \label{appendix:supplementary-results:cpu-decomposition}
 
-% TODO (prose): one sentence on the user-vs-system split.
+Figure~\ref{fig:appendix-cpu-decomposition} shows that user CPU time dominated system CPU time for the configurations that recorded process CPU, the system component staying a small fraction of the user component, while PostGIS recorded near-zero client-process CPU.
 
 \begin{figure}[H]
     \centering
-    % WHAT IT SHOWS: median CPU time (from psutil.Process.cpu_times) per
-    %   configuration across workload x tier cells, as a dumbbell -- a filled marker
-    %   for median user CPU and an open marker for median system CPU joined by a
-    %   stem, on a log axis (a bar has no valid baseline on a log scale).
-    % CAPTION STATES: that the filled/open markers are user/system median CPU; the
-    %   log axis; the per-configuration colour; the source counter.
-    % DESCRIPTIVE ONLY.
     \includegraphics[width=0.85\textwidth]{Chapters/09-appendix/sub-chapters/figures/09-cpu-decomposition.pdf}
-    \caption[CPU-time decomposition]{Median process CPU time per configuration
-    across the query patterns and size tiers, drawn as a dumbbell: a filled marker
-    is the median user CPU time and an open marker the median system CPU time,
-    joined by a stem, on a logarithmic axis (which a bar, lacking a valid baseline,
-    cannot use). Marker colour encodes the configuration;
-    the source counter is \texttt{psutil.Process.cpu\_times}.}
+    \caption[CPU-time decomposition]{Median process CPU time per configuration across
+    the query patterns and size tiers, drawn as a dumbbell: a filled marker is the
+    median user CPU time and an open marker the median system CPU time, joined by a stem,
+    on a logarithmic axis (which a bar, lacking a valid baseline, cannot use). Marker
+    color encodes the configuration; the source counter is
+    \texttt{psutil.Process.cpu\_times}.}
     \label{fig:appendix-cpu-decomposition}
 \end{figure}
 
 \subsection{CPU-to-wall-clock ratio}
 \label{appendix:supplementary-results:cpu-wall-ratio}
 
-% TODO (prose): one sentence on which configurations are compute-bound (ratio above
-% 1.0, several busy cores) versus transfer- or IO-bound (ratio below 1.0), referring
-% to Figure~\ref{fig:appendix-cpu-wall-ratio}.
+Figure~\ref{fig:appendix-cpu-wall-ratio} reports the CPU-to-wall-clock ratio against the one-core reference: DuckDB over GeoParquet recorded a ratio of about \num{3.8}, the local Shapefile path about \num{1.0}, and PostGIS between about \num{0.13} and \num{0.38}.
 
 \begin{figure}[H]
     \centering
-    % WHAT IT SHOWS: grouped bars of the CPU-to-wall-clock ratio,
-    %   (cpu_user + cpu_system)/elapsed, across workload x tier cells, one bar per
-    %   configuration, with a reference line at 1.0 (one fully-busy core). The ratio
-    %   is formed from per-cell SUMS to be robust to the sub-millisecond CPU counter
-    %   resolution.
-    % CAPTION MUST STATE: the ratio definition and the per-cell-sum computation; the
-    %   reference line at 1.0; that above 1.0 is multi-core compute-bound and below
-    %   1.0 is transfer- or IO-bound; the per-configuration grouping.
-    % DESCRIPTIVE ONLY.
     \includegraphics[width=0.9\textwidth]{Chapters/09-appendix/sub-chapters/figures/09-cpu-wall-ratio.pdf}
     \caption[CPU-to-wall-clock ratio]{Ratio of CPU time to wall-clock time,
-    $(\mathrm{cpu}_{\mathrm{user}} + \mathrm{cpu}_{\mathrm{sys}})/\mathrm{elapsed}$,
-    for each single-machine configuration across the query patterns and size tiers,
-    with a reference line at \num{1.0} (one fully-busy core). The ratio is computed
-    from per-cell sums of CPU and wall-clock time to be robust to the sub-millisecond
-    resolution of the per-iteration CPU counters. A ratio above \num{1.0} indicates
-    multi-core compute-bound execution; below \num{1.0} indicates transfer- or
-    IO-bound execution. Colour encodes configuration; the
-    source counter is \texttt{psutil.Process.cpu\_times}.}
+    $(\mathrm{cpu}_{\mathrm{user}} + \mathrm{cpu}_{\mathrm{sys}})/\mathrm{elapsed}$, for
+    each single-machine configuration across the query patterns and size tiers, with a
+    reference line at \num{1.0} (one fully-busy core). The ratio is computed from
+    per-cell sums of CPU and wall-clock time, to be robust to the sub-millisecond
+    resolution of the per-iteration CPU counters. Values above \num{1.0} correspond to
+    more than one core busy on average, and values below \num{1.0} to less than one.
+    Color encodes configuration; the source counter is
+    \texttt{psutil.Process.cpu\_times}.}
     \label{fig:appendix-cpu-wall-ratio}
 \end{figure}
 
 \subsection{Same-engine size scaling}
 \label{appendix:supplementary-results:size-scaling}
 
-% TODO (prose): one sentence on how each engine's wall-clock minimum grows from the
-% small to the large tier (its growth factor), referring to
-% Figure~\ref{fig:appendix-size-scaling-slope}.
-% OBSERVATION (growth factor, large/small): DuckDB grows steeply -- on the order of 17x
-%   (point-in-polygon), 21x (bounding-box), and 51x (kNN) -- while PostGIS stays nearly flat
-%   (about 0.8x to 1.4x, essentially unchanged, even slightly faster on kNN at the large
-%   tier); the local Shapefile path ran the small tier only and is a single point with no
-%   growth factor.
+Figure~\ref{fig:appendix-size-scaling-slope} traces each engine's wall-clock minimum from the small to the large tier: DuckDB over GeoParquet grew by roughly \num{21} to \num{22} times across the three patterns (a factor of \num{22.5} for the point-in-polygon lookup, \num{21.6} for the bounding-box filter, and \num{21.1} for the k-nearest-neighbor search), whereas PostGIS stayed nearly flat (between about \num{0.9} and \num{1.4} times, and slightly faster at the large tier for the point-in-polygon and k-nearest-neighbor patterns); the local Shapefile path ran the small tier only.
 
 \begin{figure}[H]
     \centering
-    % WHAT IT SHOWS: same-engine size-scaling slopegraph, one panel per query pattern.
-    %   Within each panel, one line per engine traces the wall-clock minimum (log)
-    %   across the size tiers, with the 95% bootstrap CI and the growth factor
-    %   (largest tier / smallest tier) annotated. The Shapefile path ran the small
-    %   tier only and appears as a single small-tier point.
-    % CAPTION MUST STATE: the per-pattern panels; the tier x-axis and log y-axis; the
-    %   minimum estimator with 95% bootstrap CI; the annotated growth factor; that
-    %   Shapefile is a small-only point.
-    % DESCRIPTIVE ONLY.
     \includegraphics[width=0.95\textwidth]{Chapters/09-appendix/sub-chapters/figures/09-size-scaling-slope.pdf}
-    \caption[Same-engine size scaling]{Wall-clock minimum of each single-machine
-    engine across the size tiers, one panel per query pattern, on a logarithmic axis
-    with the \num{95}\% bootstrap confidence interval. Each multi-tier line is
-    annotated with its growth factor (the largest tier divided by the smallest tier).
-    The Shapefile configuration ran at the small tier only and is shown as a single
-    small-tier point rather than a slope.}
+    \caption[Same-engine size scaling]{Wall-clock minimum of each single-machine engine
+    across the size tiers, one panel per query pattern, on a logarithmic axis with the
+    \num{95}\% bootstrap confidence interval. Each multi-tier line is annotated with its
+    growth factor (the largest tier divided by the smallest tier). The Shapefile
+    configuration ran at the small tier only and is shown as a single small-tier point
+    rather than a slope.}
     \label{fig:appendix-size-scaling-slope}
 \end{figure}
 
 \subsection{Per-cell chart grid}
 \label{appendix:supplementary-results:cell-grid}
 
-% TODO (prose): one sentence -- this auto-generated grid is the completeness view
-% behind the chapter figures.
+Figure~\ref{fig:appendix-cell-grid} collects every query pattern and size tier in one frame, plotting the minimum wall-clock time and its \num{95}\% bootstrap confidence interval for each configuration that ran the cell, as the completeness view behind the chapter's per-configuration figures.
 
 \begin{figure}[H]
     \centering
-    % WHAT IT SHOWS: the auto-generated per-cell grid -- one panel per (workload x
-    %   tier) cell, each plotting the minimum wall-clock time of every configuration
-    %   that ran the cell as a point with its 95% bootstrap CI whisker, on a log axis.
-    % CAPTION STATES: that this is the auto-generated completeness grid; the per-cell
-    %   panel contents (minimum time + CI per configuration); the log axis.
-    % NOTE: this is the auto-generated completeness grid; it is large and may span
-    %   a full page (consider a dedicated landscape page if needed).
-    % DESCRIPTIVE ONLY.
     \includegraphics[width=\textwidth]{Chapters/09-appendix/sub-chapters/figures/09-cell-grid.pdf}
-    \caption[Per-cell chart grid]{Auto-generated per-cell grid, one panel per
-    workload pattern and size tier. Each panel plots the minimum wall-clock time of
-    every configuration that ran the cell as a point with its \num{95}\% bootstrap
-    confidence interval as a whisker, on a logarithmic time axis. The grid is the
-    completeness view behind the chapter's per-configuration figures, spanning every
-    workload pattern and size tier in one frame.}
+    \caption[Per-cell chart grid]{Auto-generated per-cell grid, one panel per query
+    pattern and size tier. Each panel plots the minimum wall-clock time of every
+    configuration that ran the cell as a point with its \num{95}\% bootstrap confidence
+    interval as a whisker, on a logarithmic time axis. The grid is the completeness view
+    behind the chapter's per-configuration figures, spanning every query pattern and
+    size tier in one frame.}
     \label{fig:appendix-cell-grid}
 \end{figure}
-
-\subsection{Storage footprint}
-\label{appendix:supplementary-results:storage-footprint}
-
-% TODO (prose): one sentence on each format's on-disk footprint vs. input size.
-% STATUS: MISSING -- the on-disk footprint has NOT yet been measured into a result table;
-%   measurement is in progress (the analysis-side storage probe holds the GeoParquet
-%   partitions per tier and a PostGIS sizing script). Until a footprint table is generated,
-%   leave the data rows empty and do NOT invent sizes; the drafting prompt should surface
-%   this table as MISSING rather than fill it.
-
-\begin{table}[H]
-    \centering
-    % WHAT IT SHOWS: storage footprint per format (GeoParquet, PostGIS table,
-    %   Shapefile) against the input dataset size, per size tier.
-    % CAPTION MUST STATE: the formats compared; that footprint is on-disk bytes;
-    %   the per-tier breakdown.
-    % DATA: MISSING / not yet generated -- leave data rows commented out, do NOT invent numbers.
-    \footnotesize
-    \setlength{\tabcolsep}{8pt}
-    \renewcommand{\arraystretch}{1.2}
-    \begin{tabular}{@{}l r r r r@{}}
-        \toprule
-        \textbf{Tier} & \textbf{Input} & \textbf{GeoParquet} & \textbf{PostGIS} & \textbf{Shapefile} \\
-        \midrule
-        % TODO: one row per tier; values are on-disk sizes. No real numbers:
-        % Small  & <size> & <size> & <size> & <size> \\
-        % ...
-        \bottomrule
-    \end{tabular}
-    \caption[Storage footprint per format]{On-disk storage footprint of each format
-    against the input dataset size, per size tier.}
-    \label{tab:appendix-storage-footprint}
-\end{table}
 
 \subsection{Raw Spark-internal metrics}
 \label{appendix:supplementary-results:spark-metrics}
 
-% TODO (prose): one sentence pointing to the raw distributions behind the RQ2
-% phase breakdown (Figure~\ref{fig:distributed-execution-phase-breakdown}).
+Figure~\ref{fig:appendix-spark-metrics} shows the distributions of the raw Spark-internal metrics, the executor run time, input bytes read, shuffle bytes, and per-stage durations, that feed the execution-phase breakdown of Figure~\ref{fig:distributed-execution-phase-breakdown}.
 
 \begin{figure}[H]
     \centering
-    % WHAT IT SHOWS: distributions of the raw Databricks Spark-internal metrics
-    %   captured by the SparkListener -- executorRunTime, inputMetrics.bytesRead,
-    %   shuffle read/write bytes, and per-stage durations -- across iterations and
-    %   worker counts.
-    % CAPTION MUST STATE: which Spark-internal metrics are shown; that these are
-    %   the raw per-stage distributions feeding the phase breakdown; the axes.
-    % DESCRIPTIVE ONLY.
     \includegraphics[width=0.9\textwidth]{Chapters/09-appendix/sub-chapters/figures/09-spark-metrics.pdf}
     \caption[Raw Spark-internal metric distributions]{Distributions of the raw
-    Databricks Spark-internal metrics recorded by the \texttt{SparkListener} --
-    executor run time, input bytes read, shuffle bytes read and written, and
-    per-stage durations -- across iterations and worker counts. These are the raw
-    quantities that feed the execution-phase breakdown of
-    Figure~\ref{fig:distributed-execution-phase-breakdown}.}
+    Databricks Spark-internal metrics recorded by the \texttt{SparkListener}: executor
+    run time, input bytes read, shuffle bytes read and written, and per-stage durations,
+    across iterations and worker counts. These are the raw quantities that feed the
+    execution-phase breakdown of Figure~\ref{fig:distributed-execution-phase-breakdown}.}
     \label{fig:appendix-spark-metrics}
 \end{figure}
 
-% TODO (prose): one sentence on the per-stage duration profile by worker count --
-% which stage dominates and how it shrinks as workers increase -- referring to
-% Figure~\ref{fig:appendix-spark-stage-profile}.
+Figure~\ref{fig:appendix-spark-stage-profile} resolves the join into individual Spark stages: a single stage (stage index~2) dominated the profile at every worker count, its median duration falling from about \SI{352}{\second} at \num{2} workers to about \SI{61}{\second} at \num{16} workers, while the remaining stages stayed comparatively short.
 
 \begin{figure}[H]
     \centering
-    % WHAT IT SHOWS: Spark per-stage duration profile, one small panel per worker count
-    %   {2,4,8,12,16} for the broadcast strategy (large tier). Each panel is a
-    %   horizontal profile of the median duration of each Spark stage (stage index on
-    %   the y-axis), parsed from the per-iteration stage_durations_ms array. Finer than
-    %   the coarse three-phase split.
-    % CAPTION MUST STATE: that the panels are worker counts; that each bar is a Spark
-    %   stage's median duration; the broadcast strategy and tier shown; the source
-    %   array; that this refines the three-phase breakdown.
-    % DESCRIPTIVE ONLY.
     \includegraphics[width=\textwidth]{Chapters/09-appendix/sub-chapters/figures/09-spark-stage-profile.pdf}
     \caption[Spark per-stage duration profile]{Median duration of each Spark stage for
     the broadcast strategy at the large tier, one panel per worker count
@@ -441,7 +263,6 @@
     array recorded by the \texttt{SparkListener}. Each horizontal bar is one stage's
     median duration (stage index on the vertical axis); the long tail of
     near-zero-duration stages is trimmed. This is a finer view than the coarse
-    three-phase breakdown of Figure~\ref{fig:distributed-execution-phase-breakdown}.
-    Stage colour uses a lightness ramp of the broadcast palette colour.}
+    three-phase breakdown of Figure~\ref{fig:distributed-execution-phase-breakdown}.}
     \label{fig:appendix-spark-stage-profile}
 \end{figure}
