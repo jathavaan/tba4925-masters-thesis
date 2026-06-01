@@ -115,6 +115,26 @@ Figure~\ref{fig:appendix-estimator-illustration} quantifies the minimum-to-mean 
     \label{fig:appendix-estimator-illustration}
 \end{figure}
 
+\subsection{Latency distributions by query pattern}
+\label{appendix:supplementary-results:latency-ecdf-grid}
+
+Figure~\ref{fig:latency-ecdf-grid} extends the headline latency distribution of Figure~\ref{fig:single-machine-latency-ecdf} to the remaining single-machine cells, one empirical CDF per query pattern and size tier. PostGIS held a sub-\SI{0.05}{\second} median in every cell, while the slowest configuration alternated by pattern: the local Shapefile path was slowest for the kNN search (median \SI{60.81}{\second} at the small tier), whereas DuckDB was slowest for bounding-box filtering (\SI{1.14}{\second}) as it was for the point-in-polygon lookup. At the large tier the Shapefile path was not run, so each large-tier panel contrasts DuckDB against PostGIS, whose separation widened to three to four orders of magnitude (for the point-in-polygon lookup, medians of \SI{36.87}{\second} versus \SI{0.0039}{\second}).
+
+\begin{figure}[H]
+    \centering
+    \subfloat[k-NN search, small tier]{\includegraphics[valign=t, width=0.49\textwidth]{Chapters/09-appendix/sub-chapters/figures/09-single-machine-latency-ecdf-knn-search-small.pdf}\label{fig:ecdf-knn-small}}
+    \hfill
+    \subfloat[k-NN search, large tier]{\includegraphics[valign=t, width=0.49\textwidth]{Chapters/09-appendix/sub-chapters/figures/09-single-machine-latency-ecdf-knn-search-large.pdf}\label{fig:ecdf-knn-large}}
+    \\[1ex]
+    \subfloat[Bounding-box filter, small tier]{\includegraphics[valign=t, width=0.49\textwidth]{Chapters/09-appendix/sub-chapters/figures/09-single-machine-latency-ecdf-bbox-filtering-small.pdf}\label{fig:ecdf-bbox-small}}
+    \hfill
+    \subfloat[Bounding-box filter, large tier]{\includegraphics[valign=t, width=0.49\textwidth]{Chapters/09-appendix/sub-chapters/figures/09-single-machine-latency-ecdf-bbox-filtering-large.pdf}\label{fig:ecdf-bbox-large}}
+    \\[1ex]
+    \subfloat[Point-in-polygon lookup, large tier]{\includegraphics[valign=t, width=0.49\textwidth]{Chapters/09-appendix/sub-chapters/figures/09-single-machine-latency-ecdf-point-in-polygon-lookup-large.pdf}\label{fig:ecdf-pip-large}}
+    \caption[Latency distributions for the remaining single-machine cells]{Empirical cumulative distribution of per-iteration elapsed time for the single-machine cells not shown in Figure~\ref{fig:single-machine-latency-ecdf}, one step curve per configuration on a logarithmic time axis with the $p_{50}$, $p_{95}$, and $p_{99}$ percentiles marked. The small-tier panels carry all three configurations; the local Shapefile path was not run at the large tier, so the large-tier panels contrast DuckDB against PostGIS only. The relative ordering is stable within each cell, but the slowest engine differs by query pattern.}
+    \label{fig:latency-ecdf-grid}
+\end{figure}
+
 \subsection{Run-to-run dispersion}
 \label{appendix:supplementary-results:dispersion}
 
@@ -265,4 +285,15 @@ Figure~\ref{fig:appendix-spark-stage-profile} resolves the join into individual 
     near-zero-duration stages is trimmed. This is a finer view than the coarse
     three-phase breakdown of Figure~\ref{fig:distributed-execution-phase-breakdown}.}
     \label{fig:appendix-spark-stage-profile}
+\end{figure}
+
+The same per-stage decomposition at the other cluster configurations is shown in Figure~\ref{fig:spark-stage-extra}. Under the broadcast strategy the dominant stage~2 scaled with worker count at every tier, its median falling from about \SI{21}{\second} to \SI{7}{\second} at the small tier and from about \SI{153}{\second} to \SI{29}{\second} at the medium tier as workers rose from \num{2} to \num{16}. The partitioned strategy behaved differently: a single range-join stage of roughly \SI{2700}{\second}--\SI{2800}{\second} dominated the profile and was essentially flat across worker counts, which is why adding executors did not shorten its runtime. The partitioned strategy did not complete at the medium or large tiers (executor OOM), so only its small tier is shown.
+
+\begin{figure}[H]
+    \centering
+    \subfloat[Broadcast, small tier]{\includegraphics[width=0.9\textwidth]{Chapters/09-appendix/sub-chapters/figures/09-spark-stage-profile-broadcast-small.pdf}\label{fig:spark-broadcast-small}}\\[1ex]
+    \subfloat[Broadcast, medium tier]{\includegraphics[width=0.9\textwidth]{Chapters/09-appendix/sub-chapters/figures/09-spark-stage-profile-broadcast-medium.pdf}\label{fig:spark-broadcast-medium}}\\[1ex]
+    \subfloat[Partitioned, small tier]{\includegraphics[width=0.9\textwidth]{Chapters/09-appendix/sub-chapters/figures/09-spark-stage-profile-partitioned-small.pdf}\label{fig:spark-partitioned-small}}
+    \caption[Spark per-stage profiles at the remaining cluster configurations]{Median duration of each Spark stage, one panel per worker count $\{2, 4, 8, 12, 16\}$, complementing the broadcast/large profile of Figure~\ref{fig:appendix-spark-stage-profile}. The panels show the broadcast strategy at the small and medium tiers and the partitioned strategy at the small tier. For broadcast, stage~2 dominates and shrinks with added workers; for partitioned, a single range-join stage of roughly \SI{2800}{\second} dominates and is insensitive to worker count. The medium and large partitioned tiers did not complete (executor OOM).}
+    \label{fig:spark-stage-extra}
 \end{figure}
