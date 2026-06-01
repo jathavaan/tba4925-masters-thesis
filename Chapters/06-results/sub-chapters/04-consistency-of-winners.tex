@@ -69,31 +69,6 @@
     \label{fig:outcome-parallel-coordinates}
 \end{figure}
 
-% TODO (prose): add a sentence on how each configuration's wall-clock ordering across
-% the query patterns changes at a fixed tier (which leads on which pattern),
-% referring to Figure~\ref{fig:single-machine-cross-pattern}. No interpretation.
-
-\begin{figure}[H]
-    \centering
-    % WHAT IT SHOWS: cross-pattern single-machine comparison, one panel per size tier.
-    %   x = workload pattern, grouped bars per configuration, y = wall-clock minimum
-    %   (s, log) with the 95% bootstrap CI as a whisker.
-    % CAPTION MUST STATE: the per-tier panels; the workload-pattern x-axis and grouped
-    %   bars per configuration; the log y-axis; the minimum estimator with 95%
-    %   bootstrap CI; that the Shapefile configuration ran the small tier only and is
-    %   labelled did-not-run-by-design at the large tier.
-    % DESCRIPTIVE ONLY: report the per-pattern orderings; no interpretation.
-    \includegraphics[width=\textwidth]{Chapters/06-results/sub-chapters/figures/06-single-machine-cross-pattern.pdf}
-    \caption[Cross-pattern single-machine comparison by tier]{Wall-clock minimum of
-    each single-machine configuration across the query patterns, one panel per size
-    tier, on a logarithmic axis with the \num{95}\% bootstrap confidence interval as a
-    whisker. Bars are grouped by configuration within each workload pattern. The
-    Shapefile configuration ran at the small tier only and is labelled as
-    did-not-run-by-design at the large tier rather than left as a silent gap. Colour
-    encodes configuration using the thesis palette.}
-    \label{fig:single-machine-cross-pattern}
-\end{figure}
-
 \subsection{Aggregate normalized performance}
 \label{results:consistency-of-winners:aggregate-normalized-performance}
 
@@ -111,9 +86,6 @@
     %   then geometric mean across workloads, so 1.0 is best); and cite the
     %   geometric-mean rationale (Fleming--Wallace).
     % DATA: leave every data row commented out -- do NOT invent numbers.
-    % TODO: add bib entry for fleming1986_how_not_to_lie_with_statistics
-    %       (Fleming & Wallace, "How not to lie with statistics: the correct way
-    %       to summarize benchmark results", CACM 1986). Placeholder key used below.
     \setlength{\tabcolsep}{8pt}
     \renewcommand{\arraystretch}{1.2}
     \begin{tabular}{@{}l r r r@{}}
@@ -191,6 +163,36 @@
     \label{fig:rank-portability}
 \end{figure}
 
+% TODO (prose): add a sentence on how each configuration's wall-clock ordering across
+% the query patterns changes at a fixed tier (which leads on which pattern),
+% referring to Figure~\ref{fig:single-machine-cross-pattern}. No interpretation.
+
+\begin{figure}[H]
+    \centering
+    % WHAT IT SHOWS: cross-pattern single-machine comparison, one panel per size tier.
+    %   x = workload pattern, grouped bars per configuration, y = wall-clock minimum
+    %   (s, log) with the 95% bootstrap CI as a whisker.
+    % CAPTION MUST STATE: the per-tier panels; the workload-pattern x-axis and grouped
+    %   bars per configuration; the log y-axis; the minimum estimator with 95%
+    %   bootstrap CI; that the Shapefile configuration ran the small tier only and is
+    %   labelled did-not-run-by-design at the large tier.
+    % NOTE: this is the cross-pattern re-cut of the pattern-by-tier wall-clock grid
+    %   (Figure~\ref{fig:single-machine-wall-clock-time}); the caption cross-references
+    %   it so the two are not read as duplicates.
+    % DESCRIPTIVE ONLY: report the per-pattern orderings; no interpretation.
+    \includegraphics[width=\textwidth]{Chapters/06-results/sub-chapters/figures/06-single-machine-cross-pattern.pdf}
+    \caption[Cross-pattern single-machine comparison by tier]{Wall-clock minimum of
+    each single-machine configuration across the query patterns, one panel per size
+    tier, on a logarithmic axis with the \num{95}\% bootstrap confidence interval as a
+    whisker. Bars are grouped by configuration within each workload pattern. It re-cuts
+    the pattern-by-tier wall-clock grid (Figure~\ref{fig:single-machine-wall-clock-time})
+    to read run-time across the query patterns at a fixed tier, so it is a cross-pattern
+    view of that grid rather than a duplicate. The Shapefile configuration ran at the
+    small tier only and is labelled as did-not-run-by-design at the large tier rather
+    than left as a silent gap. Colour encodes configuration using the thesis palette.}
+    \label{fig:single-machine-cross-pattern}
+\end{figure}
+
 \subsection{Statistical separability}
 \label{results:consistency-of-winners:statistical-separability}
 
@@ -199,10 +201,6 @@
 % p-value, number of configurations and blocks) -- this is NOT a float. Then refer
 % to the per-comparison separability in Figure~\ref{fig:pairwise-significance-cliques}
 % and the effect magnitudes in Figure~\ref{fig:vargha-delaney-forest}.
-% TODO: add bib entry for friedman1937_use_of_ranks
-%       (Friedman, "The use of ranks to avoid the assumption of normality...",
-%       JASA 1937). Placeholder key -- cite it in the prose, e.g.
-%       \parencite{friedman1937_use_of_ranks}.
 % No interpretation (-> Discussion).
 
 \begin{figure}[H]
@@ -217,10 +215,6 @@
     % IMPORTANT: do NOT call this a "critical-difference diagram" -- that term
     %   implies the Nemenyi post-hoc test, which is NOT used here. Describe the
     %   connectors as non-significance cliques.
-    % TODO: add bib entries for
-    %       holm1979_simple_sequentially_rejective (Holm, Scand. J. Statist. 1979)
-    %       demsar2006_statistical_comparisons_classifiers (Demsar, JMLR 2006 --
-    %       source of the mean-rank diagram convention). Placeholder keys below.
     % DESCRIPTIVE ONLY: report which configs share a clique; no interpretation.
     \includegraphics[width=0.8\textwidth]{Chapters/06-results/sub-chapters/figures/06-pairwise-significance-cliques.pdf}
     \caption[Pairwise significance and non-significance cliques]{Configurations
@@ -245,7 +239,7 @@
     %   PostGIS for RQ1, and Sedona vs. the best single-node engine for RQ2 -- not
     %   every possible pair.
     % DESCRIPTIVE ONLY: report which bands the effects fall in; no interpretation.
-    \includegraphics[width=0.8\textwidth]{Chapters/06-results/sub-chapters/figures/06-vargha-delaney-forest.pdf}
+    \includegraphics[width=0.95\textwidth]{Chapters/06-results/sub-chapters/figures/06-vargha-delaney-forest.pdf}
     \caption[Vargha--Delaney effect-size forest]{Vargha--Delaney $\hat{A}_{12}$
     effect size for the key pairwise comparisons -- DuckDB versus PostGIS for RQ1
     and Apache Sedona versus the best single-node engine for RQ2. The vertical line
