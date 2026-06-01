@@ -147,6 +147,42 @@
     \label{fig:distributed-execution-phase-breakdown}
 \end{figure}
 
+% TODO (prose): add a sentence on the received-versus-sent asymmetry at the
+% distributed client boundary (received dominates; sent is a small fraction) and
+% how it scales across the size tiers, referring to
+% Figure~\ref{fig:distributed-client-boundary}. No interpretation (-> Discussion).
+
+\begin{figure}[H]
+    \centering
+    % WHAT IT SHOWS: directional network transfer measured at the Sedona driver
+    %   (client) boundary for the national-scale join, one mirrored diverging-bar
+    %   pair per size tier for a single broadcast worker count -- bytes RECEIVED to
+    %   the right, bytes SENT to the left -- on a symmetric-log axis, with the median
+    %   estimator and its 95% bootstrap CI on each direction. This is the distributed
+    %   analogue of the single-machine directional figure
+    %   (Figure~\ref{fig:single-machine-bytes-directional}) and the only place the
+    %   sent direction is shown for the distributed path, complementing the
+    %   shuffle-bytes panel of the phase breakdown.
+    % CAPTION MUST STATE: the diverging-bar encoding (received right, sent left); the
+    %   symmetric-log axis; the median estimator with 95% bootstrap CI; that bars are
+    %   per size tier for one broadcast worker count; that this is the driver/client
+    %   boundary, distinct from the shuffle bytes of the phase breakdown.
+    % DESCRIPTIVE ONLY: report the magnitudes and the received/sent asymmetry; no
+    %   interpretation (-> Discussion).
+    \includegraphics[width=0.85\textwidth]{Chapters/06-results/sub-chapters/figures/06-distributed-client-boundary.pdf}
+    \caption[Directional network transfer at the distributed client boundary]{Network
+    bytes received versus sent at the Sedona driver (client) boundary for the
+    national-scale spatial join, with one pair of mirrored bars per size tier for a
+    single broadcast worker count. Bytes received extend to the right and bytes sent
+    to the left from a central zero on a symmetric-log axis, with the median estimator
+    and its \num{95}\% bootstrap confidence interval marked on each direction. This is
+    the distributed analogue of the single-machine directional figure
+    (Figure~\ref{fig:single-machine-bytes-directional}); unlike the shuffle bytes of
+    the phase breakdown, it measures transfer at the driver/client boundary. Colour
+    encodes the distributed configuration using the thesis palette.}
+    \label{fig:distributed-client-boundary}
+\end{figure}
+
 \subsection{Operational cost and the cost-time tradeoff}
 \label{results:distributed-join-and-scaling:operational-cost-and-the-cost-time-tradeoff}
 

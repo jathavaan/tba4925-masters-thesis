@@ -66,14 +66,14 @@
     %   as the received-only bytes figure, but each configuration is a pair of
     %   mirrored bars diverging from a central zero -- bytes RECEIVED to the right,
     %   bytes SENT to the left -- on a symmetric-log axis, with the median estimator
-    %   and its 95% bootstrap CI on each direction. A bottom panel shows the same
-    %   received/sent split at the Sedona client boundary (the distributed
-    %   national-scale join, driver process).
+    %   and its 95% bootstrap CI on each direction. Single-machine (RQ1)
+    %   configurations only; the distributed Sedona client boundary is a different
+    %   data path and is shown in the distributed section
+    %   (Figure~\ref{fig:distributed-client-boundary}).
     % CAPTION MUST STATE: the diverging-bar encoding (received right, sent left); the
     %   symmetric-log axis; the median estimator with 95% bootstrap CI; that the
     %   Shapefile/local path reads from the local filesystem so both directions are
-    %   ~0 and are annotated as not like-for-like; that the bottom panel is the
-    %   Sedona client boundary shown for context.
+    %   ~0 and are annotated as not like-for-like.
     % DESCRIPTIVE ONLY: report the magnitudes and the received/sent asymmetry; no
     %   interpretation (-> Discussion).
     \includegraphics[width=0.95\textwidth]{Chapters/06-results/sub-chapters/figures/06-single-machine-bytes-directional.pdf}
@@ -85,10 +85,10 @@
     with the median estimator and its \num{95}\% bootstrap confidence interval marked
     on each direction. The Shapefile configuration reads from the local filesystem,
     so both directions are approximately zero and are labelled as not like-for-like
-    rather than plotted as comparable transfer. The bottom panel shows the same
-    received-versus-sent split at the Sedona client boundary for the distributed
-    national-scale join, included for context. Colour encodes configuration using the
-    thesis palette.}
+    rather than plotted as comparable transfer. The distributed Sedona client
+    boundary is a different data path and is shown separately in the distributed
+    section (Figure~\ref{fig:distributed-client-boundary}). Colour encodes
+    configuration using the thesis palette.}
     \label{fig:single-machine-bytes-directional}
 \end{figure}
 
