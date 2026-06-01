@@ -48,6 +48,37 @@
     \label{fig:distributed-speedup-efficiency}
 \end{figure}
 
+% TODO (prose): add a sentence contrasting broadcast and partitioned at the small
+% tier (the magnitude gap in both wall-clock time and cost), and noting that the
+% partitioned medium/large runs did not complete, referring to
+% Figure~\ref{fig:distributed-strategy-contrast} and
+% Table~\ref{tab:distributed-join-descriptive-statistics}. No interpretation.
+
+\begin{figure}[H]
+    \centering
+    % WHAT IT SHOWS: broadcast vs partitioned join strategy at the small tier, two
+    %   panels over worker counts {2,4,8,12,16}: (left) wall-clock minimum (log) with
+    %   95% bootstrap CI, (right) total operational cost. One line per strategy.
+    % CAPTION MUST STATE: the small tier; the two panels (wall-clock min, total cost);
+    %   the worker-count axis; the two strategies; the minimum estimator and CI; that
+    %   the partitioned strategy ran the SMALL tier only and the medium/large
+    %   partitioned runs did not complete (executor OOM) -- an editorial overlay
+    %   sourced from Table~\ref{tab:distributed-join-descriptive-statistics}, not the
+    %   measurement cache.
+    % DESCRIPTIVE ONLY: report the magnitude gap; no interpretation.
+    \includegraphics[width=\textwidth]{Chapters/06-results/sub-chapters/figures/06-distributed-strategy-contrast.png}
+    \caption[Broadcast versus partitioned strategy at the small tier]{Broadcast versus
+    partitioned join strategy at the small tier across worker counts
+    $\{2, 4, 8, 12, 16\}$: the left panel shows the wall-clock minimum (logarithmic,
+    with \num{95}\% bootstrap confidence interval) and the right panel the total
+    operational cost. The partitioned strategy completed only at the small tier; the
+    medium and large partitioned runs did not complete (executor out-of-memory) and
+    are noted as such from Table~\ref{tab:distributed-join-descriptive-statistics}
+    rather than drawn from the cache. Series colour encodes the join strategy using
+    the thesis palette.}
+    \label{fig:distributed-strategy-contrast}
+\end{figure}
+
 \subsection{Absolute performance vs. single-node baselines}
 \label{results:distributed-join-and-scaling:absolute-performance-vs-single-node-baselines}
 

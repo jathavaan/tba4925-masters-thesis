@@ -193,6 +193,34 @@
     \label{fig:appendix-cv-dispersion}
 \end{figure}
 
+\subsection{Run-to-run reproducibility}
+\label{appendix:supplementary-results:reproducibility}
+
+% TODO (prose): one sentence contrasting between-pass reproducibility (the lines stay
+% flat across passes) with within-pass repeatability (the shaded bands are thin),
+% referring to Figure~\ref{fig:appendix-reproducibility}.
+
+\begin{figure}[H]
+    \centering
+    % WHAT IT SHOWS: for a few representative cells, the per-pass minimum elapsed time
+    %   across benchmark passes 1-30 (line; between-pass reproducibility) with the
+    %   within-pass bootstrap CI half-width on the minimum shaded behind it (within-
+    %   pass repeatability), on a log y-axis.
+    % CAPTION MUST STATE: that the x-axis is the benchmark pass (1-30); that the line
+    %   is the per-pass minimum and the shaded band the within-pass bootstrap CI
+    %   half-width; the representative cells; the log axis; that this contrasts
+    %   between-pass reproducibility with within-pass repeatability.
+    % DESCRIPTIVE ONLY.
+    \includegraphics[width=0.8\textwidth]{Chapters/09-appendix/sub-chapters/figures/09-reproducibility.png}
+    \caption[Run-to-run reproducibility]{Per-pass minimum elapsed time across the
+    \num{30} benchmark passes for a few representative cells (the line), with the
+    within-pass \num{95}\% bootstrap confidence-interval half-width on the minimum
+    shaded behind each line, on a logarithmic axis. The line traces between-pass
+    reproducibility and the band the within-pass repeatability. Colour encodes
+    configuration using the thesis palette.}
+    \label{fig:appendix-reproducibility}
+\end{figure}
+
 \subsection{Time-of-day stability}
 \label{appendix:supplementary-results:time-of-day-stability}
 
@@ -244,6 +272,66 @@
     cannot use). Marker colour encodes the configuration using the thesis palette;
     the source counter is \texttt{psutil.Process.cpu\_times}.}
     \label{fig:appendix-cpu-decomposition}
+\end{figure}
+
+\subsection{CPU-to-wall-clock ratio}
+\label{appendix:supplementary-results:cpu-wall-ratio}
+
+% TODO (prose): one sentence on which configurations are compute-bound (ratio above
+% 1.0, several busy cores) versus transfer- or IO-bound (ratio below 1.0), referring
+% to Figure~\ref{fig:appendix-cpu-wall-ratio}.
+
+\begin{figure}[H]
+    \centering
+    % WHAT IT SHOWS: grouped bars of the CPU-to-wall-clock ratio,
+    %   (cpu_user + cpu_system)/elapsed, across workload x tier cells, one bar per
+    %   configuration, with a reference line at 1.0 (one fully-busy core). The ratio
+    %   is formed from per-cell SUMS to be robust to the sub-millisecond CPU counter
+    %   resolution.
+    % CAPTION MUST STATE: the ratio definition and the per-cell-sum computation; the
+    %   reference line at 1.0; that above 1.0 is multi-core compute-bound and below
+    %   1.0 is transfer- or IO-bound; the per-configuration grouping.
+    % DESCRIPTIVE ONLY.
+    \includegraphics[width=0.9\textwidth]{Chapters/09-appendix/sub-chapters/figures/09-cpu-wall-ratio.png}
+    \caption[CPU-to-wall-clock ratio]{Ratio of CPU time to wall-clock time,
+    $(\mathrm{cpu}_{\mathrm{user}} + \mathrm{cpu}_{\mathrm{sys}})/\mathrm{elapsed}$,
+    for each single-machine configuration across the query patterns and size tiers,
+    with a reference line at \num{1.0} (one fully-busy core). The ratio is computed
+    from per-cell sums of CPU and wall-clock time to be robust to the sub-millisecond
+    resolution of the per-iteration CPU counters. A ratio above \num{1.0} indicates
+    multi-core compute-bound execution; below \num{1.0} indicates transfer- or
+    IO-bound execution. Colour encodes configuration using the thesis palette; the
+    source counter is \texttt{psutil.Process.cpu\_times}.}
+    \label{fig:appendix-cpu-wall-ratio}
+\end{figure}
+
+\subsection{Same-engine size scaling}
+\label{appendix:supplementary-results:size-scaling}
+
+% TODO (prose): one sentence on how each engine's wall-clock minimum grows from the
+% small to the large tier (its growth factor), referring to
+% Figure~\ref{fig:appendix-size-scaling-slope}.
+
+\begin{figure}[H]
+    \centering
+    % WHAT IT SHOWS: same-engine size-scaling slopegraph, one panel per query pattern.
+    %   Within each panel, one line per engine traces the wall-clock minimum (log)
+    %   across the size tiers, with the 95% bootstrap CI and the growth factor
+    %   (largest tier / smallest tier) annotated. The Shapefile path ran the small
+    %   tier only and appears as a single small-tier point.
+    % CAPTION MUST STATE: the per-pattern panels; the tier x-axis and log y-axis; the
+    %   minimum estimator with 95% bootstrap CI; the annotated growth factor; that
+    %   Shapefile is a small-only point.
+    % DESCRIPTIVE ONLY.
+    \includegraphics[width=0.95\textwidth]{Chapters/09-appendix/sub-chapters/figures/09-size-scaling-slope.png}
+    \caption[Same-engine size scaling]{Wall-clock minimum of each single-machine
+    engine across the size tiers, one panel per query pattern, on a logarithmic axis
+    with the \num{95}\% bootstrap confidence interval. Each multi-tier line is
+    annotated with its growth factor (the largest tier divided by the smallest tier).
+    The Shapefile configuration ran at the small tier only and is shown as a single
+    small-tier point rather than a slope. Colour encodes configuration using the
+    thesis palette.}
+    \label{fig:appendix-size-scaling-slope}
 \end{figure}
 
 \subsection{Per-cell chart grid}
@@ -324,4 +412,31 @@
     quantities that feed the execution-phase breakdown of
     Figure~\ref{fig:distributed-execution-phase-breakdown}.}
     \label{fig:appendix-spark-metrics}
+\end{figure}
+
+% TODO (prose): one sentence on the per-stage duration profile by worker count --
+% which stage dominates and how it shrinks as workers increase -- referring to
+% Figure~\ref{fig:appendix-spark-stage-profile}.
+
+\begin{figure}[H]
+    \centering
+    % WHAT IT SHOWS: Spark per-stage duration profile, one small panel per worker count
+    %   {2,4,8,12,16} for the broadcast strategy (large tier). Each panel is a
+    %   horizontal profile of the median duration of each Spark stage (stage index on
+    %   the y-axis), parsed from the per-iteration stage_durations_ms array. Finer than
+    %   the coarse three-phase split.
+    % CAPTION MUST STATE: that the panels are worker counts; that each bar is a Spark
+    %   stage's median duration; the broadcast strategy and tier shown; the source
+    %   array; that this refines the three-phase breakdown.
+    % DESCRIPTIVE ONLY.
+    \includegraphics[width=\textwidth]{Chapters/09-appendix/sub-chapters/figures/09-spark-stage-profile.png}
+    \caption[Spark per-stage duration profile]{Median duration of each Spark stage for
+    the broadcast strategy at the large tier, one panel per worker count
+    $\{2, 4, 8, 12, 16\}$, parsed from the per-iteration \texttt{stage\_durations\_ms}
+    array recorded by the \texttt{SparkListener}. Each horizontal bar is one stage's
+    median duration (stage index on the vertical axis); the long tail of
+    near-zero-duration stages is trimmed. This is a finer view than the coarse
+    three-phase breakdown of Figure~\ref{fig:distributed-execution-phase-breakdown}.
+    Stage colour uses a lightness ramp of the broadcast palette colour.}
+    \label{fig:appendix-spark-stage-profile}
 \end{figure}

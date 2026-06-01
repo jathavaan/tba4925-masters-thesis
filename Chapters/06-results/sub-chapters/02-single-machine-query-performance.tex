@@ -7,10 +7,13 @@
 %   descriptively across the three outcome dimensions in order: data transferred,
 %   then wall-clock time, then operational cost. Results only; interpretation is
 %   deferred to the Discussion (Chapter~\ref{ch:discussion}).
-% GRID RULE (every grid figure in this section): the kNN workload ran at the
-%   small tier only, and the Shapefile configuration ran at the small tier only;
-%   leave those slots as did-not-run-by-design. Do not draw an empty bar, a zero,
-%   or any marker that would imply a missing or failed cell.
+% GRID RULE (every grid figure in this section): the Shapefile (GeoPandas)
+%   configuration ran at the small tier only; leave its beyond-small slots as
+%   did-not-run-by-design. The kNN workload DID run at BOTH the small and large
+%   tiers for DuckDB and PostGIS -- only Shapefile is small-only -- consistent with
+%   the cache and the appendix cardinality-agreement table; do NOT mark kNN-large
+%   as did-not-run. Do not draw an empty bar, a zero, or any marker that would
+%   imply a missing or failed cell where a configuration did not run by design.
 
 % TODO (prose): section-opening paragraph per the orienting comment above.
 
@@ -35,8 +38,8 @@
     %   bootstrap CI; that only bytes RECEIVED are shown.
     % ANNOTATE: Shapefile is read from the LOCAL filesystem, so its network bytes
     %   are ~0; label this explicitly so the near-zero cell is not misread as a
-    %   missing cell. Leave the Shapefile-beyond-small and kNN-large slots as
-    %   did-not-run-by-design.
+    %   missing cell. Leave the Shapefile-beyond-small slots as did-not-run-by-design
+    %   (kNN DID run at the large tier for DuckDB and PostGIS).
     % DESCRIPTIVE ONLY: report the distributions; no interpretation (-> Discussion).
     \includegraphics[width=0.95\textwidth]{Chapters/06-results/sub-chapters/figures/06-single-machine-bytes-transferred.png}
     \caption[Data transferred per single-machine configuration]{Network bytes
@@ -50,6 +53,43 @@
     approximately zero and is labelled as such rather than left blank. Colour
     encodes configuration using the thesis palette.}
     \label{fig:single-machine-bytes-transferred}
+\end{figure}
+
+% TODO (prose): in the data-transferred readout, add a sentence on the
+% received-versus-sent asymmetry per configuration (received dominates; sent is a
+% small fraction), referring to Figure~\ref{fig:single-machine-bytes-directional}.
+% No interpretation (-> Discussion).
+
+\begin{figure}[H]
+    \centering
+    % WHAT IT SHOWS: directional network transfer on the same workload x tier grid
+    %   as the received-only bytes figure, but each configuration is a pair of
+    %   mirrored bars diverging from a central zero -- bytes RECEIVED to the right,
+    %   bytes SENT to the left -- on a symmetric-log axis, with the median estimator
+    %   and its 95% bootstrap CI on each direction. A bottom panel shows the same
+    %   received/sent split at the Sedona client boundary (the distributed
+    %   national-scale join, driver process).
+    % CAPTION MUST STATE: the diverging-bar encoding (received right, sent left); the
+    %   symmetric-log axis; the median estimator with 95% bootstrap CI; that the
+    %   Shapefile/local path reads from the local filesystem so both directions are
+    %   ~0 and are annotated as not like-for-like; that the bottom panel is the
+    %   Sedona client boundary shown for context.
+    % DESCRIPTIVE ONLY: report the magnitudes and the received/sent asymmetry; no
+    %   interpretation (-> Discussion).
+    \includegraphics[width=0.95\textwidth]{Chapters/06-results/sub-chapters/figures/06-single-machine-bytes-directional.png}
+    \caption[Directional network transfer per single-machine configuration]{Network
+    bytes received versus sent for each single-machine configuration, in the same
+    workload-pattern (rows) by size-tier (columns) grid as the received-only figure.
+    Each configuration is a pair of mirrored bars diverging from a central zero --
+    bytes received to the right, bytes sent to the left -- on a symmetric-log axis,
+    with the median estimator and its \num{95}\% bootstrap confidence interval marked
+    on each direction. The Shapefile configuration reads from the local filesystem,
+    so both directions are approximately zero and are labelled as not like-for-like
+    rather than plotted as comparable transfer. The bottom panel shows the same
+    received-versus-sent split at the Sedona client boundary for the distributed
+    national-scale join, included for context. Colour encodes configuration using the
+    thesis palette.}
+    \label{fig:single-machine-bytes-directional}
 \end{figure}
 
 \begin{figure}[H]
@@ -68,6 +108,34 @@
     \label{fig:single-machine-bytes-vs-time}
 \end{figure}
 
+% TODO (prose): add a sentence relating network bytes received to the number of
+% result rows returned, referring to Figure~\ref{fig:bytes-vs-cardinality} and the
+% cardinality-agreement table (Table~\ref{tab:appendix-cardinality-agreement}). No
+% interpretation (-> Discussion).
+
+\begin{figure}[H]
+    \centering
+    % WHAT IT SHOWS: log-log scatter of median network bytes received (y) against
+    %   result cardinality in rows (x), one marker per workload x tier x configuration
+    %   cell. Colour encodes configuration and marker glyph the query pattern. Faint
+    %   diagonal guidelines mark constant bytes-per-result-row rates.
+    % CAPTION MUST STATE: the two log axes; that each marker is one cell at its median;
+    %   the colour=configuration and glyph=pattern encodings; that the not-recorded
+    %   cardinality of the local Shapefile path (-1) is excluded; that the diagonals
+    %   are constant bytes-per-row guidelines.
+    % DESCRIPTIVE ONLY: report the placement of cells; no interpretation.
+    \includegraphics[width=0.8\textwidth]{Chapters/06-results/sub-chapters/figures/06-bytes-vs-cardinality.png}
+    \caption[Network transfer versus result cardinality]{Median network bytes
+    received against result cardinality (the returned row count) on logarithmic axes,
+    with one marker per workload pattern, size tier, and configuration cell. Colour
+    encodes configuration and marker glyph encodes the query pattern. The local
+    Shapefile path does not record cardinality (a sentinel of $-1$) and is excluded.
+    Faint diagonal guidelines mark constant bytes-per-result-row rates, so cells of
+    equal cardinality align vertically and the per-row transfer cost can be read off.
+    Colour uses the thesis palette.}
+    \label{fig:bytes-vs-cardinality}
+\end{figure}
+
 \subsection{Wall-clock time}
 \label{results:single-machine-query-performance:wall-clock-time}
 
@@ -84,7 +152,8 @@
     % CAPTION MUST STATE: the grid layout; that the body is a distributional
     %   (raincloud) view; that the marked point is the MINIMUM estimator (per the
     %   methodology) with a 95% bootstrap CI; log y-axis.
-    % Leave the Shapefile-beyond-small and kNN-large slots as did-not-run-by-design.
+    % Leave the Shapefile-beyond-small slots as did-not-run-by-design (kNN DID run
+    %   at the large tier for DuckDB and PostGIS).
     % DESCRIPTIVE ONLY: report the distributions; no interpretation (-> Discussion).
     \includegraphics[width=0.95\textwidth]{Chapters/06-results/sub-chapters/figures/06-single-machine-wall-clock-time.png}
     \caption[Wall-clock time per single-machine configuration]{Wall-clock time of
@@ -145,7 +214,8 @@
     %   model is four-term -- see
     %   Section~\ref{research-design-and-methodology:metrics-and-cost-model:cost-model}
     %   and the rates in Table~\ref{tab:cost-model-unit-prices}.
-    % Leave the Shapefile-beyond-small and kNN-large slots as did-not-run-by-design.
+    % Leave the Shapefile-beyond-small slots as did-not-run-by-design (kNN DID run
+    %   at the large tier for DuckDB and PostGIS).
     % DESCRIPTIVE ONLY: report the stacks; no interpretation (-> Discussion).
     \includegraphics[width=0.9\textwidth]{Chapters/06-results/sub-chapters/figures/06-single-machine-operational-cost.png}
     \caption[Operational cost per single-machine configuration]{Operational cost
@@ -156,4 +226,35 @@
     and Table~\ref{tab:cost-model-unit-prices}. Term colour uses the thesis
     palette.}
     \label{fig:single-machine-operational-cost}
+\end{figure}
+
+% TODO (prose): add a sentence locating each configuration in the cost-time plane per
+% pattern (which decision quadrant it falls in), referring to
+% Figure~\ref{fig:single-machine-cost-time-quadrant}. No interpretation (-> Discussion).
+
+\begin{figure}[H]
+    \centering
+    % WHAT IT SHOWS: single-machine cost-time decision quadrant, one scatter panel per
+    %   workload pattern. x = total operational cost (USD, log), y = wall-clock minimum
+    %   (s, log). Marker glyph encodes configuration, colour encodes tier; per-panel
+    %   median cross-hairs split the plane into four labelled quadrants (fast+cheap /
+    %   slow+cheap / fast+costly / slow+costly). The national-scale panel anchors the
+    %   best-worker Sedona point as a star.
+    % CAPTION MUST STATE: the two log axes; the glyph=configuration and colour=tier
+    %   encodings; the median cross-hairs and the four quadrant labels; the single
+    %   Sedona best-worker anchor in the national-scale panel; that this is the
+    %   single-machine analogue of the distributed cost-time Pareto.
+    % DESCRIPTIVE ONLY: report quadrant membership; no interpretation.
+    \includegraphics[width=0.95\textwidth]{Chapters/06-results/sub-chapters/figures/06-single-machine-cost-time-quadrant.png}
+    \caption[Single-machine cost-time decision quadrant]{Operational cost against
+    wall-clock time for the single-machine configurations, one panel per workload
+    pattern, on logarithmic axes. Marker glyph encodes the configuration and colour
+    encodes the size tier; per-panel median cross-hairs split each panel into the four
+    decision quadrants -- fast and cheap, slow and cheap, fast and costly, slow and
+    costly. The national-scale panel additionally anchors the best-worker Sedona point
+    (the lowest-time broadcast worker count) as a star, for context with the
+    single-machine engines. This is the single-machine analogue of the distributed
+    cost-time Pareto (Figure~\ref{fig:distributed-cost-time-pareto}). Colour uses the
+    thesis palette.}
+    \label{fig:single-machine-cost-time-quadrant}
 \end{figure}

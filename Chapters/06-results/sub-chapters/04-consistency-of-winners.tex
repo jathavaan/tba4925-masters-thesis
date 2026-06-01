@@ -26,8 +26,9 @@
     %   columns = outcome dimension (data transferred, wall-clock time, operational
     %   cost). Each cell is coloured by the WINNING configuration.
     % CAPTION MUST STATE: the row/column layout; that cell colour is the winning
-    %   configuration; and that Shapefile-beyond-small and kNN-large rows carry no
-    %   winner where those cells did not run by design (not a missing cell).
+    %   configuration; and that each cell's winner is taken among the configurations
+    %   that ran it -- Shapefile ran the small tier only (not a candidate at the large
+    %   tier), while kNN DID run at both tiers for DuckDB and PostGIS.
     % DESCRIPTIVE ONLY: read the winners; no interpretation (-> Discussion).
     \includegraphics[width=0.85\textwidth]{Chapters/06-results/sub-chapters/figures/06-winners-matrix.png}
     \caption[Consistency of winners across dimensions]{Winning configuration for
@@ -66,6 +67,31 @@
     system that leads on one dimension trails on another. Colour encodes the system
     using the thesis palette.}
     \label{fig:outcome-parallel-coordinates}
+\end{figure}
+
+% TODO (prose): add a sentence on how each configuration's wall-clock ordering across
+% the query patterns changes at a fixed tier (which leads on which pattern),
+% referring to Figure~\ref{fig:single-machine-cross-pattern}. No interpretation.
+
+\begin{figure}[H]
+    \centering
+    % WHAT IT SHOWS: cross-pattern single-machine comparison, one panel per size tier.
+    %   x = workload pattern, grouped bars per configuration, y = wall-clock minimum
+    %   (s, log) with the 95% bootstrap CI as a whisker.
+    % CAPTION MUST STATE: the per-tier panels; the workload-pattern x-axis and grouped
+    %   bars per configuration; the log y-axis; the minimum estimator with 95%
+    %   bootstrap CI; that the Shapefile configuration ran the small tier only and is
+    %   labelled did-not-run-by-design at the large tier.
+    % DESCRIPTIVE ONLY: report the per-pattern orderings; no interpretation.
+    \includegraphics[width=\textwidth]{Chapters/06-results/sub-chapters/figures/06-single-machine-cross-pattern.png}
+    \caption[Cross-pattern single-machine comparison by tier]{Wall-clock minimum of
+    each single-machine configuration across the query patterns, one panel per size
+    tier, on a logarithmic axis with the \num{95}\% bootstrap confidence interval as a
+    whisker. Bars are grouped by configuration within each workload pattern. The
+    Shapefile configuration ran at the small tier only and is labelled as
+    did-not-run-by-design at the large tier rather than left as a silent gap. Colour
+    encodes configuration using the thesis palette.}
+    \label{fig:single-machine-cross-pattern}
 \end{figure}
 
 \subsection{Aggregate normalized performance}
@@ -133,6 +159,36 @@
     and a bump chart across the three tiers of the distributed join. Line colour
     encodes configuration using the thesis palette.}
     \label{fig:ranking-stability}
+\end{figure}
+
+% TODO (prose): add a sentence contrasting the per-dimension rank ordering (portable)
+% with the absolute geomean-normalized magnitudes (not portable), referring to
+% Figure~\ref{fig:rank-portability} and Table~\ref{tab:geomean-normalized-performance}.
+% No interpretation (-> Discussion).
+
+\begin{figure}[H]
+    \centering
+    % WHAT IT SHOWS: two panels over the three outcome dimensions (time, bytes, cost).
+    %   (left) per-dimension RANK of each system as a slopegraph (1 = best); (right)
+    %   the same systems' ABSOLUTE geometric-mean-normalized magnitude per dimension
+    %   on a log axis (1.0 = the dimension's best).
+    % CAPTION MUST STATE: the shared systems and three dimensions; that the left panel
+    %   is rank (1 = best) and the right is the geomean-normalized magnitude (log, 1.0
+    %   = best) of Table~\ref{tab:geomean-normalized-performance}; that it is distinct
+    %   from the rank-vs-tier ranking-stability figure.
+    % DESCRIPTIVE ONLY: report the rank crossings and the magnitude spread; no
+    %   interpretation.
+    \includegraphics[width=\textwidth]{Chapters/06-results/sub-chapters/figures/06-rank-portability.png}
+    \caption[Rank portability versus absolute magnitude]{Per-system outcomes across
+    the three dimensions -- time, bytes, and cost -- in two panels. The left panel is
+    a slopegraph of each system's rank on each dimension (\num{1} = best), so a
+    near-flat line is a portable ordering; the right panel shows the same systems'
+    absolute geometric-mean-normalized magnitude per dimension on a logarithmic axis
+    (\num{1.0} = the dimension's best), from
+    Table~\ref{tab:geomean-normalized-performance}. The figure is distinct from the
+    rank-versus-tier ranking-stability figure (Figure~\ref{fig:ranking-stability}).
+    Colour encodes the system using the thesis palette.}
+    \label{fig:rank-portability}
 \end{figure}
 
 \subsection{Statistical separability}
