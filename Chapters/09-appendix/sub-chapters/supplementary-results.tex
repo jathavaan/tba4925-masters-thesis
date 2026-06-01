@@ -118,7 +118,10 @@
         \toprule
         \textbf{Workload} & \textbf{Configuration} & \textbf{Tier} & {\textbf{$n$}} & {\textbf{Min.\ (\si{\second})}} & {\textbf{Median (\si{\second})}} & {\textbf{IQR (\si{\second})}} & {\textbf{CV}} & {\textbf{CI hw.\ (\%)}} \\
         \midrule
-        \input{Chapters/09-appendix/sub-chapters/tables/08-summary-statistics.tex}
+        % \inputtablebody (not \input): a plain \input of a \\-terminated fragment
+        % collides with the following \bottomrule across the file boundary in a
+        % tabular (-> "Misplaced \noalign"). See \inputtablebody in packages.sty.
+        \inputtablebody{Chapters/09-appendix/sub-chapters/tables/08-summary-statistics.tex}
         \bottomrule
     \end{tabular}
     \caption[Per-cell summary statistics]{Per-cell summary statistics for every
