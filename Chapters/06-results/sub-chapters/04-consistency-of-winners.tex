@@ -1,112 +1,50 @@
 \section{Consistency of winners (RQ3)}
 \label{results:consistency-of-winners}
 
-% ORIENTING COMMENT (section intro prose -- TODO below). One paragraph, no
-%   numbers: RQ3 is an analysis over the RQ1/RQ2 outputs, not a new measurement
-%   (Section~\ref{research-design-and-methodology:statistical-analysis:answering-rq3-consistency-across-patterns}).
-%   Report which configuration wins per (workload pattern, outcome dimension),
-%   how separable the rankings are, and the magnitude of the effects. Results
-%   only; interpretation is deferred to the Discussion (Chapter~\ref{ch:discussion}).
-% IMPORTANT: the Friedman chi-squared omnibus test, once available, is reported as a
-%   SENTENCE plus its statistic in the prose below -- it is NOT a float. The statistic
-%   currently on file is the wrong test (see the statistical-separability subsection): the
-%   omnibus sentence is MISSING pending a recomputed cross-cell Friedman. Do not wrap it in a
-%   figure or table when it lands.
-
-% TODO (prose): section-opening paragraph per the orienting comment above.
+The preceding sections reported single-machine query performance (Section~\ref{results:single-machine-query-performance}) and the distributed national-scale join (Section~\ref{results:distributed-join-and-scaling}) on their own terms. \acrshort{rq}3 reads those outputs together rather than collecting new measurements (Section~\ref{research-design-and-methodology:statistical-analysis:answering-rq3-consistency-across-patterns}), asking which configuration records the best value in each combination of workload pattern and outcome dimension, how separable the resulting rankings are, and how large the differences between configurations are. The readings that follow report the winners, the rank orderings across tiers and dimensions, and the points where one ordering inverts another; interpretation of these patterns is deferred.
 
 \subsection{Winners across dimensions}
 \label{results:consistency-of-winners:winners-across-dimensions}
 
-% TODO (prose): factual readout only -- which configuration wins each cell and
-% where the winner changes across patterns/tiers/dimensions. Refer to
-% Figure~\ref{fig:winners-matrix}. No interpretation (-> Discussion).
-% OBSERVATIONS (from the per-cell winners data): on RUN-TIME, PostGIS wins every
-%   single-machine cell; on the national join, Apache Sedona wins the medium and large
-%   tiers. On BYTES, the local Shapefile path wins the small single-machine cells it ran
-%   (its network transfer is approximately zero), with PostGIS or DuckDB winning the large
-%   cells. On COST, the winner is mixed (DuckDB on some small cells, PostGIS on the large
-%   single-machine cells, Sedona on the medium and large join). FLAG THE TIES: at the join
-%   small tier the PostGIS-vs-Sedona difference on time and bytes is NOT statistically
-%   significant, and the join medium tier is likewise not significant -- report these cells
-%   as statistically tied rather than naming a winner. The chapter must say "tied" where a
-%   test is not significant.
+Figure~\ref{fig:winners-matrix} records the winning configuration in every workload pattern and size tier on each of the three outcome dimensions, where the winner is the configuration with the best value among those that ran the cell. On wall-clock time, PostGIS recorded the lowest run-time in every single-machine cell across both tiers, while on the national-scale join Apache Sedona held the lowest run-time at the medium and large tiers. The bytes dimension separated differently: the local Shapefile path recorded the fewest bytes in each small-tier single-machine cell it ran, its network transfer measured at approximately zero (Figure~\ref{fig:single-machine-bytes-transferred}), whereas at the large tier the lowest transfer fell to DuckDB for the bounding-box filter and to PostGIS for the k-nearest-neighbor search and the point-in-polygon lookup. On operational cost the winner was mixed: DuckDB for the bounding-box filter and the k-nearest-neighbor search at the small tier, the local Shapefile path for the small-tier point-in-polygon lookup, PostGIS across the large single-machine cells, and Apache Sedona at the medium and large join. The national join small and medium tiers do not yield a clear winner on every dimension: on run-time and on bytes the leading configuration was not statistically separated from its nearest competitor under the Holm-adjusted pairwise tests (Table~\ref{tab:appendix-pairwise-statistics}), so those entries are read as statistically tied rather than won.
 
 \begin{figure}[H]
     \centering
-    % WHAT IT SHOWS: winners matrix / heatmap. Rows = workload pattern x size tier;
-    %   columns = outcome dimension (data transferred, wall-clock time, operational
-    %   cost). Each cell is coloured by the WINNING configuration.
-    % CAPTION MUST STATE: the row/column layout; that cell colour is the winning
-    %   configuration; and that each cell's winner is taken among the configurations
-    %   that ran it -- Shapefile ran the small tier only (not a candidate at the large
-    %   tier), while kNN DID run at both tiers for DuckDB and PostGIS.
-    % DESCRIPTIVE ONLY: read the winners; no interpretation (-> Discussion).
     \includegraphics[width=0.85\textwidth]{Chapters/06-results/sub-chapters/figures/06-winners-matrix.pdf}
-    \caption[Consistency of winners across dimensions]{Winning configuration for
-    every workload pattern and size tier (rows) on each outcome dimension
-    (columns: data transferred, wall-clock time, operational cost). Cells that did not
-    run by design carry no winner and are marked accordingly.}
+    \caption[Winning configuration across dimensions and tiers]{Winning
+    configuration in each workload pattern and size tier (rows) on each outcome
+    dimension (columns, left to right: wall-clock time, data transferred, and
+    operational cost). Cell color encodes the configuration with the best value
+    in that cell, chosen among the configurations that ran it; the local
+    Shapefile path was exercised at the small tier only and is therefore not a
+    candidate in the large-tier single-machine cells, while the national-scale
+    join is contested by the engines measured on it.}
     \label{fig:winners-matrix}
 \end{figure}
 
-% TODO (prose): factual readout only -- trace each system's polyline across the four
-% outcome axes and name where polylines cross (outcome inversions). Refer to
-% Figure~\ref{fig:outcome-parallel-coordinates}. No interpretation (-> Discussion).
-% OBSERVATIONS (from the geometric-mean normalized values): the polylines cross between
-%   axes -- PostGIS and Sedona lead on time and cost but trail the local Shapefile path on
-%   bytes, while the local path leads on bytes but trails badly on time. Name these
-%   crossings as outcome inversions (a system that leads one dimension trails another);
-%   do not interpret why.
+Figure~\ref{fig:outcome-parallel-coordinates} draws one polyline per system across the four outcome axes of time, bytes, cost, and mean rank, each axis scaled independently with the best value at the bottom. The polylines cross between axes rather than running parallel. PostGIS and Apache Sedona sit near the bottom of the time and cost axes but rise on the bytes axis, where the local Shapefile path sits lowest; the local path sits near the top of the time axis in turn. Each crossing is an outcome inversion, a system that leads on one dimension and trails on another, and the figure gathers several of them in one frame.
 
 \begin{figure}[H]
     \centering
-    % WHAT IT SHOWS: parallel-coordinates plot. One polyline per system family
-    %   (DuckDB, PostGIS, GeoPandas+Shapefile, Sedona) across four outcome axes --
-    %   wall-clock time, bytes, operational cost, and mean rank. Each axis is scaled
-    %   independently with the best (lowest) value at the bottom; lines that cross
-    %   between axes are outcome inversions, surfaced in a single frame.
-    % CAPTION MUST STATE: that each polyline is one system; the four outcome axes;
-    %   that the time/bytes/cost axes use the geometric-mean normalized values of
-    %   Table~\ref{tab:geomean-normalized-performance}; that axes are independently
-    %   scaled (best at bottom) with their real extremes annotated; that crossings
-    %   denote inversions.
-    % DESCRIPTIVE ONLY: report the crossings; no interpretation (-> Discussion).
     \includegraphics[width=0.9\textwidth]{Chapters/06-results/sub-chapters/figures/06-outcome-parallel-coordinates.pdf}
-    \caption[Per-system outcomes across dimensions]{Per-system outcomes across the
-    four outcome dimensions -- wall-clock time, bytes transferred, operational cost,
-    and mean rank -- drawn as a parallel-coordinates plot with one polyline per
-    system. The time, bytes, and cost axes use the geometric-mean normalized values
-    of Table~\ref{tab:geomean-normalized-performance}; each axis is scaled
-    independently with the best (lowest) value at the bottom and its real extremes
-    annotated. Polylines that cross between axes mark outcome inversions, where a
-    system that leads on one dimension trails on another.}
+    \caption[Per-system outcomes across dimensions]{Per-system outcomes across
+    the four outcome dimensions, drawn as a parallel-coordinates plot with one
+    polyline per system: wall-clock time, bytes transferred, operational cost,
+    and mean rank. The time, bytes, and cost axes use the geometric-mean
+    normalized values of Table~\ref{tab:geomean-normalized-performance}; each
+    axis is scaled independently with the best (lowest) value at the bottom and
+    its real extremes annotated. Polylines that cross between axes mark outcome
+    inversions, where a system that leads on one dimension trails on another.}
     \label{fig:outcome-parallel-coordinates}
 \end{figure}
 
 \subsection{Aggregate normalized performance}
 \label{results:consistency-of-winners:aggregate-normalized-performance}
 
-% TODO (prose): factual readout only -- the geometric-mean normalized score per
-% configuration. Refer to Table~\ref{tab:geomean-normalized-performance}. No
-% interpretation (-> Discussion).
-% COVERAGE CAVEAT (state it): the single-machine configurations (DuckDB, PostGIS, local
-%   Shapefile) are normalized over the single-machine query patterns, while Apache Sedona is
-%   normalized over the national-join workloads; the per-workload "best" baseline therefore
-%   differs and the configurations are not all measured on the same workload set. Report the
-%   scores and this scope; do not read the table as a single common ranking.
+Table~\ref{tab:geomean-normalized-performance} aggregates these per-cell positions into a single geometric-mean normalized score per configuration and dimension, where \num{1.0} marks the best configuration on a dimension and larger values are proportionally worse (Section~\ref{research-design-and-methodology:statistical-analysis:answering-rq3-consistency-across-patterns}). The scores spread widely within each row. On time, Apache Sedona and PostGIS sit near the floor at \num{1.01} and \num{1.66}, while the local Shapefile path and DuckDB reach \num{226.10} and \num{398.45}. On bytes the order rearranges, with the local path best at \num{1.00} and the other three between \num{5.18} and \num{8.23}. On cost the four configurations fall within a narrow band, from \num{1.70} for PostGIS to \num{2.76} for the local path. These scores are not a single common ranking: each configuration is normalized only over the workloads it ran, and those sets differ, the local Shapefile path covering the small-tier single-machine cells, Apache Sedona the national-join tiers, and DuckDB and PostGIS the single-machine cells together with the join tiers they ran, so the per-workload baseline behind each column is not shared.
 
 \begin{table}[H]
     \centering
-    % WHAT IT SHOWS: geometric-mean normalized performance. For each configuration,
-    %   the geometric mean of its per-workload slowdown relative to the best
-    %   configuration on that workload (1.0 = best). One value per configuration
-    %   per outcome dimension.
-    % CAPTION MUST STATE: the normalization (per-workload slowdown vs. the best,
-    %   then geometric mean across workloads, so 1.0 is best); and cite the
-    %   geometric-mean rationale (Fleming--Wallace).
-    % DATA: single-sourced via \inputtablebody from the analysis fragment
-    %   (tables/06-rq3-geomean.tex) -- do NOT edit rows by hand. Header, caption, label stay here.
     \setlength{\tabcolsep}{8pt}
     \renewcommand{\arraystretch}{1.2}
     \begin{tabular}{@{}l r r r@{}}
@@ -117,10 +55,11 @@
         \bottomrule
     \end{tabular}
     \caption[Geometric-mean normalized performance]{Geometric-mean normalized
-    performance per configuration. For each workload, a configuration's outcome is
-    expressed as its slowdown relative to the best configuration on that workload
-    (\num{1.0} denotes the best), and the values are aggregated across workloads by the
-    geometric mean, the appropriate summary for normalized ratios
+    performance per configuration. For each workload a configuration ran, its
+    outcome is expressed as the slowdown relative to the best configuration on
+    that workload (\num{1.0} denotes the best), and the values are aggregated
+    across that configuration's workloads by the geometric mean, the appropriate
+    summary for normalized ratios
     \parencite{fleming1986_how_not_to_lie_with_statistics}. Lower is better.}
     \label{tab:geomean-normalized-performance}
 \end{table}
@@ -128,154 +67,87 @@
 \subsection{Ranking stability}
 \label{results:consistency-of-winners:ranking-stability}
 
-% TODO (prose): factual readout only -- whether configuration rankings hold across
-% tiers, and where inversions occur. Refer to Figure~\ref{fig:ranking-stability}.
-% NOTE: the figure is faceted per workload pattern, with rank (1 = fastest) against tier;
-%   the single-machine patterns span two tiers (slopegraph) and the national join spans
-%   three (bump). Report whether each line stays flat (stable rank) or crosses (inversion).
-% No interpretation (-> Discussion).
+Figure~\ref{fig:ranking-stability} traces configuration rank by run-time as the size tier changes, with one line per configuration faceted by workload pattern and rank \num{1} marking the fastest. Across the three single-machine patterns the lines stay flat: PostGIS held rank \num{1} at both the small and the large tier for the bounding-box filter, the k-nearest-neighbor search, and the point-in-polygon lookup, with DuckDB second at the large tier in each. The national-scale join behaves differently. Between the small and the medium tier the lines cross: PostGIS falls from rank \num{1} to rank \num{3}, Apache Sedona rises from rank \num{2} to rank \num{1} and holds that position at the large tier, and DuckDB moves from rank \num{3} to rank \num{2}. The join therefore shows a rank inversion across tiers that the single-machine patterns do not.
 
 \begin{figure}[H]
     \centering
-    % WHAT IT SHOWS: ranking-stability slopegraph / bump chart. Rank (y) against
-    %   size tier (x), one line per configuration, faceted or coloured per
-    %   workload; lines that cross expose rank inversions across tiers.
-    % CAPTION MUST STATE: the axes (rank vs. tier); that each line is a
-    %   configuration; that crossings are rank inversions.
-    % NOTE: this is a SLOPEGRAPH where only two RQ1 tiers exist (small, large),
-    %   and a BUMP chart only where three tiers exist (the join: small/medium/large).
-    % DESCRIPTIVE ONLY: report the crossings; no interpretation (-> Discussion).
     \includegraphics[width=0.85\textwidth]{Chapters/06-results/sub-chapters/figures/06-ranking-stability.pdf}
-    \caption[Ranking stability across tiers]{Configuration rank as a function of
-    size tier, one line per configuration. Lines that cross mark rank inversions
-    between tiers. The chart is a slopegraph between the two single-machine tiers
-    and a bump chart across the three tiers of the distributed join.}
+    \caption[Ranking stability across tiers]{Configuration rank by
+    minimum-estimator run-time (rank \num{1} = fastest) as a function of size
+    tier, one line per configuration, faceted by workload pattern. Lines that
+    cross mark rank inversions between tiers. The chart is a slopegraph between
+    the two single-machine tiers and a bump chart across the three tiers of the
+    distributed join.}
     \label{fig:ranking-stability}
 \end{figure}
 
-% TODO (prose): add a sentence contrasting the per-dimension rank ordering (portable)
-% with the absolute geomean-normalized magnitudes (not portable), referring to
-% Figure~\ref{fig:rank-portability} and Table~\ref{tab:geomean-normalized-performance}.
-% No interpretation (-> Discussion).
+Figure~\ref{fig:rank-portability} sets the per-dimension rank ordering against the absolute magnitudes behind it. In the left panel the ranks stay within a narrow span and cross between dimensions: Apache Sedona ranks first on time and the local Shapefile path first on bytes, while the local path drops to last on cost and DuckDB sits third or fourth throughout. In the right panel the same systems spread across more than two orders of magnitude on the logarithmic axis, from \num{1.0} to \num{398.45}, so a configuration that moves only one or two rank positions can differ from the best by a factor of hundreds. A near-flat rank line can therefore correspond to magnitudes that differ by more than two orders of magnitude on the same dimension.
 
 \begin{figure}[H]
     \centering
-    % WHAT IT SHOWS: two panels over the three outcome dimensions (time, bytes, cost).
-    %   (left) per-dimension RANK of each system as a slopegraph (1 = best); (right)
-    %   the same systems' ABSOLUTE geometric-mean-normalized magnitude per dimension
-    %   on a log axis (1.0 = the dimension's best).
-    % CAPTION MUST STATE: the shared systems and three dimensions; that the left panel
-    %   is rank (1 = best) and the right is the geomean-normalized magnitude (log, 1.0
-    %   = best) of Table~\ref{tab:geomean-normalized-performance}; that it is distinct
-    %   from the rank-vs-tier ranking-stability figure.
-    % DESCRIPTIVE ONLY: report the rank crossings and the magnitude spread; no
-    %   interpretation.
     \includegraphics[width=\textwidth]{Chapters/06-results/sub-chapters/figures/06-rank-portability.pdf}
-    \caption[Rank portability versus absolute magnitude]{Per-system outcomes across
-    the three dimensions -- time, bytes, and cost -- in two panels. The left panel is
-    a slopegraph of each system's rank on each dimension (\num{1} = best), so a
-    near-flat line is a portable ordering; the right panel shows the same systems'
-    absolute geometric-mean-normalized magnitude per dimension on a logarithmic axis
-    (\num{1.0} = the dimension's best), from
-    Table~\ref{tab:geomean-normalized-performance}. The figure is distinct from the
+    \caption[Rank portability versus absolute magnitude]{Per-system outcomes
+    across the three dimensions -- time, bytes, and cost -- in two panels. The
+    left panel is a slopegraph of each system's rank on each dimension (\num{1} =
+    best), so a near-flat line is a portable ordering; the right panel shows the
+    same systems' absolute geometric-mean-normalized magnitude per dimension on a
+    logarithmic axis (\num{1.0} = the dimension's best), from
+    Table~\ref{tab:geomean-normalized-performance}. It is distinct from the
     rank-versus-tier ranking-stability figure (Figure~\ref{fig:ranking-stability}).}
     \label{fig:rank-portability}
 \end{figure}
 
-% TODO (prose): add a sentence on how each configuration's wall-clock ordering across
-% the query patterns changes at a fixed tier (which leads on which pattern),
-% referring to Figure~\ref{fig:single-machine-cross-pattern}. No interpretation.
+Figure~\ref{fig:single-machine-cross-pattern} re-cuts the single-machine run-times to compare the configurations across query patterns at a fixed tier. PostGIS recorded the lowest run-time on every pattern at both tiers, near \SI{0.0016}{\second} for the point-in-polygon lookup and the k-nearest-neighbor search at the small tier. The other configurations reorder from pattern to pattern. At the small tier the local Shapefile path was competitive on the bounding-box filter and the point-in-polygon lookup but was the slowest configuration measured on the k-nearest-neighbor search, at \SI{47.816}{\second} against DuckDB's \SI{0.746}{\second}; DuckDB stayed between \SI{0.746}{\second} and \SI{1.327}{\second} across the three small-tier patterns. The Shapefile configuration did not run at the large tier by design, where DuckDB trailed PostGIS by several orders of magnitude on every pattern.
 
 \begin{figure}[H]
     \centering
-    % WHAT IT SHOWS: cross-pattern single-machine comparison, one panel per size tier.
-    %   x = workload pattern, grouped bars per configuration, y = wall-clock minimum
-    %   (s, log) with the 95% bootstrap CI as a whisker.
-    % CAPTION MUST STATE: the per-tier panels; the workload-pattern x-axis and grouped
-    %   bars per configuration; the log y-axis; the minimum estimator with 95%
-    %   bootstrap CI; that the Shapefile configuration ran the small tier only and is
-    %   labelled did-not-run-by-design at the large tier.
-    % NOTE: this is the cross-pattern re-cut of the pattern-by-tier wall-clock grid
-    %   (Figure~\ref{fig:single-machine-wall-clock-time}); the caption cross-references
-    %   it so the two are not read as duplicates.
-    % DESCRIPTIVE ONLY: report the per-pattern orderings; no interpretation.
     \includegraphics[width=\textwidth]{Chapters/06-results/sub-chapters/figures/06-single-machine-cross-pattern.pdf}
-    \caption[Cross-pattern single-machine comparison by tier]{Wall-clock minimum of
-    each single-machine configuration across the query patterns, one panel per size
-    tier, on a logarithmic axis with the \num{95}\% bootstrap confidence interval as a
-    whisker. Bars are grouped by configuration within each workload pattern. It re-cuts
-    the pattern-by-tier wall-clock grid (Figure~\ref{fig:single-machine-wall-clock-time})
-    to read run-time across the query patterns at a fixed tier, so it is a cross-pattern
-    view of that grid rather than a duplicate. The Shapefile configuration ran at the
-    small tier only and is labelled as did-not-run-by-design at the large tier rather
-    than left as a silent gap.}
+    \caption[Cross-pattern single-machine comparison by tier]{Wall-clock minimum
+    of each single-machine configuration across the query patterns, one panel per
+    size tier, on a logarithmic axis with the \num{95}\% bootstrap confidence
+    interval as a whisker; bars are grouped by configuration within each workload
+    pattern. It re-cuts the pattern-by-tier wall-clock grid
+    (Figure~\ref{fig:single-machine-wall-clock-time}) to read run-time across the
+    query patterns at a fixed tier rather than down the tiers, so it is a
+    cross-pattern view of that grid, not a duplicate. The Shapefile configuration
+    ran at the small tier only and is labeled as not run by design at the large
+    tier rather than left as a silent gap.}
     \label{fig:single-machine-cross-pattern}
 \end{figure}
 
 \subsection{Statistical separability}
 \label{results:consistency-of-winners:statistical-separability}
 
-% TODO (prose): factual readout only. The Friedman OMNIBUS sentence is currently MISSING:
-%   the statistic on file is the WRONG TEST for RQ3. It was computed on a single cell
-%   (point-in-polygon, small tier) blocking by ITERATION (chi-squared 2564, df 2, 3 configs,
-%   1282 blocks), which only tests whether the three single-machine configs differ within
-%   that one cell. RQ3's cross-pattern omnibus
-%   (Section~\ref{research-design-and-methodology:statistical-analysis:answering-rq3-consistency-across-patterns})
-%   must instead block by workload x tier CELL across configurations. Do NOT report the
-%   on-file chi-squared/df/p as the RQ3 omnibus; leave the sentence out until the correct
-%   cross-cell Friedman is recomputed in the analysis repo, then state its statistic in prose
-%   (NOT a float). The per-comparison separability and effect magnitudes below are correct
-%   and unaffected: refer to Figure~\ref{fig:pairwise-significance-cliques} and
-%   Figure~\ref{fig:vargha-delaney-forest}, and the full pairwise table in the appendix
-%   (Table~\ref{tab:appendix-pairwise-statistics}).
-% No interpretation (-> Discussion).
+The separability of these rankings was tested where the design allowed it. A Friedman omnibus blocking by workload and tier with the configurations as treatments returned $\chi^2(2) = \num{4.67}$ at $p = \num{0.097}$ over the three single-machine configurations and the three small-tier cells that form a complete block; the national-scale join and Apache Sedona fall outside it, since Sedona ran the join alone and no complete three-treatment block spans them with the single-machine engines. With three blocks the omnibus carries little power, and the difference among the three configurations was not significant at the \num{0.05} level. Figure~\ref{fig:pairwise-significance-cliques} places the same three single-machine configurations on a mean-rank axis, PostGIS at \num{1.00}, the local Shapefile path at \num{2.33}, and DuckDB at \num{2.67}. No connector joins them: every pairwise difference was significant under the Holm-adjusted Wilcoxon tests (Section~\ref{research-design-and-methodology:statistical-analysis:pairwise-comparison-and-effect-size}), so no non-significance clique forms.
 
 \begin{figure}[H]
     \centering
-    % WHAT IT SHOWS: pairwise-significance / clique diagram. A horizontal mean-rank
-    %   axis with the configurations placed at their mean ranks; connectors join
-    %   configurations whose pairwise difference is NOT significant under the
-    %   Holm-adjusted Wilcoxon tests (i.e. non-significance cliques).
-    % CAPTION MUST STATE: the mean-rank axis; that connectors are non-significance
-    %   cliques from Holm-adjusted pairwise Wilcoxon tests; cite the
-    %   Wilcoxon--Holm--clique lineage.
-    % IMPORTANT: do NOT call this a "critical-difference diagram" -- that term
-    %   implies the Nemenyi post-hoc test, which is NOT used here. Describe the
-    %   connectors as non-significance cliques.
-    % DESCRIPTIVE ONLY: report which configs share a clique; no interpretation.
     \includegraphics[width=0.8\textwidth]{Chapters/06-results/sub-chapters/figures/06-pairwise-significance-cliques.pdf}
-    \caption[Pairwise significance and non-significance cliques]{Configurations
-    placed along a mean-rank axis, with connectors joining configurations whose
-    pairwise difference is not statistically significant under Holm-adjusted
-    Wilcoxon tests \parencite{laaber2019_software_microbenchmarking_cloud,holm1979_simple_sequentially_rejective}.
-    The connectors denote non-significance cliques; the layout follows the
-    mean-rank diagram convention of \textcite{demsar2006_statistical_comparisons_classifiers}
-    but does not use the Nemenyi post-hoc test and is therefore not a
-    critical-difference diagram.}
+    \caption[Pairwise significance and non-significance cliques]{The
+    single-machine configurations placed along a mean-rank axis (lower = faster),
+    with connectors joining any pair whose difference is not statistically
+    significant under Holm-adjusted Wilcoxon tests
+    \parencite{laaber2019_software_microbenchmarking_cloud,holm1979_simple_sequentially_rejective}
+    over the complete-block cells shared with the omnibus. The connectors denote
+    non-significance cliques; the layout follows the mean-rank diagram convention
+    of \textcite{demsar2006_statistical_comparisons_classifiers} but does not use
+    the Nemenyi post-hoc test and is therefore not a critical-difference diagram.}
     \label{fig:pairwise-significance-cliques}
 \end{figure}
 
+Figure~\ref{fig:vargha-delaney-forest} reports the Vargha--Delaney $\hat{A}_{12}$ effect size for the comparisons that anchor the single-node and distributed questions: DuckDB against PostGIS across the query cells, and Apache Sedona at eight nodes against DuckDB and PostGIS on the national join. Every marker sits at an extreme of the axis, at \num{0.0} or \num{1.0}, beyond the large-effect thresholds on either side of the \num{0.5} no-effect line (Section~\ref{research-design-and-methodology:statistical-analysis:pairwise-comparison-and-effect-size}), so wherever a difference exists one distribution separates completely from the other. Effect magnitude and statistical significance do not always coincide here: at the national join small and medium tiers the run-time and bytes differences carry these large effect sizes yet were not significant under the Holm adjustment, the ties noted above. The full set of pairwise tests, with the test statistic, the adjusted p-value, and the effect size for every comparison, is collected in Table~\ref{tab:appendix-pairwise-statistics}.
+
 \begin{figure}[H]
     \centering
-    % WHAT IT SHOWS: Vargha--Delaney A_12 forest plot. A_12 effect size (x) for
-    %   each KEY pairwise comparison (y), with a marker and CI per comparison, the
-    %   0.5 no-effect line, and the arcuri2014 magnitude bands at 0.56 / 0.64 / 0.71.
-    % CAPTION MUST STATE: that x is the A_12 effect size; the 0.5 no-effect line;
-    %   the small/medium/large bands (0.56/0.64/0.71) and their source (arcuri2014).
-    % SCOPE: restrict to the comparisons that carry the argument -- DuckDB vs.
-    %   PostGIS for RQ1, and Sedona vs. the best single-node engine for RQ2 -- not
-    %   every possible pair.
-    % DESCRIPTIVE ONLY: report which bands the effects fall in; no interpretation.
     \includegraphics[width=0.95\textwidth]{Chapters/06-results/sub-chapters/figures/06-vargha-delaney-forest.pdf}
     \caption[Vargha--Delaney effect-size forest]{Vargha--Delaney $\hat{A}_{12}$
-    effect size for the key pairwise comparisons -- DuckDB versus PostGIS for RQ1
-    and Apache Sedona versus the best single-node engine for RQ2. The vertical line
-    at \num{0.5} marks no effect, and the bands at \num{0.56}, \num{0.64}, and \num{0.71} mark the
-    small, medium, and large thresholds \parencite{arcuri2014_hitchhiker_statistical_tests}.}
+    point estimate for the key pairwise comparisons -- DuckDB versus PostGIS
+    across the query cells, and Apache Sedona at eight nodes versus the
+    single-node engines DuckDB and PostGIS on the national join. The vertical
+    line at \num{0.5} marks no effect, and the bands at \num{0.56}, \num{0.64},
+    and \num{0.71} mark the small, medium, and large thresholds
+    \parencite{arcuri2014_hitchhiker_statistical_tests}.}
     \label{fig:vargha-delaney-forest}
 \end{figure}
 
-% TODO (prose): closing paragraph. Give an interpretation-free recap of the
-% chapter -- which orderings held across patterns/tiers/dimensions and where they
-% diverged -- WITHOUT explaining why. All interpretation is deferred to the
-% Discussion (Chapter~\ref{ch:discussion}). Do not add a separate summary section.
+Read across the three dimensions and the size tiers, the orderings held in some places and inverted in others. PostGIS held the fastest run-time in every single-machine cell and at both single-machine tiers, and the three single-machine configurations separated cleanly from one another on run-time. The orderings diverged on the other dimensions and on the join: the bytes and cost winners changed from cell to cell, the local Shapefile path led on bytes while trailing on time by more than two orders of magnitude, and the national-scale join inverted its run-time ranking between the small and the medium tier, with Apache Sedona taking the lead from the medium tier onward, the join small and medium cells remaining statistically tied on run-time and bytes. What these consistencies and inversions imply is taken up in the discussion.
