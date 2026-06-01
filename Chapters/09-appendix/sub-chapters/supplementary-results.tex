@@ -155,7 +155,7 @@
     % CAPTION STATES: the representative cell; the log axis; the marked estimators;
     %   the numbers; cite chen2016 for the minimum rationale.
     % DESCRIPTIVE ONLY.
-    \includegraphics[width=0.75\textwidth]{Chapters/09-appendix/sub-chapters/figures/09-estimator-illustration.png}
+    \includegraphics[width=0.75\textwidth]{Chapters/09-appendix/sub-chapters/figures/09-estimator-illustration.pdf}
     \caption[Per-iteration ECDF and estimator choice]{Empirical cumulative
     distribution of the per-iteration elapsed time for one representative cell
     (point-in-polygon lookup, DuckDB + GeoParquet, small tier) on a logarithmic
@@ -184,7 +184,7 @@
     % CAPTION STATES: that the y-axis is the CV; one point per cell; the median tick;
     %   the 0.10 reference band; the per-configuration grouping.
     % DESCRIPTIVE ONLY.
-    \includegraphics[width=0.75\textwidth]{Chapters/09-appendix/sub-chapters/figures/09-cv-dispersion.png}
+    \includegraphics[width=0.75\textwidth]{Chapters/09-appendix/sub-chapters/figures/09-cv-dispersion.pdf}
     \caption[Run-to-run dispersion]{Run-to-run dispersion of per-iteration
     elapsed time, reported as the coefficient of variation: one point per
     workload-by-tier cell grouped by configuration, with the per-configuration
@@ -211,7 +211,7 @@
     %   half-width; the representative cells; the log axis; that this contrasts
     %   between-pass reproducibility with within-pass repeatability.
     % DESCRIPTIVE ONLY.
-    \includegraphics[width=0.8\textwidth]{Chapters/09-appendix/sub-chapters/figures/09-reproducibility.png}
+    \includegraphics[width=0.8\textwidth]{Chapters/09-appendix/sub-chapters/figures/09-reproducibility.pdf}
     \caption[Run-to-run reproducibility]{Per-pass minimum elapsed time across the
     \num{30} benchmark passes for a few representative cells (the line), with the
     within-pass \num{95}\% bootstrap confidence-interval half-width on the minimum
@@ -237,7 +237,7 @@
     % CAPTION STATES: the axes; the per-cell-median normalisation; the trend lines
     %   and the Spearman correlation; what the flat trend indicates.
     % DESCRIPTIVE ONLY.
-    \includegraphics[width=0.85\textwidth]{Chapters/09-appendix/sub-chapters/figures/08-time-of-day-stability.png}
+    \includegraphics[width=0.85\textwidth]{Chapters/09-appendix/sub-chapters/figures/08-time-of-day-stability.pdf}
     \caption[Runtime versus time-of-day]{Per-iteration elapsed time, each normalised
     to the median of its own configuration, workload, and tier cell (relative
     runtime, reference line at \num{1.0}), plotted against the start time-of-day in
@@ -264,7 +264,7 @@
     % CAPTION STATES: that the filled/open markers are user/system median CPU; the
     %   log axis; the per-configuration colour; the source counter.
     % DESCRIPTIVE ONLY.
-    \includegraphics[width=0.85\textwidth]{Chapters/09-appendix/sub-chapters/figures/09-cpu-decomposition.png}
+    \includegraphics[width=0.85\textwidth]{Chapters/09-appendix/sub-chapters/figures/09-cpu-decomposition.pdf}
     \caption[CPU-time decomposition]{Median process CPU time per configuration
     across the query patterns and size tiers, drawn as a dumbbell: a filled marker
     is the median user CPU time and an open marker the median system CPU time,
@@ -292,7 +292,7 @@
     %   reference line at 1.0; that above 1.0 is multi-core compute-bound and below
     %   1.0 is transfer- or IO-bound; the per-configuration grouping.
     % DESCRIPTIVE ONLY.
-    \includegraphics[width=0.9\textwidth]{Chapters/09-appendix/sub-chapters/figures/09-cpu-wall-ratio.png}
+    \includegraphics[width=0.9\textwidth]{Chapters/09-appendix/sub-chapters/figures/09-cpu-wall-ratio.pdf}
     \caption[CPU-to-wall-clock ratio]{Ratio of CPU time to wall-clock time,
     $(\mathrm{cpu}_{\mathrm{user}} + \mathrm{cpu}_{\mathrm{sys}})/\mathrm{elapsed}$,
     for each single-machine configuration across the query patterns and size tiers,
@@ -323,7 +323,7 @@
     %   minimum estimator with 95% bootstrap CI; the annotated growth factor; that
     %   Shapefile is a small-only point.
     % DESCRIPTIVE ONLY.
-    \includegraphics[width=0.95\textwidth]{Chapters/09-appendix/sub-chapters/figures/09-size-scaling-slope.png}
+    \includegraphics[width=0.95\textwidth]{Chapters/09-appendix/sub-chapters/figures/09-size-scaling-slope.pdf}
     \caption[Same-engine size scaling]{Wall-clock minimum of each single-machine
     engine across the size tiers, one panel per query pattern, on a logarithmic axis
     with the \num{95}\% bootstrap confidence interval. Each multi-tier line is
@@ -350,7 +350,7 @@
     % NOTE: this is the auto-generated completeness grid; it is large and may span
     %   a full page (consider a dedicated landscape page if needed).
     % DESCRIPTIVE ONLY.
-    \includegraphics[width=\textwidth]{Chapters/09-appendix/sub-chapters/figures/09-cell-grid.png}
+    \includegraphics[width=\textwidth]{Chapters/09-appendix/sub-chapters/figures/09-cell-grid.pdf}
     \caption[Per-cell chart grid]{Auto-generated per-cell grid, one panel per
     workload pattern and size tier. Each panel plots the minimum wall-clock time of
     every configuration that ran the cell as a point with its \num{95}\% bootstrap
@@ -404,7 +404,7 @@
     % CAPTION MUST STATE: which Spark-internal metrics are shown; that these are
     %   the raw per-stage distributions feeding the phase breakdown; the axes.
     % DESCRIPTIVE ONLY.
-    \includegraphics[width=0.9\textwidth]{Chapters/09-appendix/sub-chapters/figures/09-spark-metrics.png}
+    \includegraphics[width=0.9\textwidth]{Chapters/09-appendix/sub-chapters/figures/09-spark-metrics.pdf}
     \caption[Raw Spark-internal metric distributions]{Distributions of the raw
     Databricks Spark-internal metrics recorded by the \texttt{SparkListener} --
     executor run time, input bytes read, shuffle bytes read and written, and
@@ -429,7 +429,7 @@
     %   stage's median duration; the broadcast strategy and tier shown; the source
     %   array; that this refines the three-phase breakdown.
     % DESCRIPTIVE ONLY.
-    \includegraphics[width=\textwidth]{Chapters/09-appendix/sub-chapters/figures/09-spark-stage-profile.png}
+    \includegraphics[width=\textwidth]{Chapters/09-appendix/sub-chapters/figures/09-spark-stage-profile.pdf}
     \caption[Spark per-stage duration profile]{Median duration of each Spark stage for
     the broadcast strategy at the large tier, one panel per worker count
     $\{2, 4, 8, 12, 16\}$, parsed from the per-iteration \texttt{stage\_durations\_ms}
