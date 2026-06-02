@@ -1,0 +1,36 @@
+\section{Distribution and scaling}
+\label{discussion:distribution-and-scaling}
+
+% RQ2 interpretation. Reads Section~\ref{results:distributed-join-and-scaling}.
+%
+% Points to cover:
+% - Strongest case for distribution: the single-node engines hit memory exhaustion on the
+%   large-tier join (Table~\ref{tab:distributed-join-descriptive-statistics},
+%   Figure~\ref{fig:distributed-wall-clock-vs-workers}), so distribution was necessary, not
+%   merely faster. Tie to DuckDB's vertical-only scaling -- work exceeding one machine cannot
+%   be absorbed by adding nodes \parencite{duckdb2025_scalability_faq}.
+% - Speedup improved with tier (Figure~\ref{fig:distributed-speedup-efficiency}): distribution
+%   repays its coordination cost only once the work is large enough
+%   \parencite{mcsherry2015_scalability_but_at_what_cost,zaharia2012_resilient_distributed_datasets}.
+% - Efficiency collapsed at the small tier but held at the large tier
+%   (Figure~\ref{fig:distributed-speedup-efficiency}). Interpret via fixed driver-side planning
+%   overhead that does not shrink with workers, plus the four coordination-overhead sources
+%   (scheduling, shuffle, serialization, network) of Section 2.1.3
+%   \parencite{mcsherry2015_scalability_but_at_what_cost}.
+% - Executor-run time dominated the phase breakdown and did not fall as workers were added
+%   (Figure~\ref{fig:distributed-execution-phase-breakdown}); shuffle volume was tier-driven,
+%   near-flat in worker count. Read against spatial query skew / stragglers: realized
+%   parallelism is bounded by the most-loaded partition
+%   \parencite{tang2020_locationspark_distributed_spatial_query,kwon2012_skewtune_mitigating_skew}.
+% - Crossover: at the small tier the broadcast join approached but never beat PostGIS within
+%   2--16 workers (Figure~\ref{fig:distributed-wall-clock-vs-workers}); the crossover sits
+%   beyond the tested range, so small workloads favour a tuned single node. MARK as bounded by
+%   the tested worker range (extrapolation beyond it).
+% - Broadcast vs partitioned: partitioned ran ~2 orders slower and failed (executor OOM) at
+%   medium/large (Figure~\ref{fig:distributed-strategy-contrast},
+%   Table~\ref{tab:distributed-join-descriptive-statistics}). Interpret via the shuffle cost of
+%   repartitioning both inputs and duplicating boundary-straddling geometries, versus
+%   broadcast's low shuffle cost when one input is small
+%   \parencite{yu2019_geospark_perspective_beyond}.
+% - NOTE: the small-tier PostGIS-vs-Sedona comparison is reported as statistically tied in
+%   Results (no winner declared). Keep that framing; do not assert a winner the test did not support.

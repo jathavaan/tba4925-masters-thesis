@@ -1,0 +1,33 @@
+\section{Reach and limits of the findings}
+\label{discussion:reach-and-limits}
+
+% Goal 3: acknowledge what the thesis does not measure, interpreting impact on the findings.
+% Do NOT re-list the threats table (Chapter~\ref{ch:methodology}, Section 4.5) -- that is the
+% design-stage inventory. Here, pick the few limitations that actually qualify a CONCLUSION and
+% say what they bound.
+%
+% Points to cover:
+% - What generalizes vs what does not: the architectural orderings (which access pattern moves
+%   fewer bytes; whether distribution repays coordination cost) follow from format and engine
+%   structure and are expected to carry; absolute times and costs are provider- and
+%   region-specific and do not (Section 4.5)
+%   \parencite{leitner2016_patterns_chaos_iaas,iosup2011_performance_variability_cloud_services,schad2010_runtime_measurements_cloud}.
+% - Warm-engine, provisioning-free cost: the cost figure is query execution on a warm engine;
+%   cluster provisioning and idle time fall outside the timed window (Section 5.6.6). State the
+%   bound -- the cost verdict holds for amortized/steady workloads; cold-start would shift it
+%   for sporadic queries
+%   \parencite{databricks2024_cost_optimization_best_practices,jonas2019_berkeley_view_on_serverless_computing}.
+% - Engine/format confound for Shapefile: read as the GeoPandas stack, so its results cannot be
+%   attributed to the format in isolation (carried from
+%   Section~\ref{discussion:single-node-cloud-native-vs-traditional}).
+% - Effect size vs significance: extreme A12 values yet non-significant join comparisons at the
+%   small/medium tiers (Figure~\ref{fig:vargha-delaney-forest}); the omnibus had little power
+%   over three blocks (Figure~\ref{fig:pairwise-significance-cliques}). Read complete separation
+%   and statistical tie together, not as a contradiction
+%   \parencite{arcuri2014_hitchhiker_statistical_tests,demsar2006_statistical_comparisons_classifiers}.
+% - What measuring network transfer added (closes the related-work gap): client-observed
+%   transfer exposed format-internal pruning behaviour that timing-only benchmarks miss
+%   \parencite{tang2020_locationspark_distributed_spatial_query,folkerts2012_benchmarking_in_the_cloud}.
+% - One-line forward pointers only: where a limitation opens a question (small-tier crossover
+%   beyond 16 workers; partitioned-join memory tuning), gesture to it; the consolidated future
+%   work belongs to Chapter~\ref{ch:conclusions}.
