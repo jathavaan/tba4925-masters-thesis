@@ -80,18 +80,26 @@ Table~\ref{tab:appendix-summary-statistics} is the fuller dispersion companion t
 \begin{table}[H]
     \centering
     \scriptsize
-    \setlength{\tabcolsep}{5pt}
+    \setlength{\tabcolsep}{4pt}
     \renewcommand{\arraystretch}{1.2}
-    \begin{tabular}{@{}l l l S S S S S S@{}}
+    \adjustbox{max width=\textwidth}{%
+    \begin{tabular}{@{}l l l
+        S[table-format=5.0]
+        S[table-format=2.4]
+        S[table-format=2.4]
+        S[table-format=2.4]
+        S[table-format=1.3]
+        S[table-format=1.2]@{}}
         \toprule
         \textbf{Workload} & \textbf{Configuration} & \textbf{Tier} & {\textbf{$n$}} & {\textbf{Min.\ (\si{\second})}} & {\textbf{Median (\si{\second})}} & {\textbf{IQR (\si{\second})}} & {\textbf{CV}} & {\textbf{CI hw.\ (\%)}} \\
         \midrule
         % \inputtablebody (not \input): a plain \input of a \\-terminated fragment
         % collides with the following \bottomrule across the file boundary in a
         % tabular (-> "Misplaced \noalign"). See \inputtablebody in packages.sty.
-        \inputtablebody{Chapters/09-appendix/sub-chapters/tables/08-summary-statistics.tex}
+        \inputtablebody{Chapters/09-appendix/sub-chapters/tables/08-summary-statistics.tex}%
         \bottomrule
-    \end{tabular}
+    \end{tabular}%
+    }
     \caption[Per-cell summary statistics]{Per-cell summary statistics for every
     single-machine configuration, query pattern, and size tier that ran: the achieved
     count of successful timed iterations $n$, the minimum and median elapsed time, the
