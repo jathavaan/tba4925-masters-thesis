@@ -31,13 +31,17 @@ Table~\ref{tab:appendix-pairwise-statistics} lists the full pairwise comparison 
     \endfoot
     \bottomrule
     \addlinespace[\abovecaptionskip]
+    % Run academic rewrite
     \caption[Full pairwise statistics]{Pairwise comparison statistics for every
     configuration pair, query pattern, size tier, and outcome dimension: the Wilcoxon
     rank-sum statistic $W$, the Holm-adjusted $p$-value within each comparison family
     \parencite{laaber2019_software_microbenchmarking_cloud,holm1979_simple_sequentially_rejective},
     and the Vargha--Delaney $\hat{A}_{12}$ effect size with its magnitude band
     (Section~\ref{research-design-and-methodology:statistical-analysis:pairwise-comparison-and-effect-size},
-    Table~\ref{tab:vargha-delaney-thresholds}) \parencite{arcuri2014_hitchhiker_statistical_tests}.}
+    Table~\ref{tab:vargha-delaney-thresholds}) \parencite{arcuri2014_hitchhiker_statistical_tests}.
+    The byte-direction comparisons characterize distribution differences and are not a basis
+    for cross-configuration ranking, because the host-boundary byte count is not commensurable
+    across the architectures (Section~\ref{results:consistency-of-winners}).}
     \label{tab:appendix-pairwise-statistics} \\
     \endlastfoot
     \input{Chapters/09-appendix/sub-chapters/tables/09-pairwise-statistics.tex}
