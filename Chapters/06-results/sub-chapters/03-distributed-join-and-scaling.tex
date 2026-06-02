@@ -83,20 +83,35 @@ Figure~\ref{fig:distributed-cost-time-pareto} places every strategy, tier, and w
     \label{fig:distributed-cost-time-pareto}
 \end{figure}
 
-\begin{table}[H]
-    \centering
-    % Body single-sourced from the analysis fragment via \inputtablebody; do not edit rows by hand.
-    \footnotesize
-    \setlength{\tabcolsep}{6pt}
-    \renewcommand{\arraystretch}{1.2}
-    \resizebox{\textwidth}{!}{%
-    \begin{tabular}{@{}l l r r r r r@{}}
-        \toprule
-        \textbf{Tier} & \textbf{Strategy} & \textbf{Workers} & \textbf{Achieved $n$} & \textbf{Min.\ (\si{\second})} & \textbf{CI half-width} & \textbf{Cost (USD)} \\
-        \midrule
-        \inputtablebody{Chapters/06-results/sub-chapters/tables/06-distributed-descriptive-stats.tex}
-        \bottomrule
-    \end{tabular}}
-    \caption[Distributed join descriptive statistics]{Descriptive statistics of the national-scale spatial join for each size tier, join strategy, and worker count: the achieved successful-iteration count, the minimum-estimator elapsed time in seconds, its \num{95}\% bootstrap confidence-interval half-width, and the associated total operational cost (USD). Cells in which every iteration failed are marked as not completed (executor out-of-memory).}
-    \label{tab:distributed-join-descriptive-statistics}
-\end{table}
+% longtable (not a float) is used because this spans pages.
+  {{\footnotesize
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{1.2}
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{0.10\textwidth} >{\raggedright\arraybackslash}p{0.13\textwidth} r r r r r@{}}
+      \toprule
+      \textbf{Tier} & \textbf{Strategy} & \textbf{Workers} & \textbf{Achieved $n$} & \textbf{Min.\ (\si{\second})} & \textbf{CI half-width} & \textbf{Cost
+  (USD)} \\
+      \midrule
+      \endfirsthead
+      \multicolumn{7}{@{}l}{\small\itshape Table~\thetable\ (continued)} \\
+      \toprule
+      \textbf{Tier} & \textbf{Strategy} & \textbf{Workers} & \textbf{Achieved $n$} & \textbf{Min.\ (\si{\second})} & \textbf{CI half-width} & \textbf{Cost
+  (USD)} \\
+      \midrule
+      \endhead
+      \midrule
+      \multicolumn{7}{r@{}}{\small\itshape Continued on next page} \\
+      \endfoot
+      \bottomrule
+      \addlinespace[\abovecaptionskip]
+      \caption[Distributed join descriptive statistics]{Descriptive statistics of the
+      national-scale spatial join for each size tier, join strategy, and worker count:
+      the achieved successful-iteration count, the minimum-estimator elapsed time in
+      seconds, its \num{95}\% bootstrap confidence-interval half-width, and the associated
+      total operational cost (USD). Cells in which every iteration failed are marked as
+      not completed (executor out-of-memory).}
+      \label{tab:distributed-join-descriptive-statistics} \\
+      \endlastfoot
+      \inputtablebody{Chapters/06-results/sub-chapters/tables/06-distributed-descriptive-stats.tex}
+  \end{longtable}
+}
