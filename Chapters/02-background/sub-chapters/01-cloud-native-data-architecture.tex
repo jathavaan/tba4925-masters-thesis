@@ -9,11 +9,11 @@ Cloud architectures decouple these layers, placing data in object storage and pr
 \begin{figure}[H]
     \centering
     \subfloat[Coupled storage and compute.\label{fig:coupled-compute}]{%
-        \includegraphics[valign=t, width=0.45\textwidth]{Chapters/02-background/sub-chapters/figures/02-coupled-compute.png}%
+        \includegraphics[valign=t, width=0.45\textwidth]{Chapters/02-background/sub-chapters/figures/02-coupled-compute.pdf}%
     }
     \hfill
     \subfloat[Decoupled storage and compute.\label{fig:decoupled-compute}]{%
-        \includegraphics[valign=t, width=0.45\textwidth]{Chapters/02-background/sub-chapters/figures/02-decoupled-compute.png}%
+        \includegraphics[valign=t, width=0.45\textwidth]{Chapters/02-background/sub-chapters/figures/02-decoupled-compute.pdf}%
     }
     \caption[Coupled versus decoupled storage and compute architectures.]{Comparison of storage and compute architectures. (a) In the traditional coupled architecture, each node bundles its own compute and storage, so the two layers must scale together as a unit. (b) In the decoupled architecture, multiple independent compute resources access a shared object storage layer, allowing storage and compute to be provisioned, priced, and scaled independently of one another.}
     \label{fig:storage-compute-architectures}
