@@ -27,7 +27,7 @@ Read access is mediated by \acrshort{http} itself. \textcite{fielding2022_rfc911
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.85\textwidth]{Chapters/02-background/sub-chapters/figures/02-http-range-requests.png}
+    \includegraphics[width=0.85\textwidth]{Chapters/02-background/sub-chapters/figures/02-http-range-requests.pdf}
     \caption[HTTP range request access pattern.]{HTTP range request access pattern for cloud-native objects. The reader first issues a small range request for the metadata block at a known offset within the object (1), parses the layout information it returns to identify which byte intervals satisfy the query, and then issues range requests for only those intervals (2). Bytes outside the requested intervals are never transferred.}
     \label{fig:http-range-requests}
 \end{figure}
