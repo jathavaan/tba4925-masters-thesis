@@ -10,20 +10,25 @@
 %   distributed join from the medium tier, the cost winner is mixed
 %   (Figure~\ref{fig:winners-matrix}, Table~\ref{tab:geomean-normalized-performance}). Argue
 %   "best engine" is ill-posed without fixing workload, tier, and outcome dimension.
-% - Outcome inversions: time and cost orderings cross
-%   (Figure~\ref{fig:outcome-parallel-coordinates}, Figure~\ref{fig:rank-portability}); a
-%   near-flat rank line can hide more than two orders of magnitude in absolute terms. Tie the
-%   time/cost split to per-resource metering and, for Sedona, node-hour + provisioning billing
-%   (Section 2.1.4, 2.4.5)
+% - Keep transfer OUT of the cross-configuration ranking here, consistent with
+%   Section~\ref{results:consistency-of-winners}: the byte count is not commensurable, so the
+%   synthesis ranks time and cost only; the transfer signature was read per-architecture in
+%   Sections 7.1 and 7.2 and is not re-scored.
+% - Outcome inversions: time and cost orderings cross (Figure~\ref{fig:outcome-parallel-coordinates},
+%   Figure~\ref{fig:rank-portability}); a near-flat rank line can hide more than two orders of
+%   magnitude in absolute terms. Tie the time/cost split to per-resource metering and, for
+%   Sedona, node-hour + provisioning billing (Section 2.1.4, 2.4.5)
 %   \parencite{mell2011_nist_definition_of_cloud_computing,databricks2024_cost_optimization_best_practices}.
-% - Rank inversions are tier-dependent only for the join
-%   (Figure~\ref{fig:ranking-stability}); the single-machine patterns are rank-stable across
-%   tiers. Tie to range-query vs join exercising the lifecycle differently
-%   \parencite{yu2019_geospark_perspective_beyond}.
+% - Rank inversions are tier-dependent only for the join (Figure~\ref{fig:ranking-stability});
+%   the single-machine patterns are rank-stable across tiers. Tie to range-query vs join
+%   exercising the lifecycle differently \parencite{yu2019_geospark_perspective_beyond}.
 % - DECISION FRAME (goal 2): map findings onto complexity/implementation cost vs usage cost.
-%   Tuned single-node PostGIS for single-machine analytical queries; distributed Sedona once
-%   data exceeds single-node memory; DuckDB's value is operational (flat transfer, low cloud
-%   cost) rather than latency. Mark tied regions "either"; mark untested boundaries as extrapolation.
+%   Tuned single-node PostGIS for single-machine analytical queries; distributed Sedona once data
+%   exceeds single-node memory. DuckDB's value is operational rather than latency: it was
+%   cheapest on several small-tier cells (cost is a ranked dimension) and its read footprint is a
+%   predictable, cardinality-independent signature -- present that footprint as a signature, NOT
+%   a transfer win, and note it carried no cost benefit at tested single-node scale because
+%   egress was zero. Mark tied regions "either"; mark untested boundaries as extrapolation.
 %
 % FIGURE 1 (Lucidchart, to produce): "which engine when" decision quadrant, built from the
 %   measured winners, crossover points, and significance results; tied regions read "either";

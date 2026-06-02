@@ -7,8 +7,8 @@
 % - Strongest case for distribution: the single-node engines hit memory exhaustion on the
 %   large-tier join (Table~\ref{tab:distributed-join-descriptive-statistics},
 %   Figure~\ref{fig:distributed-wall-clock-vs-workers}), so distribution was necessary, not
-%   merely faster. Tie to DuckDB's vertical-only scaling -- work exceeding one machine cannot
-%   be absorbed by adding nodes \parencite{duckdb2025_scalability_faq}.
+%   merely faster. Tie to DuckDB's vertical-only scaling -- work exceeding one machine cannot be
+%   absorbed by adding nodes \parencite{duckdb2025_scalability_faq}.
 % - Speedup improved with tier (Figure~\ref{fig:distributed-speedup-efficiency}): distribution
 %   repays its coordination cost only once the work is large enough
 %   \parencite{mcsherry2015_scalability_but_at_what_cost,zaharia2012_resilient_distributed_datasets}.
@@ -19,18 +19,26 @@
 %   \parencite{mcsherry2015_scalability_but_at_what_cost}.
 % - Executor-run time dominated the phase breakdown and did not fall as workers were added
 %   (Figure~\ref{fig:distributed-execution-phase-breakdown}); shuffle volume was tier-driven,
-%   near-flat in worker count. Read against spatial query skew / stragglers: realized
-%   parallelism is bounded by the most-loaded partition
+%   near-flat in worker count. Read against spatial query skew / stragglers: realized parallelism
+%   is bounded by the most-loaded partition
 %   \parencite{tang2020_locationspark_distributed_spatial_query,kwon2012_skewtune_mitigating_skew}.
+% - Distributed transfer signature (PRIMARY dimension, distinct from shuffle): at the Sedona
+%   driver/client boundary (Figure~\ref{fig:distributed-client-boundary}) received ran roughly
+%   twice sent and both grew only modestly with tier. Read as the broadcast/collect fingerprint:
+%   the small input is broadcast and a small result is collected, so boundary transfer is
+%   governed by result size, not input size \parencite{yu2019_geospark_perspective_beyond}. Do
+%   NOT conflate this with shuffle volume (the executor-to-executor phase metric in
+%   Figure~\ref{fig:distributed-execution-phase-breakdown}). This boundary transfer is the only
+%   transfer that reaches cost on this path, via the cross-region egress term (Eq. 4.1), and it
+%   is small.
 % - Crossover: at the small tier the broadcast join approached but never beat PostGIS within
-%   2--16 workers (Figure~\ref{fig:distributed-wall-clock-vs-workers}); the crossover sits
-%   beyond the tested range, so small workloads favour a tuned single node. MARK as bounded by
-%   the tested worker range (extrapolation beyond it).
+%   2--16 workers (Figure~\ref{fig:distributed-wall-clock-vs-workers}); the crossover sits beyond
+%   the tested range, so small workloads favour a tuned single node. MARK as bounded by the
+%   tested worker range (extrapolation beyond it).
 % - Broadcast vs partitioned: partitioned ran ~2 orders slower and failed (executor OOM) at
 %   medium/large (Figure~\ref{fig:distributed-strategy-contrast},
 %   Table~\ref{tab:distributed-join-descriptive-statistics}). Interpret via the shuffle cost of
-%   repartitioning both inputs and duplicating boundary-straddling geometries, versus
-%   broadcast's low shuffle cost when one input is small
-%   \parencite{yu2019_geospark_perspective_beyond}.
+%   repartitioning both inputs and duplicating boundary-straddling geometries, versus broadcast's
+%   low shuffle cost when one input is small \parencite{yu2019_geospark_perspective_beyond}.
 % - NOTE: the small-tier PostGIS-vs-Sedona comparison is reported as statistically tied in
 %   Results (no winner declared). Keep that framing; do not assert a winner the test did not support.

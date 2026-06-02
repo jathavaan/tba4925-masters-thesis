@@ -11,27 +11,46 @@
 %   answering from warm local state, against the per-request latency and CPU overhead that
 %   storage--compute decoupling imposes
 %   \parencite{dageville2016_snowflake_elastic_data_warehouse,pang2024_storage_disaggregated_databases}.
-% - DuckDB's cloud-native advantage showed up as transfer footprint, not speed: near-constant
-%   bytes received across patterns (Figure~\ref{fig:single-machine-bytes-transferred}), so
-%   per-row transfer fell as cardinality grew (Figure~\ref{fig:bytes-vs-cardinality}). Tie to
-%   range-request access and column/row-group pruning that read only the needed byte intervals
-%   \parencite{maso2023_ogc_cog_standard,fielding2022_rfc9110_http_semantics,duckdb2025_parquet_overview}.
-% - Directional contrast: PostGIS received volume rose with result cardinality (server returns
-%   the result set) while DuckDB's stayed flat (reads a fixed format footprint),
-%   Figure~\ref{fig:bytes-vs-cardinality}. Note the host-boundary byte count means different
-%   things per architecture (Section~\ref{results:consistency-of-winners}), so this is a
-%   directional reading, not a ranking.
 % - Counterintuitive headline: a cloud-native engine lost on wall-clock time throughout. Frame
-%   as object-storage round-trips dominating sub-second queries; the format-design advantage
-%   (fewer bytes) did not convert into time against a warm, indexed local engine.
+%   as object-storage round-trips dominating sub-second queries; the cloud-native read model did
+%   not convert into a wall-clock win against a warm, indexed local engine. (Do NOT call the
+%   read footprint an "advantage" or describe it as "fewer bytes" -- it is not uniformly fewer;
+%   see the flip below.)
+%
+% TRANSFER = architectural signature, NOT a ranking (carry this stance throughout):
+% - State the guard up front: the host-boundary byte count means different things per
+%   configuration (input scanned from object storage for DuckDB; the returned result set for
+%   PostGIS; near-zero local read for the Shapefile path), so the configurations are not ordered
+%   on one byte axis (Section~\ref{results:consistency-of-winners}).
+% - DuckDB's received volume stayed near-constant across patterns
+%   (Figure~\ref{fig:single-machine-bytes-transferred}), so per-row transfer fell as cardinality
+%   grew (Figure~\ref{fig:bytes-vs-cardinality}); PostGIS's received volume rose with row count.
+%   Explain through the read model: range-request access with column / row-group pruning reads a
+%   fixed format footprint
+%   \parencite{maso2023_ogc_cog_standard,fielding2022_rfc9110_http_semantics,duckdb2025_parquet_overview},
+%   whereas a server returns the result set. This is a consequence of the read model, NOT a
+%   verdict on either engine.
+% - Demonstrate non-commensurability with the per-pattern flip: DuckDB received far more than
+%   PostGIS on the point-in-polygon lookup (about 93,323 B vs 1,923 B at the small tier) yet
+%   PostGIS received far more on the bounding-box filter (about 1.7 MB vs ~93 kB). Which
+%   configuration moves more bytes reverses by pattern, which is exactly why bytes cannot share
+%   one axis (Figure~\ref{fig:single-machine-bytes-transferred}, Figure~\ref{fig:bytes-vs-cardinality}).
+% - Directional split as a signal of where the work is performed (Section 4.3.1): for PostGIS,
+%   received is the result set, so the server did the work; for DuckDB (and Sedona), received is
+%   the scanned input, so the client pulls data to compute. Read the sent/received asymmetry
+%   (Figure~\ref{fig:single-machine-bytes-directional}) as locating computation, not scoring transfer.
+%
 % - Cost/time decoupling: DuckDB won on cost at the small tier for kNN and bounding-box while
 %   losing on time (Figure~\ref{fig:single-machine-operational-cost},
-%   Figure~\ref{fig:single-machine-cost-time-quadrant}). Interpret via per-resource metering
-%   (Section 2.1.4) \parencite{mell2011_nist_definition_of_cloud_computing}.
+%   Figure~\ref{fig:single-machine-cost-time-quadrant}); compute dominated the stack. Note the
+%   transfer-to-cost bridge: transfer reaches cost ONLY through the egress term (cost model,
+%   Eq. 4.1, Section 4.3.4), and the single-node egress term was zero throughout
+%   (Section~\ref{results:single-machine-query-performance:operational-cost}), so the byte
+%   signature produced no cost difference at the tested single-node scale. Interpret the cost
+%   ranking via per-resource metering \parencite{mell2011_nist_definition_of_cloud_computing}.
 % - GeoPandas over Shapefile: slowest measured on kNN
-%   (Figure~\ref{fig:single-machine-cross-pattern}); attribute to the absence of a usable
-%   spatial index, so search degrades toward a scan \parencite{guttman1984_rtree_dynamic_index}.
-%   Keep brief.
-% - Caveat (do not over-claim): the Shapefile path is exercised through GeoPandas, so it reads
-%   as the GeoPandas+Shapefile stack, not the format alone -- carry forward to
+%   (Figure~\ref{fig:single-machine-cross-pattern}); attribute to the absence of a usable spatial
+%   index, so search degrades toward a scan \parencite{guttman1984_rtree_dynamic_index}. Keep brief.
+% - Caveat (do not over-claim): the Shapefile path is exercised through GeoPandas, so it reads as
+%   the GeoPandas+Shapefile stack, not the format alone; carry forward to
 %   Section~\ref{discussion:reach-and-limits}.
