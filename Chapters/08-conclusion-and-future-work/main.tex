@@ -1,0 +1,91 @@
+% File: Chapters/08-conclusion-and-future-work/main.tex
+
+% ============================ DRAFTING GUIDANCE (whole chapter) ============================
+% PURPOSE:
+%   1. Conclude -- state the RQ1--RQ3 answers plainly, closing the synthesis of
+%      Chapter~\ref{ch:discussion} without re-deriving it.
+%   2. Future work -- take up the open questions the discussion defers here;
+%      Section~\ref{discussion:reach-and-limits} (final paragraph) routes them to this chapter.
+% EXCLUDE: new measurements; re-runs of Results/Discussion floats; fresh interpretation not
+%   already established in Chapter~\ref{ch:discussion}.
+% CITATION DISCIPLINE: \parencite / \textcite only, never \cite.
+% ==========================================================================================
+
+% TODO (conclusions prose): compact restatement of the RQ1--RQ3 answers. Not yet written.
+
+\section{Future work}
+\label{conclusions:future-work}
+
+% NOTES ONLY -- what this section should cover, not final prose. Three bounded items: the
+% first is the one developed in the single-node indexing discussion (Section~\ref{discussion:single-node-cloud-native-vs-traditional},
+% Section~\ref{discussion:reach-and-limits}); the other two are the open questions
+% Section~\ref{discussion:reach-and-limits} (final paragraph) explicitly defers to this chapter.
+%
+% ------------------------------------------------------------------------------------------
+% ITEM 1 -- A spatially indexed / spatially laid-out GeoParquet configuration.
+%
+%   WHY IT FOLLOWS FROM THE FINDINGS:
+%     RQ1 compared PostGIS (GiST-indexed and co-located) against the GeoParquet/DuckDB path
+%     AS DEPLOYED. Section~\ref{discussion:reach-and-limits} records two things to build on:
+%     the GeoParquet path is "unindexed beyond row-group pruning", and an indexed or
+%     co-located GeoParquet configuration was NOT tested and could narrow the run-time gap.
+%     This item turns that untested bound into a concrete experiment.
+%
+%   WHAT GEOPARQUET HAS vs LACKS (the mechanism, already in the taxonomy):
+%     - Has: block-level pruning only -- the covering bounding-box column plus per-row-group
+%       statistics in the Parquet footer. Table~\ref{tab:format-summary} lists this as
+%       "Optional bbox covering".
+%     - Lacks: any per-feature spatial index (R-tree/quadtree) and any nearest-neighbor
+%       index, unlike PostGIS (GiST) and even the Shapefile bundle (.qix).
+%
+%   DEPLOYED-LAYOUT LIMITATION TO STATE (makes the measured GeoParquet result conservative):
+%     The benchmark wrote rows sorted by partition_key, NOT by a space-filling curve
+%     (Section~\ref{system-architecture-and-implementation:data-layer:geoparquet-on-adls-gen2}).
+%     Hive partitioning by region gives file-level pruning, but within a file the row-group
+%     bounding boxes can overlap, so block-level pruning is not maximally exploited. A better
+%     layout could skip more without changing the format.
+%
+%   LEVERS TO TEST:
+%     (a) Spatial sort before write -- Hilbert or Z-order (Morton) ordering -- to tighten
+%         row-group extents and raise the share of row groups and files skipped.
+%     (b) A secondary spatial index over GeoParquet (external R-tree, a DuckDB spatial index,
+%         or a sidecar), and/or co-locating data with the engine to remove the object-storage
+%         round-trip that Section~\ref{discussion:single-node-cloud-native-vs-traditional}
+%         identifies as the sub-second latency source.
+%
+%   SCOPE THE CLAIM (do NOT repeat the index/kNN error corrected in Section 7.1):
+%     The expected benefit is on the CONTAINMENT and RANGE patterns (point-in-polygon,
+%     bounding-box) and on selective scans -- NOT on k-nearest-neighbor. A containment index
+%     does not order by distance without a bounding-box predicate
+%     (Section~\ref{discussion:single-node-cloud-native-vs-traditional}); only a kNN-capable
+%     traversal (as in PostGIS's <-> KNN-GiST) moves the kNN pattern. Say this explicitly so
+%     the section does not imply an index would fix kNN.
+%
+%   CITATIONS: ogc2024_geoparquet_specification_v110 and
+%     lamb2022_querying_parquet_millisecond_latency are already in bibliography.bib. A
+%     Hilbert / Z-order space-filling-curve reference is NOT yet in the .bib -- add one before
+%     citing; do not invent a key.
+%
+%   CROSS-REFS: Section~\ref{discussion:single-node-cloud-native-vs-traditional},
+%     Section~\ref{discussion:reach-and-limits}, Table~\ref{tab:format-summary},
+%     Section~\ref{system-architecture-and-implementation:data-layer:geoparquet-on-adls-gen2}.
+%
+% ------------------------------------------------------------------------------------------
+% ITEM 2 -- Locate the small-tier distribution crossover (deferred from
+%   Section~\ref{discussion:reach-and-limits}). Within the 2--16 workers tested, the
+%   small-tier broadcast join approached but never overtook the PostGIS minimum, so the
+%   worker count at which distribution overtakes a tuned single node is an extrapolation,
+%   not a measured point. Future work: extend the worker sweep (and/or vary problem
+%   granularity) to locate or bound that crossover.
+%   CROSS-REFS: Section~\ref{discussion:distribution-and-scaling},
+%   Section~\ref{research-design-and-methodology:statistical-analysis:answering-rq2-scaling-against-single-node}.
+%
+% ------------------------------------------------------------------------------------------
+% ITEM 3 -- Memory tuning for the partitioned join (deferred from
+%   Section~\ref{discussion:reach-and-limits}). The partitioned strategy (RangeJoin over a
+%   KDB-tree) completed only at the small tier and exhausted executor memory at the medium
+%   and large tiers. Future work: tune executor memory, partition count, and grid type to
+%   test whether that strategy completes where it here failed, separating a configuration
+%   limit from a strategy limit.
+%   CROSS-REFS: Section~\ref{discussion:distribution-and-scaling}, Section~\ref{discussion:reach-and-limits}.
+% ------------------------------------------------------------------------------------------
