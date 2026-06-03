@@ -157,13 +157,26 @@
 % Abbreviations / Acronyms
 % =============================================================================
 \usepackage[acronym,nonumberlist]{glossaries}
-\setglossarystyle{super4col}
+% Two-column abbreviations list: abbreviation + expansion. The super4col style
+% references an undefined \glssymbolwidth under this glossaries version and adds
+% empty symbol/page columns that acronyms (with nonumberlist) never fill, so
+% define a slim two-column style instead. @{} drops the leading tabcolsep so
+% entries align with the margin. Wrapped in \newglossarystyle so that the print
+% pass re-applies this layout rather than the stock one.
+\newglossarystyle{abbreviations}{%
+	\renewenvironment{theglossary}%
+		{\tablehead{}\tabletail{}%
+		 \begin{supertabular}{@{}lp{\glsdescwidth}}}%
+		{\end{supertabular}}%
+	\renewcommand*{\glossaryheader}{}%
+	\renewcommand*{\glsgroupheading}[1]{}%
+	\renewcommand*{\glossentry}[2]{%
+		\glstarget{##1}{\glossentryname{##1}} &
+		\glossentrydesc{##1}\tabularnewline}%
+	\renewcommand*{\glsgroupskip}{}%
+}
+\setglossarystyle{abbreviations}
 \renewcommand{\glsnamefont}[1]{\textbf{#1}}    % bold abbreviation
-% Drop the 6pt tabcolsep before the first column so entries align with the margin
-\renewenvironment{theglossary}%
-	{\tablehead{}\tabletail{}%
-	 \begin{supertabular}{@{}lp{\glsdescwidth}p{\glssymbolwidth}p{\glspagelistwidth}}}%
-	{\end{supertabular}}%
 \makeglossaries
 \loadglsentries{Chapters/00-preliminary/sub-chapters/03-abbreviations}
 % Lowercased acronym expansions for mid-sentence use; the abbreviations list
