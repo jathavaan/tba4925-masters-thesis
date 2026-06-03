@@ -1,11 +1,7 @@
 % File: Chapters/07-discussion/main.tex
-% Lead paragraph (TODO): write the chapter-opening paragraph here, before the first
-% \input. State in a few sentences what the discussion does and the lens it reads
-% results through: the architectural orderings are expected to carry beyond the test
-% conditions while absolute times and costs do not (Chapter~\ref{ch:methodology},
-% threats to validity). Name the three goals below as the chapter's arc. Report no
-% numbers here; cite Results floats via Figure~\ref / Table~\ref and the background
-% via Section~\ref.
+
+% Academic rewrite
+The orderings reported in Chapter~\ref{ch:results} are recorded without their cause, and reading them against the mechanisms set out in Chapter~\ref{ch:background} and the prior benchmarks of Chapter~\ref{ch:related-work} is what answers the research questions. The single-node findings are taken first, asking why the cloud-native combination of GeoParquet and DuckDB behaved as it did against the traditional PostGIS and Shapefile alternatives, the cause the Results chapter withholds. The distributed join is then read against the same single-node baselines to locate where distribution repays the coordination cost it imposes and where a tuned single node remains the better choice. Drawing the two together yields the synthesis of which engine suits which setting, weighing implementation complexity against usage cost, after which the chapter marks how far these findings reach and where the test conditions bound them.
 
 % ============================ DRAFTING GUIDANCE (whole chapter) ============================
 % PURPOSE (the chapter goals):
