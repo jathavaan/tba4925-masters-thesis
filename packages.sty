@@ -158,6 +158,11 @@
 \usepackage[acronym,nonumberlist]{glossaries}
 \setglossarystyle{super4col}
 \renewcommand{\glsnamefont}[1]{\textbf{#1}}    % bold abbreviation
+% Drop the 6pt tabcolsep before the first column so entries align with the margin
+\renewenvironment{theglossary}%
+	{\tablehead{}\tabletail{}%
+	 \begin{supertabular}{@{}lp{\glsdescwidth}p{\glssymbolwidth}p{\glspagelistwidth}}}%
+	{\end{supertabular}}%
 \makeglossaries
 \loadglsentries{Chapters/00-preliminary/sub-chapters/03-abbreviations}
 % Lowercased acronym expansions for mid-sentence use; the abbreviations list
