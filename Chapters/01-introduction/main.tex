@@ -1,4 +1,11 @@
-\input{Chapters/01-introduction/sub-chapters/01-motivation}
+Geospatial data has grown in both size and complexity, and accessing it by downloading entire files has become impractical for many tasks \parencite{cngfoundation2024_cloud_optimized_geospatial_formats_guide}. Cloud-optimized geospatial formats answer this by keeping data on cloud object storage and reading only the parts a task needs over a network \parencite{cngfoundation2024_cloud_optimized_geospatial_formats_guide}.
+
+Running on cloud infrastructure changes how performance and cost relate. Compute is provisioned on demand and paid for by the hour, with no up-front commitment and the option to release resources when they fall idle \parencite{armbrust2010_view_of_cloud_computing}. Network data transfer is billed by the byte, so the volume a query moves accumulates into a direct operational cost that a system designer has to weigh \parencite{armbrust2010_view_of_cloud_computing}.
+
+Under this pricing model, the approaches that move less data and leave less infrastructure idle are the cheaper ones to run. Traditional geospatial formats are built for on-disk access in small internal chunks, and serving subsets of them over a network usually requires running additional server software, which adds maintenance and latency \parencite{cngfoundation2024_cloud_optimized_geospatial_formats_guide}. Cloud-optimized formats instead store their metadata and data so that a client can read targeted subsets directly from object storage, lowering both the data transferred and the latency of a read \parencite{cngfoundation2024_cloud_optimized_geospatial_formats_guide}.
+
+Both families of technology are now available for the same spatial workloads, yet they make different trade-offs across performance, data transfer, and cost, and the better choice is rarely obvious. It depends on the query pattern, the size of the data, and how the system is provisioned. This thesis examines those trade-offs by benchmarking cloud-native and traditional geospatial technologies on common cloud infrastructure, measuring run-time, network data transfer, and operational cost across a set of representative spatial query workloads.
+
 \input{Chapters/01-introduction/sub-chapters/02-project-description}
 \input{Chapters/01-introduction/sub-chapters/03-contributions}
 \input{Chapters/01-introduction/sub-chapters/04-scope-and-limitations}
