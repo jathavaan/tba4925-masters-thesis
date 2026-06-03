@@ -14,7 +14,7 @@ Two phases of this lifecycle are worth naming. The \emph{executor read time} is 
 
 \begin{figure}[H]
 	\centering
-	\includegraphics[width=0.8\textwidth]{Chapters/02-background/sub-chapters/figures/02-distributed-spatial-query-lifecycle.png}
+	\includegraphics[width=0.8\textwidth]{Chapters/02-background/sub-chapters/figures/02-distributed-spatial-query-lifecycle.pdf}
 	\caption[Lifecycle of a distributed spatial query]{Lifecycle of a distributed spatial query on a Spark-based engine, shown as a swimlane across the driver, executors, and object storage. The six columns trace the query from planning, through reading input partitions, two narrow stages separated by a shuffle, and final result collection. The brackets below the storage lane mark the three named phases referenced in the prose: \emph{executor read time}, \emph{shuffle}, and \emph{driver collection}. Inter-lane arrows distinguish the network channels. The dashed gray arrows from Catalyst to each executor carry the serialized plan and task descriptors at a small, input-independent cost. The arrows between the executors and storage carry the data reads, with volume scaling with input size. The coral arrows around the shuffle column carry intra-cluster traffic between executors as Stage~1 outputs are redistributed for Stage~2. The arrows from the Stage~2 tasks to Collect carry the result set back to the driver, with volume scaling with its size.}
  	\label{fig:distributed-spatial-query-lifecycle}
 \end{figure}
@@ -28,11 +28,11 @@ The lifecycle parallelizes only when the input is split into pieces of roughly e
 \begin{figure}[H]
 	\centering
 	\subfloat[Hash partitioning.\label{fig:hash-partitioning}]{%
-		\includegraphics[valign=t, width=0.45\textwidth]{Chapters/02-background/sub-chapters/figures/02-hash-partitioning.png}%
+		\includegraphics[valign=t, width=0.45\textwidth]{Chapters/02-background/sub-chapters/figures/02-hash-partitioning.pdf}%
 	}
 	\hfill
 	\subfloat[Spatial partitioning.\label{fig:geographic-partitioning}]{%
-		\includegraphics[valign=t, width=0.45\textwidth]{Chapters/02-background/sub-chapters/figures/02-geographic-partitioning.png}%
+		\includegraphics[valign=t, width=0.45\textwidth]{Chapters/02-background/sub-chapters/figures/02-geographic-partitioning.pdf}%
 	}
 	\caption[Hash versus spatial partitioning of the same features]{Hash versus spatial partitioning of the same set of features. Both panels show the same polygons in identical positions; color encodes partition assignment, with each color corresponding to one partition handled by a different executor. (a) Under hash partitioning, color is uncorrelated with position, so polygons that share a boundary in the plane typically land on different partitions. (b) Under spatial partitioning, the study area is divided into spatially contiguous cells (dashed dividers) and all polygons within a cell share a color, so locality in the plane is preserved as locality in partition assignment. Adapted from \parencite{eldawy2015_spatial_partitioning_techniques}.}
 	\label{fig:hash-vs-spatial-partitioning}
@@ -54,11 +54,11 @@ The spatial join is the operation where distribution either pays off or breaks d
 \begin{figure}[H]
 	\centering
 	\subfloat[Broadcast join.\label{fig:broadcast-join}]{%
-		\includegraphics[valign=t, width=0.45\textwidth]{Chapters/02-background/sub-chapters/figures/02-broadcast-join.png}%
+		\includegraphics[valign=t, width=0.45\textwidth]{Chapters/02-background/sub-chapters/figures/02-broadcast-join.pdf}%
 	}
 	\hfill
 	\subfloat[Partitioned join.\label{fig:partitioned-join}]{%
-		\includegraphics[valign=t, width=0.45\textwidth]{Chapters/02-background/sub-chapters/figures/02-partitioned-join.png}%
+		\includegraphics[valign=t, width=0.45\textwidth]{Chapters/02-background/sub-chapters/figures/02-partitioned-join.pdf}%
 	}
 	\caption[Broadcast versus partitioned spatial join]{Broadcast versus partitioned spatial join on the same two inputs. Both strategies converge on the same end state, three executors each performing a local join, but they differ sharply in where the network cost falls. (a) Broadcast: the small input A is shipped from a single source down to every executor; B's partitions are already resident on the executors and do not move, so network traffic scales only with the size of A. (b) Partitioned: both A and B flow through a shuffle that applies a common spatial partitioner, so spatially matching cells of A and B co-locate on each executor before the local join runs. Both inputs traverse the network in this case, and the heavy traffic is the cost of guaranteeing co-location.}
 	\label{fig:broadcast-vs-partitioned-join}
