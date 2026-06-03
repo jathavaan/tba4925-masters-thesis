@@ -75,7 +75,7 @@ Table~\ref{tab:appendix-cardinality-agreement} gives the returned row count for 
 \subsection{Per-cell summary statistics}
 \label{appendix:supplementary-results:summary-statistics}
 
-Table~\ref{tab:appendix-summary-statistics} is the fuller dispersion companion to the achieved-iteration table (Table~\ref{tab:results-achieved-n}): the \acrfull{cv} ranged from about \num{0.17} to about \num{0.50} across the single-machine cells, with the smallest values recorded for DuckDB over GeoParquet and the largest for PostGIS, so the right-skewed spread is general rather than confined to the estimator-illustration cell.
+Table~\ref{tab:appendix-summary-statistics} is the fuller dispersion companion to the achieved-iteration table (Table~\ref{tab:results-achieved-n}): the \acrfulllc{cv} ranged from about \num{0.17} to about \num{0.50} across the single-machine cells, with the smallest values recorded for DuckDB over GeoParquet and the largest for PostGIS, so the right-skewed spread is general rather than confined to the estimator-illustration cell.
 
 \begin{table}[H]
     \centering
@@ -103,7 +103,7 @@ Table~\ref{tab:appendix-summary-statistics} is the fuller dispersion companion t
     \caption[Per-cell summary statistics]{Per-cell summary statistics for every
     single-machine configuration, query pattern, and size tier that ran: the achieved
     count of successful timed iterations $n$, the minimum and median elapsed time, the
-    \acrfull{iqr}, the coefficient of variation, and the relative half-width of
+    \acrfulllc{iqr}, the coefficient of variation, and the relative half-width of
     the \num{95}\% bootstrap confidence interval on the minimum. Dispersion is the \acrshort{iqr}
     and the \acrshort{cv} rather than the standard deviation, because the per-iteration timings are
     right-skewed and one-sidedly contaminated. Rows are grouped by query pattern. This
@@ -121,7 +121,7 @@ Figure~\ref{fig:appendix-estimator-illustration} quantifies the minimum-to-mean 
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.75\textwidth]{Chapters/09-appendix/sub-chapters/figures/09-estimator-illustration.pdf}
-    \caption[Per-iteration \acrfull{ecdf} and estimator choice]{Empirical cumulative distribution
+    \caption[Per-iteration \acrfulllc{ecdf} and estimator choice]{Empirical cumulative distribution
     of the per-iteration elapsed time for one representative cell (point-in-polygon
     lookup, DuckDB over GeoParquet, small tier) on a logarithmic time axis, with the
     minimum, median, and mean marked and the minimum-to-mean span shaded. The
@@ -137,7 +137,7 @@ Figure~\ref{fig:appendix-estimator-illustration} quantifies the minimum-to-mean 
 \subsection{Latency distributions by query pattern}
 \label{appendix:supplementary-results:latency-ecdf-grid}
 
-Figure~\ref{fig:latency-ecdf-grid} extends the headline latency distribution of Figure~\ref{fig:single-machine-latency-ecdf} to the remaining single-machine cells, one empirical \acrfull{cdf} per query pattern and size tier. PostGIS held a sub-\SI{0.05}{\second} median in every cell, while the slowest configuration alternated by pattern: the local Shapefile path was slowest for the kNN search (median \SI{60.81}{\second} at the small tier), whereas DuckDB was slowest for bounding-box filtering (\SI{1.14}{\second}) as it was for the point-in-polygon lookup. At the large tier the Shapefile path was not run, so each large-tier panel contrasts DuckDB against PostGIS, whose separation widened to three to four orders of magnitude (for the point-in-polygon lookup, medians of \SI{36.87}{\second} versus \SI{0.0039}{\second}).
+Figure~\ref{fig:latency-ecdf-grid} extends the headline latency distribution of Figure~\ref{fig:single-machine-latency-ecdf} to the remaining single-machine cells, one empirical \acrfulllc{cdf} per query pattern and size tier. PostGIS held a sub-\SI{0.05}{\second} median in every cell, while the slowest configuration alternated by pattern: the local Shapefile path was slowest for the kNN search (median \SI{60.81}{\second} at the small tier), whereas DuckDB was slowest for bounding-box filtering (\SI{1.14}{\second}) as it was for the point-in-polygon lookup. At the large tier the Shapefile path was not run, so each large-tier panel contrasts DuckDB against PostGIS, whose separation widened to three to four orders of magnitude (for the point-in-polygon lookup, medians of \SI{36.87}{\second} versus \SI{0.0039}{\second}).
 
 \begin{figure}[H]
     \centering

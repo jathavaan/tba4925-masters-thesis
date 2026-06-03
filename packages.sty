@@ -159,6 +159,11 @@
 \makeglossaries
 \loadglsentries{Chapters/00-preliminary/sub-chapters/03-abbreviations}
 
+% Lowercased acronym expansions for mid-sentence use; the abbreviations list
+% stores Title Case, so common-noun expansions are lowered at the point of use.
+\newcommand*{\acrlonglc}[1]{\MakeLowercase{\glsentrylong{#1}}}
+\newcommand*{\acrfulllc}[1]{\acrlonglc{#1}~(\acrshort{#1})}
+
 % =============================================================================
 % Hyperlinks & PDF Bookmarks
 % =============================================================================
