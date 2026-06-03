@@ -156,24 +156,18 @@
 % =============================================================================
 % Abbreviations / Acronyms
 % =============================================================================
-\usepackage[acronym,nonumberlist]{glossaries}
+\usepackage[acronym,nonumberlist,nopostdot]{glossaries}
 % Two-column abbreviations list: abbreviation + expansion. The super4col style
-% references an undefined \glssymbolwidth under this glossaries version and adds
-% empty symbol/page columns that acronyms (with nonumberlist) never fill, so
-% define a slim two-column style instead. @{} drops the leading tabcolsep so
-% entries align with the margin. Wrapped in \newglossarystyle so that the print
-% pass re-applies this layout rather than the stock one.
+% referenced an undefined \glssymbolwidth and added empty symbol/page columns
+% that acronyms (with nonumberlist) never fill. Inherit the stock "long" style's
+% row layout (a known-good longtable) and override only the table preamble, where
+% @{} drops the leading tabcolsep so entries align with the margin. Wrapped in
+% \newglossarystyle so the print pass re-applies this layout, not the stock one.
 \newglossarystyle{abbreviations}{%
+	\setglossarystyle{long}%
 	\renewenvironment{theglossary}%
-		{\tablehead{}\tabletail{}%
-		 \begin{supertabular}{@{}lp{\glsdescwidth}}}%
-		{\end{supertabular}}%
-	\renewcommand*{\glossaryheader}{}%
-	\renewcommand*{\glsgroupheading}[1]{}%
-	\renewcommand*{\glossentry}[2]{%
-		\glstarget{##1}{\glossentryname{##1}} &
-		\glossentrydesc{##1}\tabularnewline}%
-	\renewcommand*{\glsgroupskip}{}%
+		{\begin{longtable}{@{}lp{\glsdescwidth}}}%
+		{\end{longtable}}%
 }
 \setglossarystyle{abbreviations}
 \renewcommand{\glsnamefont}[1]{\textbf{#1}}    % bold abbreviation
