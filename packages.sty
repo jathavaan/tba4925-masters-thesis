@@ -166,7 +166,9 @@
 \newglossarystyle{abbreviations}{%
 	\setglossarystyle{long}%
 	\renewenvironment{theglossary}%
-		{\begin{longtable}{@{}lp{\glsdescwidth}}}%
+		{\setlength{\LTleft}{0pt}%
+		 \setlength{\LTright}{\fill}%
+		 \begin{longtable}{@{}lp{\glsdescwidth}}}%
 		{\end{longtable}}%
 }
 \setglossarystyle{abbreviations}
