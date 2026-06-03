@@ -137,6 +137,18 @@
 \usepackage{chngcntr}             % Control counters
 \counterwithin{figure}{section}   % Figure numbering within sections
 \counterwithin{table}{section}    % Table numbering within sections
+\counterwithout{footnote}{chapter} % Continuous footnote numbering across chapters
+
+% =============================================================================
+% Footnotes
+% =============================================================================
+\usepackage[bottom]{footmisc} % Pin footnotes to the page foot under \raggedbottom
+
+% =============================================================================
+% Hyperlinks & PDF Bookmarks
+% =============================================================================
+\usepackage[hidelinks]{hyperref}
+\usepackage{bookmark}
 
 
 
