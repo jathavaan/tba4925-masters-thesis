@@ -10,7 +10,7 @@
 
 \subsection{Full pairwise statistics}
 
-Table~\ref{tab:appendix-pairwise-statistics} lists the full pairwise comparison behind the separability grouping of Figure~\ref{fig:pairwise-significance-cliques}, reporting the Wilcoxon rank-sum statistic, the Holm-adjusted $p$-value, and the Vargha--Delaney $\hat{A}_{12}$ effect size for each configuration pair across every query pattern, size tier, and outcome dimension (Section~\ref{research-design-and-methodology:statistical-analysis:pairwise-comparison-and-effect-size}).
+The separability grouping of Figure~\ref{fig:pairwise-significance-cliques} rests on the full pairwise comparison in Table~\ref{tab:appendix-pairwise-statistics}, which reports the Wilcoxon rank-sum statistic, the Holm-adjusted $p$-value, and the Vargha--Delaney $\hat{A}_{12}$ effect size for each configuration pair across every query pattern, size tier, and outcome dimension (Section~\ref{research-design-and-methodology:statistical-analysis:pairwise-comparison-and-effect-size}).
 
 % longtable (not a float) is used because this spans pages.
 {\footnotesize
@@ -49,7 +49,7 @@ Table~\ref{tab:appendix-pairwise-statistics} lists the full pairwise comparison 
 
 \subsection{Result-cardinality agreement}
 
-Table~\ref{tab:appendix-cardinality-agreement} gives the returned row count for the configurations that ran each workload, backing the agreement check of Section~\ref{results:overview-and-measurement-quality:run-completeness-and-result-agreement}: the point-in-polygon lookup, the k-nearest-neighbor search, and the national-scale join returned identical counts across the engines that ran them, and the bounding-box filter was the only pattern whose returned set differed between engines, at a maximum relative discrepancy of \num{1.53}\%.
+Table~\ref{tab:appendix-cardinality-agreement} reports the returned row count for the configurations that ran each workload, backing the agreement check of Section~\ref{results:overview-and-measurement-quality:run-completeness-and-result-agreement}: the point-in-polygon lookup, the k-nearest-neighbor search, and the national-scale join returned identical counts across the engines that ran them, and the bounding-box filter was the only pattern whose returned set differed between engines, at a maximum relative discrepancy of \num{1.53}\%.
 
 \begin{table}[H]
     \centering
@@ -72,7 +72,7 @@ Table~\ref{tab:appendix-cardinality-agreement} gives the returned row count for 
 
 \subsection{Per-cell summary statistics}
 
-Table~\ref{tab:appendix-summary-statistics} is the fuller dispersion companion to the achieved-iteration table (Table~\ref{tab:results-achieved-n}): the \acrfulllc{cv} ranged from about \num{0.17} to about \num{0.50} across the single-machine cells, with the smallest values recorded for DuckDB over GeoParquet and the largest for PostGIS, so the right-skewed spread is general rather than confined to the estimator-illustration cell.
+Table~\ref{tab:appendix-summary-statistics} extends the achieved-iteration table (Table~\ref{tab:results-achieved-n}) with per-cell dispersion: the \acrfulllc{cv} ranged from about \num{0.17} to about \num{0.50} across the single-machine cells, with the smallest values recorded for DuckDB over GeoParquet and the largest for PostGIS, so the right-skewed spread is general rather than confined to the estimator-illustration cell.
 
 \begin{table}[H]
     \centering
@@ -132,7 +132,7 @@ Figure~\ref{fig:appendix-estimator-illustration} quantifies the minimum-to-mean 
 
 \subsection{Latency distributions by query pattern}
 
-Figure~\ref{fig:latency-ecdf-grid} extends the headline latency distribution of Figure~\ref{fig:single-machine-latency-ecdf} to the remaining single-machine cells, one empirical \acrfulllc{cdf} per query pattern and size tier. PostGIS held a sub-\SI{0.05}{\second} median in every cell, while the slowest configuration alternated by pattern: the local Shapefile path was slowest for the kNN search (median \SI{60.81}{\second} at the small tier), whereas DuckDB was slowest for bounding-box filtering (\SI{1.14}{\second}) as it was for the point-in-polygon lookup. At the large tier the Shapefile path was not run, so each large-tier panel contrasts DuckDB against PostGIS, whose separation widened to three to four orders of magnitude (for the point-in-polygon lookup, medians of \SI{36.87}{\second} versus \SI{0.0039}{\second}).
+Figure~\ref{fig:latency-ecdf-grid} extends the headline latency distribution of Figure~\ref{fig:single-machine-latency-ecdf} to the remaining single-machine cells, one empirical \acrfulllc{cdf} per query pattern and size tier. PostGIS held a sub-\SI{0.05}{\second} median in every cell, but the slowest configuration alternated by pattern: the local Shapefile path was slowest for the kNN search (median \SI{60.81}{\second} at the small tier), whereas DuckDB was slowest for both bounding-box filtering (\SI{1.14}{\second}) and the point-in-polygon lookup. The Shapefile path was not run at the large tier, so each large-tier panel contrasts DuckDB against PostGIS, whose separation widened to three to four orders of magnitude; for the point-in-polygon lookup the medians were \SI{36.87}{\second} versus \SI{0.0039}{\second}.
 
 \begin{figure}[H]
     \centering
@@ -151,7 +151,7 @@ Figure~\ref{fig:latency-ecdf-grid} extends the headline latency distribution of 
 
 \subsection{Run-to-run dispersion}
 
-Figure~\ref{fig:appendix-cv-dispersion} plots the coefficient of variation for every cell grouped by configuration: the single-machine query cells sat between about \num{0.17} and \num{0.50}, above the \num{0.10} reference band, while the distributed-join configurations clustered lower, mostly below about \num{0.13}.
+Figure~\ref{fig:appendix-cv-dispersion} plots the coefficient of variation for every cell, grouped by configuration: the single-machine query cells sat between about \num{0.17} and \num{0.50}, above the \num{0.10} reference band, while the distributed-join configurations clustered lower, mostly below about \num{0.13}.
 
 \begin{figure}[H]
     \centering
@@ -165,7 +165,7 @@ Figure~\ref{fig:appendix-cv-dispersion} plots the coefficient of variation for e
 
 \subsection{Run-to-run reproducibility}
 
-Figure~\ref{fig:appendix-reproducibility} separates the two: across the \num{30} passes the per-pass minimum stayed close to its central value (a between-pass coefficient of variation from about \num{0.02} to \num{0.25} across the representative cells), while the within-pass confidence-interval half-width stayed under about \num{3}\% of each cell's median.
+Figure~\ref{fig:appendix-reproducibility} separates the two: across the \num{30} passes the per-pass minimum stayed close to its central value, with a between-pass coefficient of variation from about \num{0.02} to \num{0.25} across the representative cells, while the within-pass confidence-interval half-width stayed under about \num{3}\% of each cell's median.
 
 \begin{figure}[H]
     \centering
@@ -198,7 +198,7 @@ Figure~\ref{fig:appendix-time-of-day-stability} plots each iteration's relative 
 
 \subsection{CPU decomposition}
 
-Figure~\ref{fig:appendix-cpu-decomposition} shows that user CPU time dominated system CPU time for the configurations that recorded process CPU, the system component staying a small fraction of the user component, while PostGIS recorded near-zero client-process CPU.
+Figure~\ref{fig:appendix-cpu-decomposition} shows that, for the configurations that recorded process CPU, user CPU time dominated system CPU time, with the system component staying a small fraction of the user component, while PostGIS recorded near-zero client-process CPU.
 
 \begin{figure}[H]
     \centering
@@ -233,7 +233,7 @@ Figure~\ref{fig:appendix-cpu-wall-ratio} reports the CPU-to-wall-clock ratio aga
 
 \subsection{Same-engine size scaling}
 
-Figure~\ref{fig:appendix-size-scaling-slope} traces each engine's wall-clock minimum from the small to the large tier: DuckDB over GeoParquet grew by roughly \num{21} to \num{22} times across the three patterns (a factor of \num{22.5} for the point-in-polygon lookup, \num{21.6} for the bounding-box filter, and \num{21.1} for the k-nearest-neighbor search), whereas PostGIS stayed nearly flat (between about \num{0.9} and \num{1.4} times, and slightly faster at the large tier for the point-in-polygon and k-nearest-neighbor patterns); the local Shapefile path ran the small tier only.
+Figure~\ref{fig:appendix-size-scaling-slope} traces each engine's wall-clock minimum from the small to the large tier: DuckDB over GeoParquet grew by roughly \num{21} to \num{22} times across the three patterns, a factor of \num{22.5} for the point-in-polygon lookup, \num{21.6} for the bounding-box filter, and \num{21.1} for the k-nearest-neighbor search, whereas PostGIS stayed nearly flat, between about \num{0.9} and \num{1.4} times and slightly faster at the large tier for the point-in-polygon and k-nearest-neighbor patterns; the local Shapefile path ran the small tier only.
 
 \begin{figure}[H]
     \centering
@@ -265,7 +265,7 @@ Figure~\ref{fig:appendix-cell-grid} collects every query pattern and size tier i
 
 \subsection{Raw Spark-internal metrics}
 
-Figure~\ref{fig:appendix-spark-metrics} shows the distributions of the raw Spark-internal metrics, the executor run time, input bytes read, shuffle bytes, and per-stage durations, that feed the execution-phase breakdown of Figure~\ref{fig:distributed-execution-phase-breakdown}.
+Figure~\ref{fig:appendix-spark-metrics} shows the distributions of the raw Spark-internal metrics --- executor run time, input bytes read, shuffle bytes, and per-stage durations --- that feed the execution-phase breakdown of Figure~\ref{fig:distributed-execution-phase-breakdown}.
 
 \begin{figure}[H]
     \centering
@@ -293,7 +293,7 @@ Figure~\ref{fig:appendix-spark-stage-profile} resolves the join into individual 
     \label{fig:appendix-spark-stage-profile}
 \end{figure}
 
-The same per-stage decomposition at the other cluster configurations is shown in Figure~\ref{fig:spark-stage-extra}. Under the broadcast strategy the dominant stage~2 scaled with worker count at every tier, its median falling from about \SI{21}{\second} to \SI{7}{\second} at the small tier and from about \SI{153}{\second} to \SI{29}{\second} at the medium tier as workers rose from \num{2} to \num{16}. The partitioned strategy behaved differently: a single range-join stage of roughly \SI{2700}{\second}--\SI{2800}{\second} dominated the profile and was essentially flat across worker counts, which is why adding executors did not shorten its runtime. The partitioned strategy did not complete at the medium or large tiers (executor \acrshort{oom}), so only its small tier is shown.
+Figure~\ref{fig:spark-stage-extra} shows the same per-stage decomposition at the other cluster configurations. Under the broadcast strategy the dominant stage~2 scaled with worker count at every tier: its median fell from about \SI{21}{\second} to \SI{7}{\second} at the small tier and from about \SI{153}{\second} to \SI{29}{\second} at the medium tier as workers rose from \num{2} to \num{16}. The partitioned strategy behaved differently. A single range-join stage of roughly \SI{2700}{\second}--\SI{2800}{\second} dominated the profile and stayed essentially flat across worker counts, so adding executors did not shorten its run-time. The partitioned strategy did not complete at the medium or large tiers (executor \acrshort{oom}), so only its small tier is shown.
 
 \begin{figure}[H]
     \centering

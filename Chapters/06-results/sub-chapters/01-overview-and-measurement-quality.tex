@@ -60,24 +60,14 @@ Figure~\ref{fig:results-warmup} shows the per-iteration timing behavior for a re
 \subsection{Iteration counts and convergence}
 \label{results:overview-and-measurement-quality:iteration-counts-and-convergence}
 
-% Academic rewrite
-Figure~\ref{fig:results-convergence} traces the sequential stopping rule for the same representative cell over a single measurement pass. The running half-width of the bootstrap confidence interval, expressed as a fraction of the running minimum, reaches the \num{5}\% relative target within the first iterations and stays close to it thereafter. Run-to-run reproducibility across the measurement passes and the stability of the normalized run-times against time-of-day are reported in Figures~\ref{fig:appendix-reproducibility} and~\ref{fig:appendix-time-of-day-stability} (Appendix~\ref{appendix:supplementary-results}).
+Figure~\ref{fig:results-convergence} traces the sequential stopping rule for the same representative cell over a single measurement pass. The running half-width of the bootstrap confidence interval, expressed as a fraction of the running minimum, reaches the \num{5}\% relative target within the first iterations and stays close to it thereafter. Figures~\ref{fig:appendix-reproducibility} and~\ref{fig:appendix-time-of-day-stability} (Appendix~\ref{appendix:supplementary-results}) report run-to-run reproducibility across the measurement passes and the stability of the normalized run-times against time-of-day.
 
-% Academic rewrite
-Table~\ref{tab:results-achieved-n} reports, for each single-machine cell, the achieved count of successful iterations, the minimum-estimator elapsed time, the final confidence-interval half-width, and the recorded stop reason. Every cell that ran reached the precision target rather than a budget or timeout limit. The achieved counts ranged across cells from \num{345} iterations for the point-in-polygon lookup on DuckDB at the large tier to \num{79186} for the same pattern on PostGIS at the small tier. The national-scale join took the fixed-iteration branch of the protocol rather than the sequential rule (Section~\ref{research-design-and-methodology:workloads:iteration-counts}), so its per-cell counts are reported with the distributed results in Table~\ref{tab:distributed-join-descriptive-statistics}. The fuller per-cell dispersion companion to this table, giving the median, \acrshort{iqr}, coefficient of variation, and confidence-interval half-width for every cell, is Table~\ref{tab:appendix-summary-statistics}, and the coefficient of variation is plotted across cells by configuration in Figure~\ref{fig:appendix-cv-dispersion} (Appendix~\ref{appendix:supplementary-results}).
+Table~\ref{tab:results-achieved-n} records the achieved count of successful iterations, the minimum-estimator elapsed time, the final confidence-interval half-width, and the recorded stop reason for each single-machine cell. Every cell that ran reached the precision target rather than a budget or timeout limit. Across cells, the achieved counts ranged from \num{345} iterations for the point-in-polygon lookup on DuckDB at the large tier to \num{79186} for the same pattern on PostGIS at the small tier. The national-scale join took the fixed-iteration branch of the protocol rather than the sequential rule (Section~\ref{research-design-and-methodology:workloads:iteration-counts}), so its per-cell counts appear with the distributed results in Table~\ref{tab:distributed-join-descriptive-statistics}. Table~\ref{tab:appendix-summary-statistics} is the fuller per-cell dispersion companion to this table, giving the median, \acrshort{iqr}, coefficient of variation, and confidence-interval half-width for every cell. Figure~\ref{fig:appendix-cv-dispersion} (Appendix~\ref{appendix:supplementary-results}) plots the coefficient of variation across cells by configuration.
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.7\textwidth]{Chapters/06-results/sub-chapters/figures/06-results-convergence.pdf}
-    \caption[Sequential-stopping convergence]{Convergence of the sequential stopping
-    rule for one representative configuration, workload, and tier (DuckDB over
-    GeoParquet, point-in-polygon, small tier), over a single measurement pass. The
-    running bootstrap \num{95}\% confidence-interval half-width, expressed as a
-    fraction of the running minimum elapsed time, is plotted against the number of
-    accumulated iterations; the horizontal line marks the \num{5}\% relative target
-    half-width \parencite{georges2007_statistically_rigorous_java_performance,laaber2019_software_microbenchmarking_cloud},
-    and the marker indicates the first iteration at which the running half-width meets
-    that target.}
+    \caption[Sequential-stopping convergence]{Convergence of the sequential stopping rule for one representative configuration, workload, and tier (DuckDB over GeoParquet, point-in-polygon, small tier), over a single measurement pass. The running bootstrap \num{95}\% confidence-interval half-width, expressed as a fraction of the running minimum elapsed time, is plotted against the number of accumulated iterations; the horizontal line marks the \num{5}\% relative target half-width \parencite{georges2007_statistically_rigorous_java_performance,laaber2019_software_microbenchmarking_cloud}, and the marker indicates the first iteration at which the running half-width meets that target.}
     \label{fig:results-convergence}
 \end{figure}
 
@@ -94,12 +84,6 @@ Table~\ref{tab:results-achieved-n} reports, for each single-machine cell, the ac
         \inputtablebody{Chapters/06-results/sub-chapters/tables/06-achieved-iterations.tex}
         \bottomrule
     \end{tabular}}
-    \caption[Achieved iteration counts and convergence]{Achieved count of successful
-    timed iterations, minimum-estimator elapsed time, final bootstrap \num{95}\%
-    confidence-interval half-width, and recorded stop reason for each single-machine
-    configuration, query pattern, and size tier. The reported $n$ is the achieved
-    number of successful iterations recorded in the run metadata, not the configured
-    ceiling. Cells that did not run by design carry an explicit did-not-run stop
-    reason rather than a zero count.}
+    \caption[Achieved iteration counts and convergence]{Achieved count of successful timed iterations, minimum-estimator elapsed time, final bootstrap \num{95}\% confidence-interval half-width, and recorded stop reason for each single-machine configuration, query pattern, and size tier. The reported $n$ is the achieved number of successful iterations recorded in the run metadata, not the configured ceiling. Cells that did not run by design carry an explicit did-not-run stop reason rather than a zero count.}
     \label{tab:results-achieved-n}
 \end{table}

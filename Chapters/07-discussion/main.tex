@@ -1,29 +1,4 @@
-% File: Chapters/07-discussion/main.tex
-
-% Academic rewrite
-The orderings reported in Chapter~\ref{ch:results} are recorded without their cause, and reading them against the mechanisms set out in Chapter~\ref{ch:background} and the prior benchmarks of Chapter~\ref{ch:related-work} is what answers the research questions. The single-node findings are taken first, asking why the cloud-native combination of GeoParquet and DuckDB behaved as it did against the traditional PostGIS and Shapefile alternatives, the cause the Results chapter withholds. The distributed join is then read against the same single-node baselines to locate where distribution repays the coordination cost it imposes and where a tuned single node remains the better choice. Drawing the two together yields the synthesis of which engine suits which setting, weighing implementation complexity against usage cost, after which the chapter marks how far these findings reach and where the test conditions bound them.
-
-% ============================ DRAFTING GUIDANCE (whole chapter) ============================
-% PURPOSE (the chapter goals):
-%   1. Interpret the Results (Chapter~\ref{ch:results}) through the background
-%      (Chapter~\ref{ch:background}) and related work (Chapter~\ref{ch:related-work}).
-%   2. Frame the real-world decision as implementation/complexity cost weighed against
-%      usage (operational) cost -- the "which engine, and when" synthesis (Section 7.3).
-%   3. Acknowledge factors the thesis does not measure (Section 7.4), interpreting their
-%      bearing on the findings rather than re-listing the validity table.
-% INCLUDE: mechanism and cause (the "why" the Results chapter withholds); a link from each
-%   finding to a named background mechanism with a citation key; the complexity-vs-cost
-%   decision framing; the "statistically tied" reading wherever a test was not significant;
-%   explicit marking of any claim that extrapolates beyond the tested tiers.
-% EXCLUDE: new measurements or numbers not already in Chapter~\ref{ch:results} (cite the
-%   Results float instead); wholesale restatement of Results tables; a second copy of the
-%   threats-to-validity table (it lives in Chapter~\ref{ch:methodology}, Section 4.5 --
-%   interpret, do not duplicate); future work and the closing summary, which belong to
-%   Chapter~\ref{ch:conclusions}.
-% CITATION DISCIPLINE: \parencite / \textcite only, never \cite. Every interpretive claim
-%   traces to a background mechanism or a related-work source; soften a claim rather than
-%   over-cite. Keys named in the sub-chapter comments are verified against bibliography.bib.
-% ==========================================================================================
+Chapter~\ref{ch:results} reports the orderings but not their cause. Recovering that cause, by reading the orderings against the mechanisms set out in Chapter~\ref{ch:background} and the prior benchmarks of Chapter~\ref{ch:related-work}, answers the research questions. The single-node findings come first. They ask why the cloud-native combination of GeoParquet and DuckDB behaved as it did against the traditional PostGIS and Shapefile alternatives. The distributed join is then read against the same single-node baselines to locate where distribution repays the coordination cost it imposes and where a tuned single node remains the better choice. Drawing the two together gives the synthesis of which engine suits which setting, weighing implementation complexity against usage cost, after which the chapter marks how far these findings reach and where the test conditions bound them.
 
 \input{Chapters/07-discussion/sub-chapters/01-single-node-cloud-native-vs-traditional}
 \input{Chapters/07-discussion/sub-chapters/02-distribution-and-scaling}
