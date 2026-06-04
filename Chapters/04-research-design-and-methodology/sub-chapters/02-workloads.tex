@@ -18,7 +18,9 @@ Each single-machine workload is defined by three elements: the spatial predicate
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.95\textwidth]{Chapters/04-research-design-and-methodology/sub-chapters/figures/04-single-machine-query-definitions.png}
+    \subfloat[]{\includegraphics[width=0.30\textwidth]{Chapters/04-research-design-and-methodology/sub-chapters/figures/04-single-machine-point-in-polygon.pdf}}\hfill
+    \subfloat[]{\includegraphics[width=0.30\textwidth]{Chapters/04-research-design-and-methodology/sub-chapters/figures/04-single-machine-k-nearest-neighbor.pdf}}\hfill
+    \subfloat[]{\includegraphics[width=0.30\textwidth]{Chapters/04-research-design-and-methodology/sub-chapters/figures/04-single-machine-bounding-box.pdf}}
     \caption[Single-machine query patterns.]{The three single-machine query patterns, each evaluated against the same building set, with query geometry shown in coral and result features in green. (a) Point-in-polygon returns the polygon containing a fixed query point. (b) $k$-nearest-neighbor returns the $k$ buildings closest to a fixed query point, here $k = \num{3}$. (c) Bounding-box filter returns every building whose geometry intersects a fixed rectangular window.}
     \label{fig:single-machine-query-definitions}
 \end{figure}
