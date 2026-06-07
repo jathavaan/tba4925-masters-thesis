@@ -236,58 +236,46 @@
 % Long monospace literals (Spark/Sedona/Azure config keys, dotted Python paths,
 % BENCHMARK_* constants) cannot hyphenate and so overflow the right margin in
 % body text, footnotes and captions. \texttt is redefined so a line may break
-% after the separators  . , : ; = / + -  and after \_ , by inserting a
-% *zero-width* \allowbreak. No glyph is added, removed or hyphenated: the
-% rendered characters are byte-for-byte identical; only the set of legal break
-% points grows. (Two literals already carry a manual \allowbreak; the duplicate
-% is harmless.)
+% after the separators  . / : = - + ,  and after \_ , by inserting a *zero-width*
+% \allowbreak. No glyph is added, removed or hyphenated: the rendered characters
+% are byte-for-byte identical; only the set of legal break points grows. (Two
+% literals already carry a manual \allowbreak; the duplicate is harmless.)
 %
-% The argument is walked token-by-token with \futurelet, so spaces, brace groups
-% and control sequences (\_, \url{...}, \textbackslash, \allowbreak) pass through
-% unchanged; only genuine separator tokens gain a break. \texttt stays robust
-% (\DeclareRobustCommand), so it is safe inside \caption{} and re-typesets
-% correctly in the List of Figures / Tables -- the helper macros never reach the
-% .aux/.lof because only \protect\texttt{<literal>} is written there.
+% Implementation: split the literal on each separator in turn, inserting an
+% \allowbreak after each. Delimited (pattern-matched) scanning treats {...} groups
+% as atomic, so a nested command such as \url{...} is never severed from its
+% argument and gains no internal break (\url does its own breaking). Spaces and
+% control symbols (\_, \textbackslash) pass through unchanged. \texttt is robust
+% (\DeclareRobustCommand), so it is safe inside \caption{} and re-typesets in the
+% List of Figures/Tables -- the helper macros never reach the .aux/.lof because
+% only \protect\texttt{<literal>} is written there.
 %
-% To revert to stock \texttt, comment this whole block and uncomment the line:
-%   \makeatletter \let\texttt\bk@origtexttt \makeatother
+% To revert to stock \texttt, comment out this whole block (nothing else redefines
+% \texttt, so the LaTeX kernel definition is then used).
 % -----------------------------------------------------------------------------
 \makeatletter
-\let\bk@origtexttt\texttt           % stock \texttt (the ttfamily text-font cmd)
-\let\bk@uscore\_                    % the text \_ token, for identity comparison
-\def\bk@stopmarker{\bk@stopmarker}  % unique end sentinel (only peeked/consumed)
-
-\def\bk@loop{\futurelet\bk@tok\bk@dispatch}
-\def\bk@dispatch{%
-	\ifx\bk@tok\bk@stopmarker
-		\let\bk@next\bk@end
-	\else\ifx\bk@tok\@sptoken
-		\let\bk@next\bk@dospace
-	\else\ifx\bk@tok\bgroup
-		\let\bk@next\bk@grabgroup
-	\else
-		\let\bk@next\bk@grab
-	\fi\fi\fi
-	\bk@next}
-\def\bk@end\bk@stopmarker{}                  % swallow the sentinel and stop
-\def\bk@grabgroup#1{{#1}\bk@loop}            % keep a brace group intact (no descent)
-\def\bk@grab#1{#1\bk@checkbreak{#1}\bk@loop} % emit token, maybe add break, recurse
-\expandafter\def\expandafter\bk@dospace\space{ \bk@loop} % keep the space, recurse
-
-% Append a zero-width \allowbreak after a separator token (never a hyphen).
-\def\bk@checkbreak#1{%
-	\ifx#1\bk@uscore\allowbreak\else
-	\ifx#1.\allowbreak\else
-	\ifx#1,\allowbreak\else
-	\ifx#1:\allowbreak\else
-	\ifx#1;\allowbreak\else
-	\ifx#1=\allowbreak\else
-	\ifx#1/\allowbreak\else
-	\ifx#1+\allowbreak\else
-	\ifx#1-\allowbreak\else
-	\fi\fi\fi\fi\fi\fi\fi\fi\fi}
-
-\DeclareRobustCommand{\texttt}[1]{\bk@origtexttt{\bk@loop#1\bk@stopmarker}}
+% Per-stage end sentinels: unique, empty-meaning control sequences used only as
+% delimiters and in \ifx end-tests -- never expanded, so no infinite-loop risk.
+\def\bk@edot{}\def\bk@esl{}\def\bk@eco{}\def\bk@eeq{}
+\def\bk@ehy{}\def\bk@epl{}\def\bk@ecm{}\def\bk@eus{}
+% Split pipeline:  .  ->  /  ->  :  ->  =  ->  -  ->  +  ->  ,  ->  \_  -> emit.
+% Each stage emits its piece into the next stage, then -- if a separator followed --
+% re-emits that separator + \allowbreak and recurses on the remainder.
+\def\bk@dot#1.#2\bk@edot{\bk@sl#1/\bk@esl\ifx\bk@edot#2\bk@edot\else.\allowbreak\bk@dot#2\bk@edot\fi}
+\def\bk@sl#1/#2\bk@esl{\bk@co#1:\bk@eco\ifx\bk@esl#2\bk@esl\else/\allowbreak\bk@sl#2\bk@esl\fi}
+\def\bk@co#1:#2\bk@eco{\bk@eq#1=\bk@eeq\ifx\bk@eco#2\bk@eco\else:\allowbreak\bk@co#2\bk@eco\fi}
+\def\bk@eq#1=#2\bk@eeq{\bk@hy#1-\bk@ehy\ifx\bk@eeq#2\bk@eeq\else=\allowbreak\bk@eq#2\bk@eeq\fi}
+\def\bk@hy#1-#2\bk@ehy{\bk@pl#1+\bk@epl\ifx\bk@ehy#2\bk@ehy\else-\allowbreak\bk@hy#2\bk@ehy\fi}
+\def\bk@pl#1+#2\bk@epl{\bk@cm#1,\bk@ecm\ifx\bk@epl#2\bk@epl\else+\allowbreak\bk@pl#2\bk@epl\fi}
+\def\bk@cm#1,#2\bk@ecm{\bk@us#1\_\bk@eus\ifx\bk@ecm#2\bk@ecm\else,\allowbreak\bk@cm#2\bk@ecm\fi}
+\def\bk@us#1\_#2\bk@eus{#1\ifx\bk@eus#2\bk@eus\else\_\allowbreak\bk@us#2\bk@eus\fi}
+% Redefine \texttt: run the literal through the pipeline inside {\ttfamily ...}.
+% We bypass the kernel's \DeclareTextFontCommand italic-correction wrapper, which
+% would scan the pipeline's leading/trailing tokens; italic correction is a no-op
+% for the upright monospace font, so the output is visually identical.
+\DeclareRobustCommand{\texttt}[1]{%
+	\ifmmode\nfss@text{\ttfamily\bk@dot#1.\bk@edot}%
+	\else\leavevmode{\ttfamily\bk@dot#1.\bk@edot}\fi}
 \makeatother
 
 % =============================================================================
