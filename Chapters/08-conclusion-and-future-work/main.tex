@@ -1,91 +1,16 @@
-% File: Chapters/08-conclusion-and-future-work/main.tex
+The single-machine comparison \acrshort{rq}1 poses resolves to a division of outcomes rather than a single superior stack. On wall-clock query time a warm, indexed PostGIS held the lowest run-time in every single-machine cell, and the GeoParquet and DuckDB path did not turn its decoupled read model into a run-time win at the sub-second scale these queries occupy. Network transfer was a per-architecture signature rather than a single ranking, because the bytes crossing the host boundary denote a scanned input for DuckDB and a returned result set for PostGIS, and the larger mover reversed by query pattern. At the single-node scale tested, that transfer did not reach operational cost, because the egress term was zero for every single-node configuration. DuckDB nonetheless recorded the lowest cost on two of the small-tier query patterns, despite trailing on run-time there.
 
-% ============================ DRAFTING GUIDANCE (whole chapter) ============================
-% PURPOSE:
-%   1. Conclude -- state the RQ1--RQ3 answers plainly, closing the synthesis of
-%      Chapter~\ref{ch:discussion} without re-deriving it.
-%   2. Future work -- take up the open questions the discussion defers here;
-%      Section~\ref{discussion:reach-and-limits} (final paragraph) routes them to this chapter.
-% EXCLUDE: new measurements; re-runs of Results/Discussion floats; fresh interpretation not
-%   already established in Chapter~\ref{ch:discussion}.
-% CITATION DISCIPLINE: \parencite / \textcite only, never \cite.
-% ==========================================================================================
+For the national-scale spatial join, the answer to \acrshort{rq}2 turns on the size of the work. At the large tier neither single-node engine completed the join while the distributed broadcast join on Apache Sedona did, so distribution at that scale is a matter of feasibility rather than speed. Where both paths completed, the broadcast join scaled with added workers, yet its speedup stayed below the ideal-linear reference and fell further short as workers grew, the trace of a fixed coordination overhead and a partition load that more workers cannot drain. For a small join the comparison reversed: across the 2--16 workers tested the broadcast join approached the PostGIS minimum without overtaking it, so a tuned single node remained the better choice. From the medium tier, by contrast, the broadcast join led the single-node engines at every worker count. The choice of join strategy was the largest single lever, with the partitioned join running roughly two orders of magnitude slower than the broadcast join where it completed and exhausting executor memory at the medium and large tiers.
 
-% TODO (conclusions prose): compact restatement of the RQ1--RQ3 answers. Not yet written.
+Read together, as \acrshort{rq}3 asks, those orderings did not hold a consistent winner. The leading configuration depended jointly on the query pattern, the dataset tier, and the outcome dimension, and changing any one of them could change it, so a single best engine is an ill-posed question. The practitioner guidance that follows is therefore conditional. For single-machine analytical queries, a tuned single-node PostGIS is the configuration to reach for, a lead that tracks the native spatial index it exposes rather than the engine in the abstract. Distribution earns its added operational complexity once the working set outgrows a single machine. DuckDB's value is operational, resting on its low cost and predictable read footprint rather than on latency.
+
+The work contributed the first reported comparison of a distributed engine, Apache Sedona, against single-node PostGIS and DuckDB on a national-scale spatial join. It also reported network transfer jointly with run-time and operational cost, a dimension absent from almost all spatial benchmarks. Methodologically, it reported effect sizes and bootstrapped confidence intervals and adopted a rank-based omnibus test with post-hoc correction, practices rarely found in geospatial benchmarking. These findings are bounded. They rest on a single cloud provider, on vector building polygons rather than raster or other feature types, on read performance alone, on a single client issuing queries in sequence, and on a distributed sweep of 2--16 workers. The orderings that follow from format and engine structure are expected to reach beyond those conditions, while the absolute times and costs, priced from provider- and region-specific rates, are not. One bound shapes the work that follows: the single-node run-time comparison varied indexing capability and storage locality together with the engine, and the GeoParquet path was left unindexed beyond row-group pruning.
 
 \section{Future work}
 \label{conclusions:future-work}
 
-% NOTES ONLY -- what this section should cover, not final prose. Three bounded items: the
-% first is the one developed in the single-node indexing discussion (Section~\ref{discussion:single-node-cloud-native-vs-traditional},
-% Section~\ref{discussion:reach-and-limits}); the other two are the open questions
-% Section~\ref{discussion:reach-and-limits} (final paragraph) explicitly defers to this chapter.
-%
-% ------------------------------------------------------------------------------------------
-% ITEM 1 -- A spatially indexed / spatially laid-out GeoParquet configuration.
-%
-%   WHY IT FOLLOWS FROM THE FINDINGS:
-%     RQ1 compared PostGIS (GiST-indexed and co-located) against the GeoParquet/DuckDB path
-%     AS DEPLOYED. Section~\ref{discussion:reach-and-limits} records two things to build on:
-%     the GeoParquet path is "unindexed beyond row-group pruning", and an indexed or
-%     co-located GeoParquet configuration was NOT tested and could narrow the run-time gap.
-%     This item turns that untested bound into a concrete experiment.
-%
-%   WHAT GEOPARQUET HAS vs LACKS (the mechanism, already in the taxonomy):
-%     - Has: block-level pruning only -- the covering bounding-box column plus per-row-group
-%       statistics in the Parquet footer. Table~\ref{tab:format-summary} lists this as
-%       "Optional bbox covering".
-%     - Lacks: any per-feature spatial index (R-tree/quadtree) and any nearest-neighbor
-%       index, unlike PostGIS (GiST) and even the Shapefile bundle (.qix).
-%
-%   DEPLOYED-LAYOUT LIMITATION TO STATE (makes the measured GeoParquet result conservative):
-%     The benchmark wrote rows sorted by partition_key, NOT by a space-filling curve
-%     (Section~\ref{system-architecture-and-implementation:data-layer:geoparquet-on-adls-gen2}).
-%     Hive partitioning by region gives file-level pruning, but within a file the row-group
-%     bounding boxes can overlap, so block-level pruning is not maximally exploited. A better
-%     layout could skip more without changing the format.
-%
-%   LEVERS TO TEST:
-%     (a) Spatial sort before write -- Hilbert or Z-order (Morton) ordering -- to tighten
-%         row-group extents and raise the share of row groups and files skipped.
-%     (b) A secondary spatial index over GeoParquet (external R-tree, a DuckDB spatial index,
-%         or a sidecar), and/or co-locating data with the engine to remove the object-storage
-%         round-trip that Section~\ref{discussion:single-node-cloud-native-vs-traditional}
-%         identifies as the sub-second latency source.
-%
-%   SCOPE THE CLAIM (do NOT repeat the index/kNN error corrected in Section 7.1):
-%     The expected benefit is on the CONTAINMENT and RANGE patterns (point-in-polygon,
-%     bounding-box) and on selective scans -- NOT on k-nearest-neighbor. A containment index
-%     does not order by distance without a bounding-box predicate
-%     (Section~\ref{discussion:single-node-cloud-native-vs-traditional}); only a kNN-capable
-%     traversal (as in PostGIS's <-> KNN-GiST) moves the kNN pattern. Say this explicitly so
-%     the section does not imply an index would fix kNN.
-%
-%   CITATIONS: ogc2024_geoparquet_specification_v110 and
-%     lamb2022_querying_parquet_millisecond_latency are already in bibliography.bib. A
-%     Hilbert / Z-order space-filling-curve reference is NOT yet in the .bib -- add one before
-%     citing; do not invent a key.
-%
-%   CROSS-REFS: Section~\ref{discussion:single-node-cloud-native-vs-traditional},
-%     Section~\ref{discussion:reach-and-limits}, Table~\ref{tab:format-summary},
-%     Section~\ref{system-architecture-and-implementation:data-layer:geoparquet-on-adls-gen2}.
-%
-% ------------------------------------------------------------------------------------------
-% ITEM 2 -- Locate the small-tier distribution crossover (deferred from
-%   Section~\ref{discussion:reach-and-limits}). Within the 2--16 workers tested, the
-%   small-tier broadcast join approached but never overtook the PostGIS minimum, so the
-%   worker count at which distribution overtakes a tuned single node is an extrapolation,
-%   not a measured point. Future work: extend the worker sweep (and/or vary problem
-%   granularity) to locate or bound that crossover.
-%   CROSS-REFS: Section~\ref{discussion:distribution-and-scaling},
-%   Section~\ref{research-design-and-methodology:statistical-analysis:answering-rq2-scaling-against-single-node}.
-%
-% ------------------------------------------------------------------------------------------
-% ITEM 3 -- Memory tuning for the partitioned join (deferred from
-%   Section~\ref{discussion:reach-and-limits}). The partitioned strategy (RangeJoin over a
-%   KDB-tree) completed only at the small tier and exhausted executor memory at the medium
-%   and large tiers. Future work: tune executor memory, partition count, and grid type to
-%   test whether that strategy completes where it here failed, separating a configuration
-%   limit from a strategy limit.
-%   CROSS-REFS: Section~\ref{discussion:distribution-and-scaling}, Section~\ref{discussion:reach-and-limits}.
-% ------------------------------------------------------------------------------------------
+The first direction addresses the single-node run-time bound directly. An indexed or co-located GeoParquet configuration was not tested, and a fairer comparison would add one. The benchmark wrote each tier in \texttt{partition\_key} order rather than along a space-filling curve, so within a file the per-row-group bounding boxes can overlap and the pruning the format allows is not fully realized (Section~\ref{system-architecture-and-implementation:data-layer:geoparquet-on-adls-gen2}). A spatial sort, such as a Hilbert or Z-order ordering, would tighten the row-group extents and raise the share of row groups and files a query can skip, without changing the format. A secondary spatial index over GeoParquet, or co-locating the data with the engine to remove the object-storage round-trip, is the second lever and would address the sub-second latency the deployed path paid (Section~\ref{discussion:reach-and-limits}). Any expected gain is confined to the containment and range patterns and to selective scans. A containment index does not order by distance without a bounding-box predicate, so it would not move the k-nearest-neighbor search.
+
+A second direction locates the crossover the small-tier comparison only bounded. Within the 2--16 workers tested the broadcast join approached the PostGIS minimum without overtaking it, so the worker count at which distribution would overtake a tuned single node on a small join is an extrapolation rather than a measured point (Section~\ref{discussion:distribution-and-scaling}). Extending the worker sweep and varying the problem granularity would locate that crossover or bound it from above.
+
+A third direction revisits the partitioned join. It completed only at the small tier and exhausted executor memory at the medium and large tiers, leaving open whether that failure reflects the strategy or its configuration (Section~\ref{discussion:reach-and-limits}). Tuning executor memory, the partition count, and the grid type would test whether the partitioned join completes where it failed here, separating a configuration limit from a strategy limit.

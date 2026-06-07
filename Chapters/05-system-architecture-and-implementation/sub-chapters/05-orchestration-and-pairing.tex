@@ -10,7 +10,7 @@ The orchestrator in \texttt{main.py} drives the suite through a single serial lo
 
 \begin{figure}[H]
 	\centering
-	\includegraphics[width=0.7\textwidth]{Chapters/05-system-architecture-and-implementation/sub-chapters/figures/05-dispatch-loop.png}
+	\includegraphics[width=0.7\textwidth]{Chapters/05-system-architecture-and-implementation/sub-chapters/figures/05-dispatch-loop.pdf}
 	\caption[Orchestrator dispatch loop.]{Control flow of the \texttt{main.py} dispatch loop: a serial outer pass admits one batch at a time, launches its members in parallel as one-off ACI container groups, and blocks on a join barrier until every member has finished before marking the batch completed and advancing to the next experiment.}
 	\label{fig:dispatch-loop}
 \end{figure}

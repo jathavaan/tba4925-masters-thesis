@@ -10,7 +10,7 @@ GeoParquet on \acrshort{adls} is the canonical form, written first, and the othe
 
 \begin{figure}[H]
 	\centering
-	\includegraphics[width=0.8\textwidth]{Chapters/05-system-architecture-and-implementation/sub-chapters/figures/05-materialization-lineage.png}
+	\includegraphics[width=0.8\textwidth]{Chapters/05-system-architecture-and-implementation/sub-chapters/figures/05-materialization-lineage.pdf}
 	\caption[Materialization lineage of the three physical representations]{Materialization lineage of the three physical representations. The test dataset pipeline emits the small tier as canonical GeoParquet on \acrshort{adls}, from which the medium and large tiers are synthesized; the PostGIS tables are then derived at all three size tiers by streaming through DuckDB, and the Shapefile bundle is exported from the small tier through DuckDB's \acrshort{gdal} writer.}
 	\label{fig:materialization-lineage}
 \end{figure}

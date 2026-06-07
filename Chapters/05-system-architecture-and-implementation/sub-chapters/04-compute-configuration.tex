@@ -27,7 +27,7 @@ The broadcast and partitioned join strategies distinguished in Section~\ref{back
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.8\textwidth]{Chapters/05-system-architecture-and-implementation/sub-chapters/figures/05-sedona-join-plan-control.png}
+    \includegraphics[width=0.8\textwidth]{Chapters/05-system-architecture-and-implementation/sub-chapters/figures/05-sedona-join-plan-control.pdf}
     \caption[Configuration controlling the Sedona spatial join plan.]{Configuration controlling the Sedona spatial join plan. The shared cluster guardrails (\texttt{spark.databricks.photon.enabled=false}, \texttt{spark.sql.adaptive.enabled=false}, and \texttt{spark.sql.autoBroadcastJoinThreshold=-1}) keep Photon from forcing a BroadcastNestedLoopJoin and prevent the broadcast heuristic from pre-empting the partitioned strategy. The broadcast variant's \texttt{broadcast()} hint resolves to a BroadcastIndexJoin, while the partitioned variant's KDB-Tree settings resolve to a RangeJoin over a KDB-Tree partitioning; both repartition the buildings to the cluster's \texttt{defaultParallelism}.}
     \label{fig:sedona-join-plan-control}
 \end{figure}

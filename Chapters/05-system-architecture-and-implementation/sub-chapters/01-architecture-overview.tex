@@ -5,7 +5,7 @@ Each experiment runs as an isolated, short-lived containerized job\footnote{A co
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\textwidth]{Chapters/05-system-architecture-and-implementation/sub-chapters/figures/05-system-overview.png}
+    \includegraphics[width=0.7\textwidth]{Chapters/05-system-architecture-and-implementation/sub-chapters/figures/05-system-overview.pdf}
     \caption[Benchmark system run-time layout]{Run-time layout of the benchmark system. The orchestrator runs in its own \acrshort{aci} container and supervises the full benchmark; for each experiment it launches a one-off \acrshort{aci} container group whose dispatcher matches the experiment's \texttt{script-id} to an entrypoint that writes its per-iteration samples and a cost row as Parquet to Blob Storage.}
     \label{fig:system-overview}
 \end{figure}

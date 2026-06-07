@@ -27,7 +27,7 @@ Two identifiers key every measurement back to the run that produced it. The run 
 
 \begin{figure}[H]
 	\centering
-	\includegraphics[width=0.8\textwidth]{Chapters/05-system-architecture-and-implementation/sub-chapters/figures/05-determinism-chain.png}
+	\includegraphics[width=0.8\textwidth]{Chapters/05-system-architecture-and-implementation/sub-chapters/figures/05-determinism-chain.pdf}
 	\caption[Determinism of the benchmark run]{Each source of randomness in the benchmark framework is pinned to a fixed identifier: the \texttt{benchmark\_run} index seeds the \texttt{random.Random()} execution-order shuffle, and a \texttt{blake2b} digest of the \texttt{(run\_id, query\_id)} pair seeds \texttt{\_make\_bootstrap\_rng}, so both the execution order and the bootstrap stop point are reproducible across re-runs.}
 	\label{fig:determinism-chain}
 \end{figure}
