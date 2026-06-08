@@ -34,7 +34,7 @@ The lifecycle parallelizes only when the input is split into pieces of roughly e
 	\subfloat[Spatial partitioning.\label{fig:geographic-partitioning}]{%
 		\includegraphics[valign=t, width=0.45\textwidth]{Chapters/02-background/sub-chapters/figures/02-geographic-partitioning.pdf}%
 	}
-	\caption[Hash versus spatial partitioning of the same features]{Hash versus spatial partitioning of the same set of features. Both panels show the same polygons in identical positions; color encodes partition assignment, with each color corresponding to one partition handled by a different executor. (a) Under hash partitioning, color is uncorrelated with position, so polygons that share a boundary in the plane typically land on different partitions. (b) Under spatial partitioning, the study area is divided into spatially contiguous cells (dashed dividers) and all polygons within a cell share a color, so locality in the plane is preserved as locality in partition assignment. Adapted from \parencite{eldawy2015_spatial_partitioning_techniques}.}
+	\caption[Hash versus spatial partitioning of the same features]{Hash versus spatial partitioning of the same set of features. Both panels show the same polygons in identical positions; color encodes partition assignment, with each color corresponding to one partition handled by a different executor. (a) Under hash partitioning, color is uncorrelated with position, so polygons that share a boundary in the plane typically land on different partitions. (b) Under spatial partitioning, the study area is divided into spatially contiguous cells (dashed dividers) and all polygons within a cell share a color, so locality in the plane is preserved as locality in partition assignment. Adapted from \textcite{eldawy2015_spatial_partitioning_techniques}.}
 	\label{fig:hash-vs-spatial-partitioning}
 \end{figure}
 
@@ -73,7 +73,7 @@ Sedona contributes four spatial extensions to the Spark engine. First, it adds a
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=0.7\textwidth]{Chapters/02-background/sub-chapters/figures/02-sedona-architecture-on-spark.pdf}
-	\caption[Apache Sedona architecture on Apache Spark]{Layered architecture of Apache Sedona on Apache Spark. From top to bottom: two user-facing APIs (Sedona SQL/DataFrame and SRDD); the Catalyst optimizer with Sedona's \acrlonglc{udf}s~(\acrshort{udf}) and types registered; the four spatial extensions enumerated in the surrounding paragraph (Geometry type, ST functions, spatial partitioners, per-partition indexes); the Apache Spark runtime; and the storage formats Sedona reads directly. Adapted from \parencite{yu2015_geospark_cluster_computing}.}
+	\caption[Apache Sedona architecture on Apache Spark]{Layered architecture of Apache Sedona on Apache Spark. From top to bottom: two user-facing APIs (Sedona SQL/DataFrame and SRDD); the Catalyst optimizer with Sedona's \acrlonglc{udf}s~(\acrshort{udf}) and types registered; the four spatial extensions enumerated in the surrounding paragraph (Geometry type, ST functions, spatial partitioners, per-partition indexes); the Apache Spark runtime; and the storage formats Sedona reads directly. Adapted from \textcite{yu2015_geospark_cluster_computing}.}
 	\label{fig:sedona-architecture-on-spark}
 \end{figure}
 
