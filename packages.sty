@@ -131,6 +131,13 @@
 \usepackage{longtable}
 \setlength{\LTpre}{\medskipamount}
 \setlength{\LTpost}{\medskipamount}
+% Flush-left longtables with full-width captions. longtable otherwise defaults
+% to \LTleft=\LTright=\fill (centered), which indents the grid rightward while
+% the caption is drawn flush-left at the text margin, so the caption overhangs
+% the table on the left. Match the body-text margin instead.
+\setlength{\LTcapwidth}{\textwidth}
+\setlength{\LTleft}{0pt}
+\setlength{\LTright}{\fill}
 
 % \inputtablebody{<file>} -- include a generated table-body fragment (the
 % "& ... \\" rows that slot between \midrule and \bottomrule). Uses the TeX
