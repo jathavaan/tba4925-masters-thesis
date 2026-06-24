@@ -129,8 +129,13 @@
 \usepackage{tabularx}
 \newcolumntype{L}{>{\raggedright\arraybackslash}X} % left-aligned wrapping X column
 \usepackage{longtable}
-\setlength{\LTpre}{\medskipamount}
-\setlength{\LTpost}{\medskipamount}
+% Space above/below a longtable. Match \intextsep -- the separation a regular
+% [H] table float adds between itself and the surrounding text -- so a longtable
+% caption sits the same distance below the text above it as a normal table
+% caption does. longtable's default here was \medskipamount, about half as much,
+% which read as too tight against the preceding paragraph.
+\setlength{\LTpre}{\intextsep}
+\setlength{\LTpost}{\intextsep}
 % Flush-left longtables with full-width captions. longtable otherwise defaults
 % to \LTleft=\LTright=\fill (centered), which indents the grid rightward while
 % the caption is drawn flush-left at the text margin, so the caption overhangs
