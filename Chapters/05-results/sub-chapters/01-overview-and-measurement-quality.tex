@@ -76,6 +76,8 @@ Table~\ref{tab:results-achieved-n} records the achieved count of successful iter
     \footnotesize
     \setlength{\tabcolsep}{6pt}
     \renewcommand{\arraystretch}{1.2}
+    \caption[Achieved iteration counts and convergence]{Achieved count of successful timed iterations, minimum-estimator elapsed time, final bootstrap \num{95}\% confidence-interval half-width, and recorded stop reason for each single-machine configuration, query pattern, and size tier. The reported $n$ is the achieved number of successful iterations recorded in the run metadata, not the configured ceiling. Cells that did not run by design carry an explicit did-not-run stop reason rather than a zero count.}
+    \label{tab:results-achieved-n}
     \resizebox{\textwidth}{!}{%
     \begin{tabular}{@{}l l l r r r l@{}}
         \toprule
@@ -84,6 +86,4 @@ Table~\ref{tab:results-achieved-n} records the achieved count of successful iter
         \inputtablebody{Chapters/05-results/sub-chapters/tables/05-achieved-iterations.tex}
         \bottomrule
     \end{tabular}}
-    \caption[Achieved iteration counts and convergence]{Achieved count of successful timed iterations, minimum-estimator elapsed time, final bootstrap \num{95}\% confidence-interval half-width, and recorded stop reason for each single-machine configuration, query pattern, and size tier. The reported $n$ is the achieved number of successful iterations recorded in the run metadata, not the configured ceiling. Cells that did not run by design carry an explicit did-not-run stop reason rather than a zero count.}
-    \label{tab:results-achieved-n}
 \end{table}

@@ -40,6 +40,8 @@ The unit prices are pinned to 2026 Norway East rates and held as constants in th
 The distributed term combines two charges over the cluster's lifetime in Sweden Central, where the Sedona workers run on \texttt{Standard\_D4s\_v3} nodes under the Jobs Compute plan.\footnote{Jobs Compute is the Databricks pricing plan for automated jobs that run on transient, job-scoped clusters rather than on persistent interactive ones.} The first is a \acrfull{dbu} charge, with each node drawing \num{0.75} \acrshort{dbu}s per hour; the second is a per-node virtual-machine charge. Both are summed across the driver and the workers, since the driver runs on the same node type and is counted alongside them. Egress is the single non-zero transfer charge in the framework. Every transfer that stays within one region and tenant is priced at zero under the modeling assumption of Section~\ref{research-design-and-methodology:metrics-and-cost-model:cost-model}, so only the distributed configuration carries an egress charge, its executors in Sweden Central reading storage in Norway East across the regional split established in Section~\ref{system-architecture-and-implementation:infrastructure}. The Jobs Compute Standard tier is retired on 1 October 2026, after which existing workspaces are upgraded to Premium and the \acrshort{dbu} price rises to \$\num{0.30}, which the pinned constant will require updating at that date \parencite{databricks2024_pricing}.
 
 \begin{longtable}{@{\extracolsep{\fill}} l l r}
+	\caption[Unit prices used by the cost model.]{Unit prices used by the cost model, pinned to 2026 Norway East rates. Rates are taken from the published pricing for Azure Container Instances \parencite{microsoft2024_container_instances_pricing}, blob storage \parencite{microsoft2024_azure_data_lake_storage_pricing}, Azure Database for PostgreSQL \parencite{microsoft2024_postgresql_flexible_server_pricing}, Azure Databricks \parencite{databricks2024_pricing}, the cluster node virtual machine \parencite{microsoft2024_virtual_machines_pricing}, and cross-region bandwidth \parencite{microsoft2024_bandwidth_pricing}.}
+	\label{tab:cost-model-unit-prices} \\
 	\toprule
 	\textbf{Resource} & \textbf{Unit} & \textbf{Rate (USD)} \\
 	\midrule
@@ -53,9 +55,6 @@ The distributed term combines two charges over the cluster's lifetime in Sweden 
 	\multicolumn{3}{r@{}}{\small\itshape Continued on next page} \\
 	\endfoot
 	\bottomrule
-	\addlinespace[\abovecaptionskip]
-	\caption[Unit prices used by the cost model.]{Unit prices used by the cost model, pinned to 2026 Norway East rates. Rates are taken from the published pricing for Azure Container Instances \parencite{microsoft2024_container_instances_pricing}, blob storage \parencite{microsoft2024_azure_data_lake_storage_pricing}, Azure Database for PostgreSQL \parencite{microsoft2024_postgresql_flexible_server_pricing}, Azure Databricks \parencite{databricks2024_pricing}, the cluster node virtual machine \parencite{microsoft2024_virtual_machines_pricing}, and cross-region bandwidth \parencite{microsoft2024_bandwidth_pricing}.}
-	\label{tab:cost-model-unit-prices} \\
 	\endlastfoot
 	\multicolumn{3}{l}{\emph{Azure Container Instances}} \\*
 	\quad Compute (\acrshort{vcpu})   & per \acrshort{vcpu}-second & \$\num{0.0000143} \\

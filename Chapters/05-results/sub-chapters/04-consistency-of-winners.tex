@@ -47,13 +47,6 @@ The geometric-mean normalized scores of Table~\ref{tab:geomean-normalized-perfor
     \centering
     \setlength{\tabcolsep}{8pt}
     \renewcommand{\arraystretch}{1.2}
-    \begin{tabular}{@{}l r r@{}}
-        \toprule
-        \textbf{Configuration} & \textbf{Time} & \textbf{Cost} \\
-        \midrule
-        \inputtablebody{Chapters/05-results/sub-chapters/tables/05-rq3-geomean.tex}
-        \bottomrule
-    \end{tabular}
     \caption[Geometric-mean normalized performance]{Geometric-mean normalized
     performance per configuration. For each workload a configuration ran, its
     wall-clock time and operational cost are each expressed as the slowdown relative to the best configuration on
@@ -62,6 +55,13 @@ The geometric-mean normalized scores of Table~\ref{tab:geomean-normalized-perfor
     summary for normalized ratios
     \parencite{fleming1986_how_not_to_lie_with_statistics}. Lower is better.}
     \label{tab:geomean-normalized-performance}
+    \begin{tabular}{@{}l r r@{}}
+        \toprule
+        \textbf{Configuration} & \textbf{Time} & \textbf{Cost} \\
+        \midrule
+        \inputtablebody{Chapters/05-results/sub-chapters/tables/05-rq3-geomean.tex}
+        \bottomrule
+    \end{tabular}
 \end{table}
 
 \subsection{Ranking stability}

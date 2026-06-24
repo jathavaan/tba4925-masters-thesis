@@ -13,6 +13,8 @@ The Shapefile is a vector data format introduced by \acrfull{esri} in 1998 and r
 
 \begin{table}[H]
     \centering
+    \caption[Shapefile component files.]{Mandatory and optional files in the Shapefile format.}
+    \label{tab:shapefile-components}
     \begin{tabular}{lll}
         \toprule
         \textbf{Extension} & \textbf{Type} & \textbf{Content} \\
@@ -25,8 +27,6 @@ The Shapefile is a vector data format introduced by \acrfull{esri} in 1998 and r
         \texttt{.qix} & Optional & Spatial index (quadtree, open-source) \\
         \bottomrule
     \end{tabular}
-    \caption[Shapefile component files.]{Mandatory and optional files in the Shapefile format.}
-    \label{tab:shapefile-components}
 \end{table}
 
 The three mandatory files are tightly coupled by record order, as Figure \ref{fig:shapefile-linkage} illustrates. A record is the storage unit for one feature, holding the geometry in the \texttt{.shp} file and the corresponding attribute values in the \texttt{.dbf} file. The \texttt{.shp} file opens with a \num{100}-byte header, a fixed-size metadata block describing the file's layout, followed by a sequence of variable-length records, each prefixed by an \num{8}-byte record header that carries the record number and the content length of the record \parencite{esri1998_shapefile_technical_description}. Because records vary in length, finding the \(n\)th record by reading the \texttt{.shp} file alone would require scanning every preceding record. The \texttt{.shx} file resolves this by storing a fixed-length \num{8}-byte entry per record, giving its byte offset and its length within the \texttt{.shp} file, so that a reader can jump directly to any record by number \parencite{esri1998_shapefile_technical_description}. The \texttt{.dbf} file holds one attribute row per geometry in the same order as the \texttt{.shp} file, so attributes and geometries are joined by position rather than by a key column \parencite{esri1998_shapefile_technical_description}.
@@ -52,6 +52,8 @@ A GeoJSON document is a single \acrshort{json} object of one of nine types, list
 
 \begin{table}[H]
     \centering
+    \caption[GeoJSON top-level types.]{The nine top-level types defined by the GeoJSON specification.}
+    \label{tab:geojson-types}
     \begin{tabular}{ll}
         \toprule
         \textbf{Type} & \textbf{Category} \\
@@ -67,8 +69,6 @@ A GeoJSON document is a single \acrshort{json} object of one of nine types, list
         FeatureCollection   & Wrapper  \\
         \bottomrule
     \end{tabular}
-    \caption[GeoJSON top-level types.]{The nine top-level types defined by the GeoJSON specification.}
-    \label{tab:geojson-types}
 \end{table}
 
 Coordinates are \acrshort{json} arrays of two or three numbers: longitude, latitude, and optional altitude. Implementations should not use more than three elements \parencite{butler2016_rfc7946_geojson_format}. \acrshort{rfc}~7946 requires all coordinates to be in WGS84 longitude and latitude (\texttt{OGC:CRS84}), removing support for alternative reference systems that caused interoperability problems \parencite{butler2016_rfc7946_geojson_format}. The standard also mandates the right-hand rule for polygon rings, a winding convention in which exterior rings run counterclockwise and holes clockwise to identify each ring's interior, and uses \texttt{[west, south, east, north]} for bounding boxes rather than \texttt{minx, miny, maxx, maxy} \parencite{butler2016_rfc7946_geojson_format}.
@@ -194,6 +194,8 @@ The formats and engines treated in this section fall into three architectural ti
     \footnotesize
     \setlength{\tabcolsep}{6pt}
     \renewcommand{\arraystretch}{1.2}
+    \caption[Summary of spatial data formats and engines.]{Spatial data formats and engines compared along the dimensions used in this thesis.}
+    \label{tab:format-summary}
     \begin{tabularx}{\textwidth}{@{}l L L c@{}}
         \toprule
         \textbf{Format / engine} & \textbf{Native spatial index} & \textbf{Access pattern} & \textbf{Cloud-native} \\
@@ -211,6 +213,4 @@ The formats and engines treated in this section fall into three architectural ti
         DuckDB + spatial  & R-tree                     & In-process \acrshort{sql} or remote   & Partial \\
         \bottomrule
     \end{tabularx}
-    \caption[Summary of spatial data formats and engines.]{Spatial data formats and engines compared along the dimensions used in this thesis.}
-    \label{tab:format-summary}
 \end{table}

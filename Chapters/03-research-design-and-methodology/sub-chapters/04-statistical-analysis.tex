@@ -16,6 +16,8 @@ Every claim this chapter makes about the quality of a measured number rests on t
 
 \begin{table}[H]
 	\centering
+	\caption[Repeatability versus reproducibility]{The two measurement conditions distinguished in this design, the source of variation each admits, what is held fixed, and the analysis that quantifies it. Reproducibility is the wider of the two.}
+	\label{tab:repeatability-vs-reproducibility}
 	\begin{tabular}{@{}l >{\raggedright\arraybackslash}p{0.23\textwidth} >{\raggedright\arraybackslash}p{0.17\textwidth} >{\raggedright\arraybackslash}p{0.21\textwidth} @{}}
 		\toprule
 		Condition & What varies & Held constant & Quantified by \\
@@ -24,8 +26,6 @@ Every claim this chapter makes about the quality of a measured number rests on t
 		Reproducibility & Full re-measurement under separate provisioning & Nominal configuration only & Seeded re-runs (Section~\ref{research-design-and-methodology:overview-and-experimental-design:replication-and-randomization}) \\
 		\bottomrule
 	\end{tabular}
-	\caption[Repeatability versus reproducibility]{The two measurement conditions distinguished in this design, the source of variation each admits, what is held fixed, and the analysis that quantifies it. Reproducibility is the wider of the two.}
-	\label{tab:repeatability-vs-reproducibility}
 \end{table}
 
 \subsection{Summary statistics and the choice of estimator}
@@ -52,6 +52,8 @@ The analysis does not assume that the measured distributions are normal. Two con
 
 \begin{table}[H]
 	\centering
+	\caption[Vargha--Delaney effect-size thresholds]{Interpretation thresholds for the Vargha--Delaney $\hat{A}_{12}$ effect size. Values near \num{0.5} indicate no effect; the listed thresholds mark the lower bound of each magnitude band. Adapted from \textcite{arcuri2014_hitchhiker_statistical_tests}.}
+	\label{tab:vargha-delaney-thresholds}
 	\begin{tabular}{@{}rl@{}}
 		\toprule
 		$\hat{A}_{12}$ & Effect size \\
@@ -62,8 +64,6 @@ The analysis does not assume that the measured distributions are normal. Two con
 		\num{0.71} & Large \\
 		\bottomrule
 	\end{tabular}
-	\caption[Vargha--Delaney effect-size thresholds]{Interpretation thresholds for the Vargha--Delaney $\hat{A}_{12}$ effect size. Values near \num{0.5} indicate no effect; the listed thresholds mark the lower bound of each magnitude band. Adapted from \textcite{arcuri2014_hitchhiker_statistical_tests}.}
-	\label{tab:vargha-delaney-thresholds}
 \end{table}
 
 \subsection{Answering RQ1: Cloud-native vs. traditional}

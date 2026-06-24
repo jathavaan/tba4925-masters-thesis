@@ -88,6 +88,13 @@ Figure~\ref{fig:distributed-cost-time-pareto} places every strategy, tier, and w
 \setlength{\tabcolsep}{3pt}
 \renewcommand{\arraystretch}{1.2}
 \begin{longtable}{@{}>{\raggedright\arraybackslash}p{0.10\textwidth} >{\raggedright\arraybackslash}p{0.13\textwidth} r r r r r@{}}
+      \caption[Distributed join descriptive statistics]{Descriptive statistics of the
+      national-scale spatial join for each size tier, join strategy, and worker count:
+      the achieved successful-iteration count, the minimum-estimator elapsed time in
+      seconds, its \num{95}\% bootstrap confidence-interval half-width, and the associated
+      total operational cost (USD). Cells in which every iteration failed are marked as
+      not completed (executor out-of-memory).}
+      \label{tab:distributed-join-descriptive-statistics} \\
       \toprule
       \textbf{Tier} & \textbf{Strategy} & \textbf{Workers} & \textbf{Achieved $n$} & \textbf{Min.\ (\si{\second})} & \textbf{\acrshort{ci} half-width} & \textbf{Cost
   (USD)} \\
@@ -103,14 +110,6 @@ Figure~\ref{fig:distributed-cost-time-pareto} places every strategy, tier, and w
       \multicolumn{7}{r@{}}{\small\itshape Continued on next page} \\
       \endfoot
       \bottomrule
-      \addlinespace[\abovecaptionskip]
-      \caption[Distributed join descriptive statistics]{Descriptive statistics of the
-      national-scale spatial join for each size tier, join strategy, and worker count:
-      the achieved successful-iteration count, the minimum-estimator elapsed time in
-      seconds, its \num{95}\% bootstrap confidence-interval half-width, and the associated
-      total operational cost (USD). Cells in which every iteration failed are marked as
-      not completed (executor out-of-memory).}
-      \label{tab:distributed-join-descriptive-statistics} \\
       \endlastfoot
       \inputtablebody{Chapters/05-results/sub-chapters/tables/05-distributed-descriptive-stats.tex}
   \end{longtable}

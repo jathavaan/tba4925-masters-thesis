@@ -16,6 +16,17 @@ The separability grouping of Figure~\ref{fig:pairwise-significance-cliques} rest
 {\footnotesize
 \setlength{\tabcolsep}{4pt}
 \begin{longtable}{@{}>{\raggedright\arraybackslash}p{0.22\textwidth} >{\raggedright\arraybackslash}p{0.17\textwidth} >{\raggedright\arraybackslash}p{0.14\textwidth} r r r@{}}
+    \caption[Full pairwise statistics]{Pairwise comparison statistics for every
+    configuration pair, query pattern, size tier, and outcome dimension: the Wilcoxon
+    rank-sum statistic $W$, the Holm-adjusted $p$-value within each comparison family
+    \parencite{laaber2019_software_microbenchmarking_cloud,holm1979_simple_sequentially_rejective},
+    and the Vargha--Delaney $\hat{A}_{12}$ effect size with its magnitude band
+    (Section~\ref{research-design-and-methodology:statistical-analysis:pairwise-comparison-and-effect-size},
+    Table~\ref{tab:vargha-delaney-thresholds}) \parencite{arcuri2014_hitchhiker_statistical_tests}.
+    The byte-direction comparisons characterize distribution differences and are not a basis
+    for cross-configuration ranking, because the host-boundary byte count is not commensurable
+    across the architectures (Section~\ref{results:consistency-of-winners}).}
+    \label{tab:appendix-pairwise-statistics} \\
     \toprule
     \textbf{Comparison} & \textbf{Workload\,$\times$\,tier} & \textbf{Dimension} & \textbf{$W$} & \textbf{$p_\text{Holm}$} & \textbf{$\hat{A}_{12}$} \\
     \midrule
@@ -29,18 +40,6 @@ The separability grouping of Figure~\ref{fig:pairwise-significance-cliques} rest
     \multicolumn{6}{r@{}}{\small\itshape Continued on next page} \\
     \endfoot
     \bottomrule
-    \addlinespace[\abovecaptionskip]
-    \caption[Full pairwise statistics]{Pairwise comparison statistics for every
-    configuration pair, query pattern, size tier, and outcome dimension: the Wilcoxon
-    rank-sum statistic $W$, the Holm-adjusted $p$-value within each comparison family
-    \parencite{laaber2019_software_microbenchmarking_cloud,holm1979_simple_sequentially_rejective},
-    and the Vargha--Delaney $\hat{A}_{12}$ effect size with its magnitude band
-    (Section~\ref{research-design-and-methodology:statistical-analysis:pairwise-comparison-and-effect-size},
-    Table~\ref{tab:vargha-delaney-thresholds}) \parencite{arcuri2014_hitchhiker_statistical_tests}.
-    The byte-direction comparisons characterize distribution differences and are not a basis
-    for cross-configuration ranking, because the host-boundary byte count is not commensurable
-    across the architectures (Section~\ref{results:consistency-of-winners}).}
-    \label{tab:appendix-pairwise-statistics} \\
     \endlastfoot
     \input{Chapters/09-appendix/sub-chapters/tables/09-pairwise-statistics.tex}
 \end{longtable}
@@ -55,6 +54,11 @@ Table~\ref{tab:appendix-cardinality-agreement} reports the returned row count fo
     \footnotesize
     \setlength{\tabcolsep}{6pt}
     \renewcommand{\arraystretch}{1.2}
+    \caption[Result-cardinality agreement]{Returned result cardinality for each query
+    pattern and size tier across the configurations that ran it, with the maximum
+    relative discrepancy between configurations in the final column. Cells that did not
+    run by design are left blank.}
+    \label{tab:appendix-cardinality-agreement}
     \begin{tabular}{@{}l r r r r@{}}
         \toprule
         \textbf{Workload\,$\times$\,tier} & \textbf{DuckDB} & \textbf{PostGIS} & \textbf{Shapefile} & \textbf{Max.\ rel.\ disc.} \\
@@ -62,11 +66,6 @@ Table~\ref{tab:appendix-cardinality-agreement} reports the returned row count fo
         \inputtablebody{Chapters/09-appendix/sub-chapters/tables/08-cardinality-agreement.tex}
         \bottomrule
     \end{tabular}
-    \caption[Result-cardinality agreement]{Returned result cardinality for each query
-    pattern and size tier across the configurations that ran it, with the maximum
-    relative discrepancy between configurations in the final column. Cells that did not
-    run by design are left blank.}
-    \label{tab:appendix-cardinality-agreement}
 \end{table}
 
 \subsection{Per-cell summary statistics}
@@ -78,6 +77,17 @@ Table~\ref{tab:appendix-summary-statistics} extends the achieved-iteration table
     \scriptsize
     \setlength{\tabcolsep}{4pt}
     \renewcommand{\arraystretch}{1.2}
+    \caption[Per-cell summary statistics]{Per-cell summary statistics for every
+    single-machine configuration, query pattern, and size tier that ran: the achieved
+    count of successful timed iterations $n$, the minimum and median elapsed time, the
+    \acrshort{iqr}, the coefficient of variation, and the relative half-width of
+    the \num{95}\% bootstrap confidence interval on the minimum. Dispersion is the \acrshort{iqr}
+    and the \acrshort{cv} rather than the standard deviation, because the per-iteration timings are
+    right-skewed and one-sidedly contaminated. Rows are grouped by query pattern. This
+    is the fuller companion to the achieved-iteration table
+    (Table~\ref{tab:results-achieved-n}); the distributed-join configurations are
+    summarized separately in Table~\ref{tab:distributed-join-descriptive-statistics}.}
+    \label{tab:appendix-summary-statistics}
     \adjustbox{max width=\textwidth}{%
     \begin{tabular}{@{}l l l
         S[table-format=5.0]
@@ -96,17 +106,6 @@ Table~\ref{tab:appendix-summary-statistics} extends the achieved-iteration table
         \bottomrule
     \end{tabular}%
     }
-    \caption[Per-cell summary statistics]{Per-cell summary statistics for every
-    single-machine configuration, query pattern, and size tier that ran: the achieved
-    count of successful timed iterations $n$, the minimum and median elapsed time, the
-    \acrshort{iqr}, the coefficient of variation, and the relative half-width of
-    the \num{95}\% bootstrap confidence interval on the minimum. Dispersion is the \acrshort{iqr}
-    and the \acrshort{cv} rather than the standard deviation, because the per-iteration timings are
-    right-skewed and one-sidedly contaminated. Rows are grouped by query pattern. This
-    is the fuller companion to the achieved-iteration table
-    (Table~\ref{tab:results-achieved-n}); the distributed-join configurations are
-    summarized separately in Table~\ref{tab:distributed-join-descriptive-statistics}.}
-    \label{tab:appendix-summary-statistics}
 \end{table}
 
 \subsection{Estimator behavior}

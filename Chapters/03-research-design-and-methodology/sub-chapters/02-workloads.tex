@@ -31,6 +31,8 @@ The \acrshort{rq}2 workload is a spatial join between Norwegian municipal bounda
     \footnotesize
     \setlength{\tabcolsep}{6pt}
     \renewcommand{\arraystretch}{1.2}
+    \caption[Benchmark workloads.]{The benchmark workloads, the predicate each evaluates, the configurations that execute it, and the dataset tiers at which it is run. The GeoPandas + Shapefile configuration runs at the small tier only and is excluded from the large tier.}
+    \label{tab:workload-matrix}
     \begin{tabularx}{\textwidth}{@{}l >{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}X l@{}}
         \toprule
         \textbf{Workload} & \textbf{Predicate} & \textbf{Configurations} & \textbf{Tiers} \\
@@ -42,8 +44,6 @@ The \acrshort{rq}2 workload is a spatial join between Norwegian municipal bounda
         Spatial join         & \texttt{ST\_Intersects} join, per municipality & Sedona (broadcast, partitioned; \numrange{2}{16} workers), PostGIS, DuckDB       & Small, medium, large \\
         \bottomrule
     \end{tabularx}
-    \caption[Benchmark workloads.]{The benchmark workloads, the predicate each evaluates, the configurations that execute it, and the dataset tiers at which it is run. The GeoPandas + Shapefile configuration runs at the small tier only and is excluded from the large tier.}
-    \label{tab:workload-matrix}
 \end{table}
 
 \subsection{Iteration counts}
