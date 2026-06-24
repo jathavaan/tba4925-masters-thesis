@@ -1,0 +1,54 @@
+\section{Workloads}
+\label{research-design-and-methodology:workloads}
+
+Each workload maps to the access or index mechanism it is designed to stress, so that a difference between configurations traces to that mechanism rather than to the workload as a whole. The workloads target the two structural axes established in the background rather than the query language. The first is the divide between formats a client can read in part and formats that require a full scan, identified in Section~\ref{background:spatial-data-formats-and-storage-models:summary} as the primary axis for interpreting read performance. The second is the distributed query lifecycle of Section~\ref{background:distributed-spatial-processing:the-lifecycle-of-a-distributed-spatial-query}, whose planning, shuffle, and collection phases determine where a distributed engine spends time and bytes.
+
+\subsection{Workload taxonomy}
+\label{research-design-and-methodology:workloads:workload-taxonomy}
+
+The workloads fall into two families, one for each of the first two research questions. \acrshort{rq}1 uses three single-machine query patterns over a single input: a point-in-polygon test, a $k$-nearest-neighbor search, and a bounding-box range filter. \acrshort{rq}2 uses one national-scale spatial join between two inputs, run on the distributed engine and on the single-node engines that serve as its reference. The single-machine patterns isolate how a format and engine read and prune one dataset, whereas the join exercises the cross-input coordination that only a distributed lifecycle incurs.
+
+Each pattern stresses a distinct mechanism. The point-in-polygon test resolves an intersection predicate, the predicate class for which both single-node engines consult an R-tree (Section~\ref{background:spatial-data-formats-and-storage-models:full-database-engines}), so it measures how effectively that index narrows the candidate set. The $k$-nearest-neighbor search orders features by distance to a fixed point. Distance ordering gains no help from the spatial index unless a bounding-box predicate is also supplied (Section~\ref{background:spatial-data-formats-and-storage-models:full-database-engines}), so the search probes the cost of a predicate the index does not directly serve. The bounding-box range filter is the pattern that range-request formats are built for. Block-level pruning against per-row-group statistics and the GeoParquet bounding-box covering answer it (Section~\ref{background:geometry-and-indexing:spatial-indexing}), while the format-level predicate and projection pushdown of Section~\ref{background:spatial-data-formats-and-storage-models:file-formats} govern how many bytes leave storage. The spatial join is a wide operation that crosses a stage boundary and resolves through either broadcast or partitioned execution (Section~\ref{background:distributed-spatial-processing:distributed-spatial-operations}). On this workload the distributed lifecycle of Section~\ref{background:distributed-spatial-processing:the-lifecycle-of-a-distributed-spatial-query} either repays its coordination cost or does not.
+
+\subsection{Workload definitions}
+\label{research-design-and-methodology:workloads:workload-definitions}
+
+Each single-machine workload is defined by three elements: the spatial predicate it evaluates, the fixed reference geometry against which the predicate is tested, and the shape of the result it returns. The point-in-polygon workload tests a fixed query point against the building polygons and returns the polygon or polygons containing it. The $k$-nearest-neighbor workload ranks the buildings by distance to a fixed query point and returns the $k$ closest buildings. The bounding-box workload applies a fixed rectangular window and returns every building whose geometry intersects it and whose projected area exceeds \SI{10}{\meter\squared}, a threshold that excludes degenerate micro-polygons. The window is sized to a fixed selectivity on the intersection predicate. The area threshold's selectivity instead depends on the building-size distribution and so varies across tiers, and evaluating it requires a reprojection to a metric coordinate reference system whose cost differs across the engines compared. Figure~\ref{fig:single-machine-query-definitions} shows the three patterns geometrically against a shared building set. With the reference geometry and both predicates held constant across configurations, a difference in time or transferred bytes can be attributed to the format and engine rather than to how much data each query happened to touch.
+
+\begin{figure}[H]
+    \centering
+    \subfloat[]{\includegraphics[width=0.30\textwidth]{Chapters/03-research-design-and-methodology/sub-chapters/figures/03-single-machine-point-in-polygon.pdf}}\hfill
+    \subfloat[]{\includegraphics[width=0.30\textwidth]{Chapters/03-research-design-and-methodology/sub-chapters/figures/03-single-machine-k-nearest-neighbor.pdf}}\hfill
+    \subfloat[]{\includegraphics[width=0.30\textwidth]{Chapters/03-research-design-and-methodology/sub-chapters/figures/03-single-machine-bounding-box.pdf}}
+    \caption[Single-machine query patterns.]{The three single-machine query patterns, each evaluated against the same building set, with query geometry shown in coral and result features in green. (a) Point-in-polygon returns the polygon containing a fixed query point. (b) $k$-nearest-neighbor returns the $k$ buildings closest to a fixed query point, here $k = \num{3}$. (c) Bounding-box filter returns every building whose geometry intersects a fixed rectangular window.}
+    \label{fig:single-machine-query-definitions}
+\end{figure}
+
+The \acrshort{rq}2 workload is a spatial join between Norwegian municipal boundaries and the building dataset, evaluated with an intersection predicate and grouped per municipality, so that each building is associated with the municipality whose boundary contains it. The single-machine patterns run at the small and large dataset tiers, whereas the join runs at the small, medium, and large tiers to trace its scaling behavior. The concrete record counts and the data layer that realizes each tier are described in Chapter~\ref{ch:system-architecture-and-implementation}. Table~\ref{tab:workload-matrix} summarizes each workload, its predicate, the configurations that execute it, and the tiers at which it is run.
+
+\begin{table}[H]
+    \centering
+    \footnotesize
+    \setlength{\tabcolsep}{6pt}
+    \renewcommand{\arraystretch}{1.2}
+    \begin{tabularx}{\textwidth}{@{}l >{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}X l@{}}
+        \toprule
+        \textbf{Workload} & \textbf{Predicate} & \textbf{Configurations} & \textbf{Tiers} \\
+        \midrule
+        Point-in-polygon     & \texttt{ST\_Contains} point probe              & DuckDB + GeoParquet, PostGIS, GeoPandas + Shapefile & Small, large \\
+        $k$-nearest-neighbor & Distance ordering (\texttt{ST\_Distance})      & DuckDB + GeoParquet, PostGIS, GeoPandas + Shapefile & Small \\
+        Bounding-box filter  & Rectangular window (\texttt{ST\_Intersects})   & DuckDB + GeoParquet, PostGIS, GeoPandas + Shapefile & Small, large \\
+        \midrule
+        Spatial join         & \texttt{ST\_Intersects} join, per municipality & Sedona (broadcast, partitioned; \numrange{2}{16} workers), PostGIS, DuckDB       & Small, medium, large \\
+        \bottomrule
+    \end{tabularx}
+    \caption[Benchmark workloads.]{The benchmark workloads, the predicate each evaluates, the configurations that execute it, and the dataset tiers at which it is run. The GeoPandas + Shapefile configuration runs at the small tier only and is excluded from the large tier.}
+    \label{tab:workload-matrix}
+\end{table}
+
+\subsection{Iteration counts}
+\label{research-design-and-methodology:workloads:iteration-counts}
+
+Every workload runs a sequence of warmup iterations followed by timed iterations, with the warmup results discarded, following the replication protocol of Section~\ref{research-design-and-methodology:overview-and-experimental-design:replication-and-randomization}. For high-frequency single-machine queries, the measured variance sets the number of timed iterations through a relative-precision sequential stopping rule, following the approach \textcite{georges2007_statistically_rigorous_java_performance} introduced for performance benchmarks. After each timed iteration, the framework recomputes a bootstrap \num{95}\% confidence interval for the mean elapsed time \parencite{laaber2019_software_microbenchmarking_cloud} and stops once its half-width falls below \num{5}\% of the mean. Four bounds constrain the rule: a floor of \num{10} successful samples and a \num{60}-second timed window, both of which the rule must clear before it may stop; a soft ceiling at the per-workload iteration budget; and a hard per-iteration timeout together with a cumulative timed-window cap, whose values are given in Section~\ref{system-architecture-and-implementation:measurement-instrumentation-and-cost-model:host-level-instrumentation}. A failed iteration is recorded as a per-iteration sample marked \texttt{failed} and does not abort the run; only three consecutive failures abort it, and a run with mixed outcomes carries the stop reason \texttt{partial}. The bootstrap confidence interval, the mean, and the median are computed over the successful samples alone, so the floor gates on successful samples rather than on raw iterations. The confidence interval on the mean governs only when sampling stops, while the location summary reported for each cell remains the minimum rather than the mean. The reported sample size for each benchmark cell is therefore the achieved count of successful iterations recorded in the run metadata, not the configured ceiling. Section~\ref{research-design-and-methodology:statistical-analysis} sets out the statistical treatment of the resulting samples, covering the estimator, the uncertainty quantification, and how the iteration count feeds into it.
+
+The national-scale join takes the other branch. Because it is long-running and low in variance, a variance-driven stopping rule would buy little, so the join uses a fixed count of three timed iterations preceded by a single warmup iteration. Each iteration holds a distributed cluster for its full duration, so further iterations multiply cluster costs without a proportional gain in precision. Three was judged the point beyond which each additional iteration returned too little to justify its cost. A cumulative wall-clock ceiling caps this fixed-iteration branch, so that a single pathological iteration cannot run away into unbilled node-hours; the ceiling is given in Section~\ref{system-architecture-and-implementation:measurement-instrumentation-and-cost-model:host-level-instrumentation}. The single warmup primes the engine before the timed iterations begin.

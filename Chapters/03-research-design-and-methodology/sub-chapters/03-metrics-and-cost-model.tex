@@ -1,0 +1,52 @@
+\section{Metrics and cost model}
+\label{research-design-and-methodology:metrics-and-cost-model}
+
+The experiment reports each workload and configuration along three outcome dimensions: wall-clock time, network transfer, and operational cost. These correspond to the read-performance, transfer, and cost terms named in the research questions, so every comparison resolves into the same axes whatever configuration is under test. Network transfer is treated as a primary outcome rather than an incidental statistic, closing the accounting gap set out in Section~\ref{introduction:related-work}. Prior spatial benchmarks seldom measure the bytes a query moves, yet a cloud benchmark is incomplete unless it reports end-to-end performance together with the pricing that performance drives \parencite{folkerts2012_benchmarking_in_the_cloud}. The remainder of this section defines each dimension and develops the cost model that converts the first two into the third.
+
+\subsection{Primary metrics}
+\label{research-design-and-methodology:metrics-and-cost-model:primary-metrics}
+
+Wall-clock time is the headline metric: the elapsed interval between a query's submission and the availability of its result, as defined for the distributed lifecycle in Section~\ref{background:distributed-spatial-processing:the-lifecycle-of-a-distributed-spatial-query}. In the single-node configurations the measurement boundary is the client process that issues the query, so this interval spans request construction, the engine's own execution, and the return of the result to the client. The distributed configuration shares that client boundary, but the interval now encloses the full cluster-side lifecycle, from driver-side planning through parallel reads and shuffles to final collection. Reporting one elapsed time at a common boundary keeps the configurations comparable, even though the work inside that interval differs sharply between them.
+
+Network transfer is measured as two separate quantities, bytes received and bytes sent, captured at the client or host boundary where the workload issues its reads and collects its results. The two directions are kept apart because a configuration that pushes computation to the data moves different inbound and outbound volumes than one that pulls raw features back to the client. The split is itself a signal of where the work is performed. Operational cost is the third primary dimension. It is defined here only as the monetary charge attributable to running a workload on metered cloud resources, and its decomposition into resource terms is developed in Section~\ref{research-design-and-methodology:metrics-and-cost-model:cost-model}.
+
+\subsection{Auxiliary metrics}
+\label{research-design-and-methodology:metrics-and-cost-model:auxiliary-metrics}
+
+Every run records two further quantities, but in a diagnostic role rather than as reported outcomes. \acrshort{cpu} time, split into user and system components, measures how much of an elapsed interval was spent computing rather than waiting on storage or the network. It thus separates a compute-bound configuration from a transfer-bound one. Result cardinality is the number of rows or features a query returns. Recording it lets a difference in time or bytes be checked against the size of the result, rather than being mistaken for an effect of the format or engine. Neither quantity ranks the configurations. Both exist to explain the primary results when elapsed time or byte count would otherwise be ambiguous.
+
+\subsection{Distributed phase metrics}
+\label{research-design-and-methodology:metrics-and-cost-model:distributed-phase-metrics}
+
+The distributed configuration admits finer measurement than a single elapsed time, because its wall-clock interval is the sum of distinct phases that scale differently with the workload. The benchmark therefore decomposes this interval into the three phases established in Section~\ref{background:distributed-spatial-processing:the-lifecycle-of-a-distributed-spatial-query}: the executor read time spent fetching input partitions from object storage, the shuffle volume moved between executors when an operation crosses a stage boundary, and the driver collection time spent returning the result set at the end of the query. Once elapsed time and transferred bytes are attributed to these phases, a difference observed against a single-node engine can be traced to a specific mechanism, such as a costly shuffle or a large collection, rather than to the bare fact of distribution.
+
+Each phase term corresponds to a concrete quantity exposed by the Spark run-time. Executor read time and shuffle volume are read from the metrics the run-time emits for input and shuffle stages, and driver collection time is taken from the action that returns results to the driver. Table~\ref{tab:distributed-phase-metrics} summarizes these correspondences. The correspondence established here is conceptual, between the thesis-level phases and the run-time quantities that stand in for them. The instrumentation that captures those quantities, including how the run-time's metric stream is intercepted and recorded, is an implementation concern deferred to Chapter~\ref{ch:system-architecture-and-implementation}.
+
+\begin{table}[H]
+	\centering
+	\begin{tabular}{@{}ll@{}}
+		\toprule
+		Phase (thesis) & Spark run-time source \\
+		\midrule
+		Executor read time & Input-stage metrics \\
+		Shuffle volume & Shuffle-stage metrics \\
+		Driver collection time & Result-returning action \\
+		\bottomrule
+	\end{tabular}
+	\caption[Distributed phase metrics and their Spark run-time sources.]{The three distributed wall-clock phases of Section~\ref{background:distributed-spatial-processing:the-lifecycle-of-a-distributed-spatial-query} and the Spark run-time metric each is read from. Executor read time is the time fetching input partitions from object storage; shuffle volume is the bytes moved between executors across a stage boundary; driver collection time is the time returning the result set to the driver.}
+	\label{tab:distributed-phase-metrics}
+\end{table}
+
+\subsection{Cost model}
+\label{research-design-and-methodology:metrics-and-cost-model:cost-model}
+
+Operational cost follows from the cloud cost model of Section~\ref{background:cloud-native-data-architecture:cloud-cost-model}, in which storage, compute, operations, and bandwidth are each metered and priced along a separate dimension. Equation~\ref{eq:cost-model} expresses a workload's cost as the sum of four resource terms. Compute is charged for allocated processing capacity over the time it is held; storage per gigabyte-month, prorated to the fraction of a month the data occupies; operations per \num{10000} transactional requests against object storage; and network egress per gigabyte of outbound traffic. In the equation, $C$ is the total cost, $t$ the time compute is held, $s$ the stored volume in gigabytes, $t_{\text{month}}$ the duration of a billing month, $n_{\text{ops}}$ the number of transactional requests, and $g_{\text{out}}$ the outbound traffic in gigabytes, with each $c$ the unit price of its term.
+
+\begin{equation}
+	C = c_{\text{compute}}\, t + c_{\text{storage}}\, s \, \frac{t}{t_{\text{month}}} + c_{\text{ops}}\, \frac{n_{\text{ops}}}{10{,}000} + c_{\text{egress}}\, g_{\text{out}}
+	\label{eq:cost-model}
+\end{equation}
+
+Compute is metered at per-second granularity rather than the coarser per-minute increment used for illustration in Section~\ref{background:cloud-native-data-architecture:cloud-cost-model}, because the short-lived configurations measured here would otherwise have their cost rounded well above what they consume.
+
+Each configuration is charged only for the resource terms it actually consumes, so the cost expression differs by configuration. A single-node engine accrues compute for the client instance and, where its data sits in a managed relational store, the charge for that store. The distributed engine accrues compute for its cluster across the cluster's lifetime.\footnote{For the distributed engine, $c_{\text{compute}}$ in Equation~\ref{eq:cost-model} is the per-node rate multiplied by the total node count, which counts the driver node in addition to the workers.} Any configuration that reads from object storage accrues storage, operation, and egress terms. The egress term is treated as near-zero under one modeling assumption: that transfer remaining within a single region and tenant\footnote{A tenant is the isolated account scope a cloud provider assigns to a customer; resources within one tenant share a single billing and access boundary.} is not billed as outbound traffic. A charge therefore arises only when a configuration moves data across a region boundary. In this design, the distributed configuration is the only one whose compute and storage are provisioned in different regions, so it is the only one that carries a non-zero egress term, whereas every other configuration stays intra-region and intra-tenant and so carries a zero egress term. The concrete regions, the services that realize each term, the pinned unit prices, and the offline computation that combines them into a per-workload figure are implementation details, specified in Section~\ref{system-architecture-and-implementation:measurement-instrumentation-and-cost-model:cost-model-implementation}.

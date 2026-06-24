@@ -1,0 +1,10 @@
+% File: Chapters/05-results/main.tex
+
+Four configurations produced the measurements reported here. On a single node, DuckDB over GeoParquet, PostGIS, and GeoPandas over Shapefile ran three query patterns: the point-in-polygon test, k-nearest-neighbor search, and the bounding-box range filter. The national-scale spatial join ran on the single-node DuckDB and PostGIS engines and, as the distributed configuration, on Apache Sedona on Databricks. The single-machine patterns were measured at the small and large dataset tiers, the join at the small, medium, and large tiers, defined in Chapter~\ref{ch:system-architecture-and-implementation}.
+
+Throughout the chapter, the minimum estimator summarizes run-time and the median summarizes transferred bytes, and each summary carries a bootstrap confidence interval that quantifies within-engine repeatability (Section~\ref{research-design-and-methodology:statistical-analysis:uncertainty-quantification}).
+
+\input{Chapters/05-results/sub-chapters/01-overview-and-measurement-quality}
+\input{Chapters/05-results/sub-chapters/02-single-machine-query-performance}
+\input{Chapters/05-results/sub-chapters/03-distributed-join-and-scaling}
+\input{Chapters/05-results/sub-chapters/04-consistency-of-winners}

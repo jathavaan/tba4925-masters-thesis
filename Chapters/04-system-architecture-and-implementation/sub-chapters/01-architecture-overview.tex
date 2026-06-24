@@ -1,0 +1,33 @@
+\section{Run-time layout}
+\label{system-architecture-and-implementation:architecture-overview}
+
+Each experiment runs as an isolated, short-lived containerized job\footnote{A container packages an application together with its dependencies so that it runs as an isolated process on a shared host, without the overhead of a full virtual machine.}. Figure~\ref{fig:system-overview} shows the run-time layout. An orchestrator (\texttt{main.py}) runs outside the cluster, reads the experiment manifest \texttt{benchmarks.yml}\footnote{A manifest is a declarative file that lists the experiments to run and their parameters, so the set of runs is configured in data rather than in code.}, and launches one \acrfull{aci} container group per experiment with a restart policy of \texttt{Never}, so each job runs once and is then torn down. Inside each container, a dispatcher (\texttt{benchmark\_runner.py}) matches the experiment's \texttt{script-id} to the entrypoint that implements it\footnote{An entrypoint is the specific routine that the dispatcher invokes to execute a given experiment.}. Each entrypoint records its per-iteration samples and a per-benchmark cost row, both written as Parquet to the \texttt{benchmarks} container in Blob Storage for downstream analysis.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{Chapters/04-system-architecture-and-implementation/sub-chapters/figures/04-system-overview.pdf}
+    \caption[Benchmark system run-time layout]{Run-time layout of the benchmark system. The orchestrator runs in its own \acrshort{aci} container and supervises the full benchmark; for each experiment it launches a one-off \acrshort{aci} container group whose dispatcher matches the experiment's \texttt{script-id} to an entrypoint that writes its per-iteration samples and a cost row as Parquet to Blob Storage.}
+    \label{fig:system-overview}
+\end{figure}
+
+The system varies along two axes. On the data axis, one logical dataset of Norwegian building polygons is materialized as three physical representations\footnote{To materialize a dataset is to compute and store a concrete instance of it, so that a single logical dataset can be held as several distinct physical encodings.}, joined in \acrshort{rq}2 against a fixed set of municipality boundaries; on the compute axis, four engines read them, each tied to the access mechanism it exercises. GeoParquet on \acrfull{adls} is read by both DuckDB and Apache Sedona and exercises the range-request access pattern established in Section~\ref{background:spatial-data-formats-and-storage-models:summary}. PostGIS reads the same buildings from server-managed tables, while the Shapefile bundle is read from local disk through GeoPandas as the full-scan baseline. Crossing the cloud-native and traditional axis with the single-node and distributed axis yields the four design cells of Figure~\ref{fig:design-space}. Table~\ref{tab:data-engine-mapping} lays out each engine's representation, storage backend, access pattern, and design cell.
+
+\begin{table}[H]
+    \centering
+    \begin{adjustbox}{max width=\textwidth, center}
+    \begin{tabular}{@{}lllll@{}}
+        \toprule
+        Engine        & Representation        & Storage backend      & Access pattern                & Design cell                \\
+        \midrule
+        DuckDB        & GeoParquet            & \acrshort{adls}      & \acrshort{http} range request & Cloud-native, single-node  \\
+        Apache Sedona & GeoParquet            & \acrshort{adls}      & \acrshort{http} range request & Cloud-native, distributed  \\
+        PostGIS       & Server-managed tables & Azure PostgreSQL     & Server-side query             & Traditional, single-node   \\
+        GeoPandas     & Shapefile             & Local disk           & Full scan                     & Traditional, single-node   \\
+        \bottomrule
+    \end{tabular}
+    \end{adjustbox}
+    \caption[Data representation to engine mapping]{Each engine paired with its physical representation, the storage backend hosting that representation, the access pattern it exercises, and the corresponding design cell in Figure~\ref{fig:design-space}.}
+    \label{tab:data-engine-mapping}
+\end{table}
+
+The remaining sections specify these components. Section~\ref{system-architecture-and-implementation:infrastructure} fixes the compute platforms, storage, and identity; Section~\ref{system-architecture-and-implementation:data-layer} describes the three data representations; Section~\ref{system-architecture-and-implementation:compute-configuration} sets out each engine's configuration; Section~\ref{system-architecture-and-implementation:orchestration-and-pairing} covers orchestration and pairing; and Section~\ref{system-architecture-and-implementation:measurement-instrumentation-and-cost-model} details the measurement instrumentation and the cost model. The data-publishing and analysis stages that bracket this benchmark system, together with the steps that regenerate the reported figures and tables, are documented in Appendix~\ref{appendix:software-and-reproducibility}.

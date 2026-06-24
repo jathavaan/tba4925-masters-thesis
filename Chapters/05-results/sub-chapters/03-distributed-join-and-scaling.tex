@@ -1,0 +1,117 @@
+\section{Distributed join and scaling (RQ2)}
+\label{results:distributed-join-and-scaling}
+
+The national-scale spatial join moved the comparison onto the distributed engine. It was run on Apache Sedona on Databricks across worker counts of \num{2}, \num{4}, \num{8}, \num{12}, and \num{16} nodes under two execution strategies, a broadcast join and a partitioned join, and measured against the single-node PostGIS and DuckDB engines at the small, medium, and large tiers. The scaling of the join is read first, then its absolute run-time against the single-node baselines, the decomposition of its execution into phases, and finally its operational cost and the cost-time tradeoff.
+
+\subsection{Scaling behavior}
+\label{results:distributed-join-and-scaling:scaling-behavior}
+
+Figure~\ref{fig:distributed-speedup-efficiency} shows how the broadcast join scaled relative to the two-worker baseline of Equation~\ref{eq:speedup-parallel-efficiency}, with elapsed times taken under the minimum estimator of Section~\ref{research-design-and-methodology:statistical-analysis:summary-statistics-and-the-choice-of-estimator}. Speedup rose monotonically with worker count at every tier but stayed below the ideal-linear reference, and the shortfall widened as workers were added. At \num{16} workers the broadcast join reached a speedup of about \num{2.3} at the small tier, \num{5.3} at the medium tier, and \num{6.5} at the large tier, against the ideal of \num{8}, so the achieved speedup improved with tier. The paired parallel efficiency declined from one as workers were added: the decline was steepest at the small tier, where efficiency fell to about \num{0.29} at \num{16} workers, and gentlest at the large tier, where it remained near \num{0.81} and varied non-monotonically, dipping to about \num{0.79} at \num{8} workers before partially recovering. The partitioned series, drawn at the small tier only, stayed near unit speedup across the range, its efficiency falling to about \num{0.13} at \num{16} workers.
+
+\begin{figure}[H]
+    \centering
+    \subfloat[Speedup $S(n)$.\label{fig:distributed-speedup}]{%
+        \includegraphics[valign=t, width=0.45\textwidth]{Chapters/05-results/sub-chapters/figures/05-distributed-speedup.pdf}}%
+    \hfill
+    \subfloat[Parallel efficiency $E(n)$.\label{fig:distributed-efficiency}]{%
+        \includegraphics[valign=t, width=0.45\textwidth]{Chapters/05-results/sub-chapters/figures/05-distributed-efficiency.pdf}}%
+    \caption[Speedup and parallel efficiency of the distributed join]{Scaling of the distributed national-scale spatial join over worker counts $\{2, 4, 8, 12, 16\}$, with speedup and parallel efficiency defined relative to the two-worker baseline ($n_0 = 2$) of Equation~\ref{eq:speedup-parallel-efficiency}. Panel~(a) shows speedup $S(n) = T_2/T_n$ against an ideal-linear reference, and panel~(b) the paired parallel efficiency $E(n) = (2/n)\,S(n)$ against its ideal of one. Markers are computed from the minimum-estimator elapsed times; line color encodes the join strategy (broadcast, partitioned) and line weight increases with the size tier, while the reference lines use a neutral palette color.}
+    \label{fig:distributed-speedup-efficiency}
+\end{figure}
+
+The two strategies differed by a wide margin at the small tier, the only tier at which the partitioned join completed. Figure~\ref{fig:distributed-strategy-contrast} contrasts them across worker counts. The partitioned join ran between about \SI{2540}{\second} and \SI{2760}{\second} across the worker counts, roughly two orders of magnitude slower than the broadcast join, which ran between about \SI{14}{\second} and \SI{32}{\second}. The same separation appeared in operational cost: the partitioned runs cost between about \num{11.9} and \num{56.8} US dollars, against about \num{0.38} to \num{1.59} dollars for broadcast, roughly \num{30} times as much. The partitioned medium- and large-tier runs did not complete, recording an executor out-of-memory failure at every worker count, as listed in Table~\ref{tab:distributed-join-descriptive-statistics}.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{Chapters/05-results/sub-chapters/figures/05-distributed-strategy-contrast.pdf}
+    \caption[Broadcast versus partitioned strategy at the small tier]{Broadcast and partitioned execution of the national-scale spatial join at the small tier, across worker counts $\{2, 4, 8, 12, 16\}$, with one line per strategy. The left panel shows the wall-clock minimum on a logarithmic axis, with markers at the minimum estimator and whiskers spanning the \num{95}\% bootstrap confidence interval; the right panel shows the total operational cost (USD). The partitioned strategy completed at the small tier only, and its medium- and large-tier runs did not complete, recording an executor out-of-memory failure; that absence is annotated from Table~\ref{tab:distributed-join-descriptive-statistics} rather than drawn from the measurement cache.}
+    \label{fig:distributed-strategy-contrast}
+\end{figure}
+
+\subsection{Absolute performance vs. single-node baselines}
+\label{results:distributed-join-and-scaling:absolute-performance-vs-single-node-baselines}
+
+% NOTE: the small-tier PostGIS-vs-Sedona comparison below is reported neutrally
+% (no winner declared) because no rank-sum / Mann-Whitney / Vargha-Delaney A12 test
+% is currently wired into the RQ2 analysis path, and this section carries no p-value
+% float. A pairwise test on these two samples should be obtainable from the persisted
+% per-iteration data; wire it in and report significance and effect size here if/when
+% available.
+Figure~\ref{fig:distributed-wall-clock-vs-workers} places the distributed broadcast join against the single-node baselines at each tier, where the worker count at which a curve first drops below a baseline locates the crossover of Section~\ref{research-design-and-methodology:statistical-analysis:answering-rq2-scaling-against-single-node}. At the small tier the fastest single-node engine was PostGIS, at \SI{13.365}{\second}. The broadcast join fell from \SI{31.981}{\second} at \num{2} workers to \SI{13.747}{\second} at \num{16} workers (\num{95}\% bootstrap confidence-interval half-width \SI{0.486}{\second}), so it approached but did not drop below the PostGIS baseline within the tested range of \numrange{2}{16} workers. At the medium tier the fastest single-node engine was DuckDB, at about \SI{1386}{\second}; the broadcast join was already far below it at \num{2} workers, at \SI{203.4}{\second} (confidence-interval half-width \SI{1.010}{\second}), and fell to \SI{38.2}{\second} at \num{16} workers, so the distributed join led at every tested worker count. At the large tier neither single-node engine completed the join, so no baseline is plotted and only the distributed curve appears.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{Chapters/05-results/sub-chapters/figures/05-distributed-wall-clock-vs-workers.pdf}
+    \caption[Distributed wall-clock time versus single-node baselines]{Wall-clock time of the distributed national-scale spatial join as a function of worker count, on a logarithmic axis, with the single-node PostGIS and DuckDB minima drawn as per-tier horizontal reference lines. The broadcast strategy is shown at the small, medium, and large tiers and the partitioned strategy at the small tier; line color encodes the strategy. Heights are the minimum estimator, so the worker count at which a broadcast curve drops below its best single-node baseline can be read off where the curve crosses that line. The large-tier single-node baselines are absent because those engines did not complete the large join, and the partitioned medium and large runs are annotated as not completed (executor out-of-memory).}
+    \label{fig:distributed-wall-clock-vs-workers}
+\end{figure}
+
+\subsection{Execution-phase breakdown}
+\label{results:distributed-join-and-scaling:execution-phase-breakdown}
+
+Nearly all of the broadcast join's time fell in the executor-run phase. Decomposed into the phase metrics of Section~\ref{research-design-and-methodology:metrics-and-cost-model:distributed-phase-metrics}, panel~(a) of Figure~\ref{fig:distributed-execution-phase-breakdown} attributes effectively the whole stacked phase time to that phase at every tier and worker count. Driver collection was negligible, reaching at most about \SI{2.2}{\second} and recorded as zero at several worker counts. The executor-run totals rose with tier, from a few hundred seconds at the small tier to several thousand seconds at the large tier, and did not fall as workers were added. Panel~(b) reports the shuffle volume, with bytes read and bytes written nearly equal at every point. This volume also rose with tier, from roughly \SIrange{0.5}{1}{\giga\byte} at the small tier to about \SIrange{5}{11}{\giga\byte} at the medium tier and \SIrange{13}{19}{\giga\byte} at the large tier, varying only modestly with worker count within a tier. The raw Spark-internal metrics behind this breakdown appear in Figure~\ref{fig:appendix-spark-metrics}, and the finer per-stage duration profile in Figures~\ref{fig:appendix-spark-stage-profile} and~\ref{fig:spark-stage-extra} (Appendix~\ref{appendix:supplementary-results}).
+
+\begin{figure}[H]
+    \centering
+    \subfloat[Wall-clock time by phase.\label{fig:distributed-phase-time}]{%
+        \includegraphics[valign=t, width=0.45\textwidth]{Chapters/05-results/sub-chapters/figures/05-distributed-phase-time.pdf}}%
+    \hfill
+    \subfloat[Shuffle bytes.\label{fig:distributed-shuffle-bytes}]{%
+        \includegraphics[valign=t, width=0.45\textwidth]{Chapters/05-results/sub-chapters/figures/05-distributed-shuffle-bytes.pdf}}%
+    \caption[Execution-phase breakdown of the distributed join]{Decomposition of the broadcast national-scale spatial join from its instrumented phase metrics (Section~\ref{research-design-and-methodology:metrics-and-cost-model:distributed-phase-metrics}), against worker count and across the three size tiers. Panel~(a) stacks the two time phases, executor run time and driver collection time; panel~(b) stacks the shuffle read and write volumes, in bytes. Each bar is the per-iteration median of the corresponding metric, and shuffle is reported as a data volume rather than as a stacked time component.}
+    \label{fig:distributed-execution-phase-breakdown}
+\end{figure}
+
+At the driver boundary, the returned result was small in absolute terms. Figure~\ref{fig:distributed-client-boundary} reports the directional transfer at the Sedona client boundary for the eight-worker broadcast configuration, with the median estimator marked on each direction. Bytes received ranged from about \SI{34}{\kilo\byte} at the small tier to about \SI{62}{\kilo\byte} at the large tier, and bytes sent from about \SI{18}{\kilo\byte} to about \SI{32}{\kilo\byte}. Received therefore exceeded sent by roughly a factor of two at each tier, and both directions grew modestly with tier. This boundary is distinct from the shuffle volume of the phase breakdown and is the distributed counterpart of the single-machine directional transfer in Figure~\ref{fig:single-machine-bytes-directional}.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.65\textwidth]{Chapters/05-results/sub-chapters/figures/05-distributed-client-boundary.pdf}
+    \caption[Directional network transfer at the distributed client boundary]{Network bytes received versus sent at the Sedona driver (client) boundary for the national-scale spatial join, measured for the eight-worker broadcast configuration, with one pair of mirrored bars per size tier. Bytes received extend to the right and bytes sent to the left from a central zero on a symmetric-log axis, with the median estimator and its \num{95}\% bootstrap confidence interval marked on each direction. This is the distributed analogue of the single-machine directional figure (Figure~\ref{fig:single-machine-bytes-directional}); unlike the shuffle volume of the phase breakdown, it measures transfer at the driver/client boundary.}
+    \label{fig:distributed-client-boundary}
+\end{figure}
+
+\subsection{Operational cost and the cost-time tradeoff}
+\label{results:distributed-join-and-scaling:operational-cost-and-the-cost-time-tradeoff}
+
+Figure~\ref{fig:distributed-cost-time-pareto} places every strategy, tier, and worker count in the cost-time plane and traces the non-dominated frontier. The frontier was composed entirely of small-tier broadcast points, at \num{2}, \num{4}, \num{12}, and \num{16} workers. The small-tier broadcast point at \num{8} workers was dominated, as were all of the medium- and large-tier broadcast points and every partitioned point, each sitting further up and to the right at both higher time and higher cost. The per-cell achieved iteration counts, minimum-estimator run-times, confidence-interval half-widths, and costs behind these figures are collected in Table~\ref{tab:distributed-join-descriptive-statistics}.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.75\textwidth]{Chapters/05-results/sub-chapters/figures/05-distributed-cost-time-pareto.pdf}
+    \caption[Cost-time tradeoff of the distributed join]{Operational cost (USD) against wall-clock time (s) for the distributed national-scale spatial join, on logarithmic axes, with one point per join strategy, size tier, and worker count and each point annotated with its worker count. Line color encodes the join strategy, and the connected line traces the non-dominated (Pareto) frontier.}
+    \label{fig:distributed-cost-time-pareto}
+\end{figure}
+
+% longtable (not a float) is used because this spans pages.
+  {{\footnotesize
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{1.2}
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{0.10\textwidth} >{\raggedright\arraybackslash}p{0.13\textwidth} r r r r r@{}}
+      \toprule
+      \textbf{Tier} & \textbf{Strategy} & \textbf{Workers} & \textbf{Achieved $n$} & \textbf{Min.\ (\si{\second})} & \textbf{\acrshort{ci} half-width} & \textbf{Cost
+  (USD)} \\
+      \midrule
+      \endfirsthead
+      \multicolumn{7}{@{}l}{\small\itshape Table~\thetable\ (continued)} \\
+      \toprule
+      \textbf{Tier} & \textbf{Strategy} & \textbf{Workers} & \textbf{Achieved $n$} & \textbf{Min.\ (\si{\second})} & \textbf{\acrshort{ci} half-width} & \textbf{Cost
+  (USD)} \\
+      \midrule
+      \endhead
+      \midrule
+      \multicolumn{7}{r@{}}{\small\itshape Continued on next page} \\
+      \endfoot
+      \bottomrule
+      \addlinespace[\abovecaptionskip]
+      \caption[Distributed join descriptive statistics]{Descriptive statistics of the
+      national-scale spatial join for each size tier, join strategy, and worker count:
+      the achieved successful-iteration count, the minimum-estimator elapsed time in
+      seconds, its \num{95}\% bootstrap confidence-interval half-width, and the associated
+      total operational cost (USD). Cells in which every iteration failed are marked as
+      not completed (executor out-of-memory).}
+      \label{tab:distributed-join-descriptive-statistics} \\
+      \endlastfoot
+      \inputtablebody{Chapters/05-results/sub-chapters/tables/05-distributed-descriptive-stats.tex}
+  \end{longtable}
+}

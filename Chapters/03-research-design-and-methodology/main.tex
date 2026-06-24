@@ -1,0 +1,9 @@
+% File: Chapters/03-research-design-and-methodology/main.tex
+
+The design answers two questions, and this chapter is the plan the rest of the thesis carries out: it fixes what is varied, what is held constant, how each outcome is measured in principle, and how the resulting samples are analyzed. The first question asks how the cloud-native combination of GeoParquet and DuckDB compares with the traditional alternatives, PostGIS and Shapefile, in wall-clock query time, network transfer, and operational cost, evaluated across spatial intersection predicates, distance-based nearest-neighbor search, and bounding-box range filtering on Norwegian building data at small and large dataset tiers. The second asks, for a national-scale spatial join on the same data, how broadcast-join and partitioned-join execution strategies on Apache Sedona compare against single-node PostGIS and DuckDB in wall-clock time, scaling behavior, network transfer, and operational cost across the same tiers.
+
+\input{Chapters/03-research-design-and-methodology/sub-chapters/01-overview-and-experimental-design}
+\input{Chapters/03-research-design-and-methodology/sub-chapters/02-workloads}
+\input{Chapters/03-research-design-and-methodology/sub-chapters/03-metrics-and-cost-model}
+\input{Chapters/03-research-design-and-methodology/sub-chapters/04-statistical-analysis}
+\input{Chapters/03-research-design-and-methodology/sub-chapters/05-threats-to-validity}

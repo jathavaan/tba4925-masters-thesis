@@ -1,0 +1,83 @@
+\section{Single-machine query performance (RQ1)}
+\label{results:single-machine-query-performance}
+
+The single-machine results come from three single-node configurations: DuckDB over GeoParquet, PostGIS, and GeoPandas over Shapefile. GeoPandas over Shapefile was exercised at the small tier only, so its larger-tier cells are absent by design rather than failed. DuckDB and PostGIS ran the point-in-polygon lookup, the k-nearest-neighbor search, and the bounding-box filter at both the small and large tiers, and the national-scale join appears for the single-node engines that executed it. Each configuration is reported in turn across the data transferred over the network, the wall-clock time of each query, and the operational cost.
+
+\subsection{Data transferred}
+\label{results:single-machine-query-performance:data-transferred}
+
+Figure~\ref{fig:single-machine-bytes-transferred} shows the network bytes received by each configuration across the workload-by-tier grid, on a logarithmic axis. The local Shapefile path reads from disk, so its received volume is approximately zero: \SI{0}{\byte} for the point-in-polygon and bounding-box queries and \SI{42}{\byte} for the k-nearest-neighbor search. DuckDB over object storage received a near-constant payload across all three patterns, \SI{93323}{\byte} at the small tier and approximately \SI{12000}{\byte} at the large tier. On the point-in-polygon lookup and the k-nearest-neighbor search it received the most of the three configurations. PostGIS received the most on the bounding-box filter, reaching \SI{1703441}{\byte} at the small tier and \SI{1858684}{\byte} (approximately \SI{1.9}{\mega\byte}) at the large tier, but stayed low elsewhere, at \SI{1923}{\byte} for the point-in-polygon lookup and \SI{8688}{\byte} and \SI{7927}{\byte} for the k-nearest-neighbor search. These cells span several orders of magnitude on the logarithmic axis. Each query returned a deterministic payload. The marked median estimator and its \num{95}\% bootstrap confidence interval coincide to negligible width.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\textwidth]{Chapters/05-results/sub-chapters/figures/05-single-machine-bytes-transferred.pdf}
+    \caption[Data transferred per single-machine configuration]{Network bytes received by each single-machine configuration, arranged as a grid with workload patterns in rows and size tiers in columns. Within each cell, every configuration is drawn as a raincloud, which combines a half-violin, a box, and a jittered sample of the per-iteration values, so the full distribution is visible on a logarithmic axis; the median estimator used for transfer metrics and its \num{95}\% bootstrap confidence interval are marked on each. Only bytes received are shown. The Shapefile configuration reads from the local filesystem, so its network transfer is approximately zero and is labeled as such rather than left blank.}
+    \label{fig:single-machine-bytes-transferred}
+\end{figure}
+
+Figure~\ref{fig:single-machine-bytes-directional} separates the two directions. For both DuckDB and PostGIS, bytes received exceeded bytes sent by orders of magnitude. The sent direction carried sub-kilobyte request traffic in most cells, around \SIrange{600}{900}{\byte}, rising only for the PostGIS bounding-box filter, which sent \SI{13648}{\byte} at the small tier and \SI{14770}{\byte} at the large tier. The local Shapefile path moved only tens of bytes in either direction and is marked as not like-for-like, reading from the local filesystem rather than across a client boundary.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\textwidth]{Chapters/05-results/sub-chapters/figures/05-single-machine-bytes-directional.pdf}
+    \caption[Directional network transfer per single-machine configuration]{Network bytes received versus sent for each single-machine configuration, in the same workload-pattern (rows) by size-tier (columns) grid as the received-only figure. Each configuration is a pair of mirrored bars diverging from a central zero, bytes received to the right and bytes sent to the left, on a symmetric-log axis, logarithmic away from the origin but linear across a band around zero so that zero values remain representable, with the median estimator and its \num{95}\% bootstrap confidence interval marked on each direction. The Shapefile configuration reads from the local filesystem, so both directions are approximately zero and are labeled as not like-for-like rather than plotted as comparable transfer. The distributed Sedona client boundary is a different data path, shown separately in Figure~\ref{fig:distributed-client-boundary}.}
+    \label{fig:single-machine-bytes-directional}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{Chapters/05-results/sub-chapters/figures/05-single-machine-bytes-vs-time.pdf}
+    \caption[Bytes transferred versus wall-clock time]{Relationship between bytes transferred and wall-clock time across single-machine configurations, with one point per configuration, workload pattern, and size tier on logarithmic axes.}
+    \label{fig:single-machine-bytes-vs-time}
+\end{figure}
+
+The received volumes relate to the number of result rows each query returned, shown in Figure~\ref{fig:bytes-vs-cardinality}. The point-in-polygon lookup returned a single row, and the k-nearest-neighbor search \num{10} rows. The national-scale join returned \num{357} rows, and the bounding-box filter several thousand, at \numrange{2682}{3015} rows depending on engine and tier. DuckDB's received volume varied little with cardinality, so its per-row transfer fell as the result grew, whereas the PostGIS received volume rose with the row count. The returned counts agreed across the engines that ran each workload, as Table~\ref{tab:appendix-cardinality-agreement} reports. Figure~\ref{fig:single-machine-bytes-vs-time} plots the same received volumes against wall-clock time.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{Chapters/05-results/sub-chapters/figures/05-bytes-vs-cardinality.pdf}
+    \caption[Network transfer versus result cardinality]{Median network bytes received against result cardinality (the returned row count) on logarithmic axes, with one marker per workload pattern, size tier, and configuration cell. Color encodes configuration and marker glyph encodes the query pattern. The local Shapefile path does not record cardinality (a sentinel of $-1$) and is excluded. Faint diagonal guidelines mark constant bytes-per-result-row rates, so cells of equal cardinality align vertically and the per-row transfer can be read off.}
+    \label{fig:bytes-vs-cardinality}
+\end{figure}
+
+\subsection{Wall-clock time}
+\label{results:single-machine-query-performance:wall-clock-time}
+
+Figure~\ref{fig:single-machine-wall-clock-time} reports the wall-clock time of each configuration, summarized by the minimum estimator on a logarithmic axis. PostGIS recorded the lowest run-time in every single-machine cell, from approximately \SI{0.0015}{\second} for the point-in-polygon lookup and the k-nearest-neighbor search to \SI{0.0389}{\second} for the bounding-box filter at the large tier. DuckDB ran several orders of magnitude slower, from \SI{1.327}{\second} for the point-in-polygon lookup at the small tier to \SI{29.919}{\second} at the large tier, with the k-nearest-neighbor search and the bounding-box filter between those bounds. At the small tier, the local Shapefile path fell between the two engines on the point-in-polygon lookup, at \SI{0.3427}{\second}, and on the bounding-box filter, at \SI{0.0521}{\second}; on the k-nearest-neighbor search, however, it was the slowest configuration measured, at \SI{47.816}{\second} against DuckDB's \SI{0.7460}{\second}. Table~\ref{tab:results-achieved-n} lists the minimum-estimator run-times and their bootstrap confidence-interval half-widths. Each engine's growth from the small to the large tier is traced per pattern in Figure~\ref{fig:appendix-size-scaling-slope}, and the complete per-cell grid of minima appears in Figure~\ref{fig:appendix-cell-grid}. The user/system \acrshort{cpu} split and the \acrshort{cpu}-to-wall-clock ratio behind these times appear in Figures~\ref{fig:appendix-cpu-decomposition} and~\ref{fig:appendix-cpu-wall-ratio} (Appendix~\ref{appendix:supplementary-results}).
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\textwidth]{Chapters/05-results/sub-chapters/figures/05-single-machine-wall-clock-time.pdf}
+    \caption[Wall-clock time per single-machine configuration]{Wall-clock time of each single-machine configuration, in the same grid layout as the bytes-transferred figure: workload patterns in rows, size tiers in columns. Within each cell, every configuration is drawn as a raincloud, so the full distribution and its upper tail are visible on a logarithmic axis; the minimum estimator and its \num{95}\% bootstrap confidence interval are marked on each.}
+    \label{fig:single-machine-wall-clock-time}
+\end{figure}
+
+Figure~\ref{fig:single-machine-latency-ecdf} shows the per-iteration latency distribution for the point-in-polygon lookup at the small tier, the one cell in which all three configurations ran. The three curves are separated by orders of magnitude across the whole distribution. PostGIS stayed in the single-digit-millisecond range, from a median ($p_{50}$) of \SI{0.0037}{\second} through \SI{0.0068}{\second} at $p_{95}$ to \SI{0.0105}{\second} at $p_{99}$. The local Shapefile path ran from $p_{50}$ \SI{0.3741}{\second} to $p_{99}$ \SI{0.6133}{\second}, and DuckDB from $p_{50}$ \SI{1.5252}{\second} to $p_{99}$ \SI{3.3482}{\second}. The median-to-tail spread was widest for PostGIS, whose $p_{99}$ was about \num{2.8} times its median, and tightest for the local path at about \num{1.6} times, with DuckDB between at roughly \num{2.2} times. The other tests showed similar characteristics, illustrated in Figure~\ref{fig:latency-ecdf-grid}.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{Chapters/05-results/sub-chapters/figures/05-single-machine-latency-ecdf.pdf}
+    \caption[Latency distribution for the headline single-machine cell]{\acrfull{ecdf} of per-iteration elapsed time for the point-in-polygon lookup at the small tier, with one step curve per single-machine configuration on a logarithmic time axis. The median ($p_{50}$), $p_{95}$, and $p_{99}$ percentiles are marked on each curve, so the spread between the median and the upper tail is directly comparable across configurations.}
+    \label{fig:single-machine-latency-ecdf}
+\end{figure}
+
+\subsection{Operational cost}
+\label{results:single-machine-query-performance:operational-cost}
+
+Figure~\ref{fig:single-machine-operational-cost} decomposes the operational cost of each configuration into the four cost-model terms defined in Section~\ref{research-design-and-methodology:metrics-and-cost-model:cost-model}: compute, storage, operations, and egress. At these data sizes the compute term dominated the stack for both single-node engines, with storage a thin sliver. The operations term stayed near zero and was nonzero only for DuckDB, at no more than \num{0.0023}~USD per workload. The egress term was zero throughout. The local Shapefile path carried the compute term alone, with zero storage, operations, and egress.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{Chapters/05-results/sub-chapters/figures/05-single-machine-operational-cost.pdf}
+    \caption[Operational cost per single-machine configuration]{Operational cost of each single-machine configuration, faceted by workload pattern. Each bar is stacked into the four terms of the cost model (compute, storage, operations, and egress), whose definitions and unit prices are given in Section~\ref{research-design-and-methodology:metrics-and-cost-model:cost-model} and Table~\ref{tab:cost-model-unit-prices}; each configuration is charged only for the terms it consumes, so the local-filesystem Shapefile path carries the compute term alone.}
+    \label{fig:single-machine-operational-cost}
+\end{figure}
+
+Figure~\ref{fig:single-machine-cost-time-quadrant} places each configuration in the cost-time plane, one panel per workload pattern, with per-panel median cross-hairs marking the four decision quadrants. DuckDB at the large tier fell in the slow-and-costly quadrant in every panel in which it appeared, while the small-tier engines sat toward the cheaper and faster side. PostGIS, the fastest in absolute terms, sat at the low-time edge near the cost median in the point-in-polygon, k-nearest-neighbor, and bounding-box panels. In the national-scale join panel the two tiers separated, with both engines at the small tier in the fast-and-cheap quadrant and both at the medium tier in the slow-and-costly quadrant. The best-worker Sedona point appears in that panel alone, marked as a star at low time and moderate cost for context with the single-machine engines.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\textwidth]{Chapters/05-results/sub-chapters/figures/05-single-machine-cost-time-quadrant.pdf}
+    \caption[Single-machine cost-time decision quadrant]{Operational cost against wall-clock time for the single-machine configurations, one panel per workload pattern, on logarithmic axes. Marker glyph encodes the configuration and color encodes the size tier; per-panel median cross-hairs split each panel into the four decision quadrants (fast and cheap, slow and cheap, fast and costly, slow and costly). The national-scale panel additionally anchors the best-worker Sedona point as a star, for context with the single-machine engines. This is the single-machine analogue of the distributed cost-time Pareto frontier, the configurations not beaten on both cost and time by any other (Figure~\ref{fig:distributed-cost-time-pareto}).}
+    \label{fig:single-machine-cost-time-quadrant}
+\end{figure}

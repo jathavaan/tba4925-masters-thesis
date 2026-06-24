@@ -1,0 +1,6 @@
+Chapter~\ref{ch:results} reports the orderings but not their cause. Recovering that cause, by reading the orderings against the mechanisms set out in Chapter~\ref{ch:background} and the prior benchmarks of Section~\ref{introduction:related-work}, answers the research questions. The single-node findings come first. They ask why the cloud-native combination of GeoParquet and DuckDB behaved as it did against the traditional PostGIS and Shapefile alternatives. The distributed join is then read against the same single-node baselines to locate where distribution repays the coordination cost it imposes and where a tuned single node remains the better choice. Drawing the two together gives the synthesis of which engine suits which setting, weighing implementation complexity against usage cost, after which the chapter marks how far these findings reach and where the test conditions bound them.
+
+\input{Chapters/06-discussion/sub-chapters/01-single-node-cloud-native-vs-traditional}
+\input{Chapters/06-discussion/sub-chapters/02-distribution-and-scaling}
+\input{Chapters/06-discussion/sub-chapters/03-synthesis-which-engine-when}
+\input{Chapters/06-discussion/sub-chapters/04-reach-and-limits}
