@@ -10,7 +10,7 @@ Figure~\ref{fig:single-machine-bytes-transferred} shows the network bytes receiv
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\textwidth]{Chapters/05-results/sub-chapters/figures/05-single-machine-bytes-transferred.pdf}
+    \includegraphics[width=0.7\textwidth]{Chapters/05-results/sub-chapters/figures/05-single-machine-bytes-transferred.pdf}
     \caption[Data transferred per single-machine configuration]{Network bytes received by each single-machine configuration, arranged as a grid with workload patterns in rows and size tiers in columns. Within each cell, every configuration is drawn as a raincloud, which combines a half-violin, a box, and a jittered sample of the per-iteration values, so the full distribution is visible on a logarithmic axis; the median estimator used for transfer metrics and its \num{95}\% bootstrap confidence interval are marked on each. Only bytes received are shown. The Shapefile configuration reads from the local filesystem, so its network transfer is approximately zero and is labeled as such rather than left blank.}
     \label{fig:single-machine-bytes-transferred}
 \end{figure}
@@ -19,7 +19,7 @@ Figure~\ref{fig:single-machine-bytes-directional} separates the two directions. 
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\textwidth]{Chapters/05-results/sub-chapters/figures/05-single-machine-bytes-directional.pdf}
+    \includegraphics[width=0.7\textwidth]{Chapters/05-results/sub-chapters/figures/05-single-machine-bytes-directional.pdf}
     \caption[Directional network transfer per single-machine configuration]{Network bytes received versus sent for each single-machine configuration, in the same workload-pattern (rows) by size-tier (columns) grid as the received-only figure. Each configuration is a pair of mirrored bars diverging from a central zero, bytes received to the right and bytes sent to the left, on a symmetric-log axis, logarithmic away from the origin but linear across a band around zero so that zero values remain representable, with the median estimator and its \num{95}\% bootstrap confidence interval marked on each direction. The Shapefile configuration reads from the local filesystem, so both directions are approximately zero and are labeled as not like-for-like rather than plotted as comparable transfer. The distributed Sedona client boundary is a different data path, shown separately in Figure~\ref{fig:distributed-client-boundary}.}
     \label{fig:single-machine-bytes-directional}
 \end{figure}
@@ -56,7 +56,7 @@ Figure~\ref{fig:single-machine-latency-ecdf} shows the per-iteration latency dis
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\textwidth]{Chapters/05-results/sub-chapters/figures/05-single-machine-latency-ecdf.pdf}
+    \includegraphics[width=0.7\textwidth]{Chapters/05-results/sub-chapters/figures/05-single-machine-latency-ecdf.pdf}
     \caption[Latency distribution for the headline single-machine cell]{\acrfull{ecdf} of per-iteration elapsed time for the point-in-polygon lookup at the small tier, with one step curve per single-machine configuration on a logarithmic time axis. The median ($p_{50}$), $p_{95}$, and $p_{99}$ percentiles are marked on each curve, so the spread between the median and the upper tail is directly comparable across configurations.}
     \label{fig:single-machine-latency-ecdf}
 \end{figure}
