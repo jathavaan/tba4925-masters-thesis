@@ -10,7 +10,7 @@ Figure~\ref{fig:single-machine-bytes-transferred} shows the network bytes receiv
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.95\textwidth]{Chapters/05-results/sub-chapters/figures/05-single-machine-bytes-transferred.pdf}
+    \includegraphics[width=\textwidth]{Chapters/05-results/sub-chapters/figures/05-single-machine-bytes-transferred.pdf}
     \caption[Data transferred per single-machine configuration]{Network bytes received by each single-machine configuration, arranged as a grid with workload patterns in rows and size tiers in columns. Within each cell, every configuration is drawn as a raincloud, which combines a half-violin, a box, and a jittered sample of the per-iteration values, so the full distribution is visible on a logarithmic axis; the median estimator used for transfer metrics and its \num{95}\% bootstrap confidence interval are marked on each. Only bytes received are shown. The Shapefile configuration reads from the local filesystem, so its network transfer is approximately zero and is labeled as such rather than left blank.}
     \label{fig:single-machine-bytes-transferred}
 \end{figure}
@@ -19,14 +19,14 @@ Figure~\ref{fig:single-machine-bytes-directional} separates the two directions. 
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.95\textwidth]{Chapters/05-results/sub-chapters/figures/05-single-machine-bytes-directional.pdf}
+    \includegraphics[width=\textwidth]{Chapters/05-results/sub-chapters/figures/05-single-machine-bytes-directional.pdf}
     \caption[Directional network transfer per single-machine configuration]{Network bytes received versus sent for each single-machine configuration, in the same workload-pattern (rows) by size-tier (columns) grid as the received-only figure. Each configuration is a pair of mirrored bars diverging from a central zero, bytes received to the right and bytes sent to the left, on a symmetric-log axis, logarithmic away from the origin but linear across a band around zero so that zero values remain representable, with the median estimator and its \num{95}\% bootstrap confidence interval marked on each direction. The Shapefile configuration reads from the local filesystem, so both directions are approximately zero and are labeled as not like-for-like rather than plotted as comparable transfer. The distributed Sedona client boundary is a different data path, shown separately in Figure~\ref{fig:distributed-client-boundary}.}
     \label{fig:single-machine-bytes-directional}
 \end{figure}
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.7\textwidth]{Chapters/05-results/sub-chapters/figures/05-single-machine-bytes-vs-time.pdf}
+    \includegraphics[width=\textwidth]{Chapters/05-results/sub-chapters/figures/05-single-machine-bytes-vs-time.pdf}
     \caption[Bytes transferred versus wall-clock time]{Relationship between bytes transferred and wall-clock time across single-machine configurations, with one point per configuration, workload pattern, and size tier on logarithmic axes.}
     \label{fig:single-machine-bytes-vs-time}
 \end{figure}
@@ -35,7 +35,7 @@ The received volumes relate to the number of result rows each query returned, sh
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.8\textwidth]{Chapters/05-results/sub-chapters/figures/05-bytes-vs-cardinality.pdf}
+    \includegraphics[width=\textwidth]{Chapters/05-results/sub-chapters/figures/05-bytes-vs-cardinality.pdf}
     \caption[Network transfer versus result cardinality]{Median network bytes received against result cardinality (the returned row count) on logarithmic axes, with one marker per workload pattern, size tier, and configuration cell. Color encodes configuration and marker glyph encodes the query pattern. The local Shapefile path does not record cardinality (a sentinel of $-1$) and is excluded. Faint diagonal guidelines mark constant bytes-per-result-row rates, so cells of equal cardinality align vertically and the per-row transfer can be read off.}
     \label{fig:bytes-vs-cardinality}
 \end{figure}
@@ -47,7 +47,7 @@ Figure~\ref{fig:single-machine-wall-clock-time} reports the wall-clock time of e
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.95\textwidth]{Chapters/05-results/sub-chapters/figures/05-single-machine-wall-clock-time.pdf}
+    \includegraphics[width=\textwidth]{Chapters/05-results/sub-chapters/figures/05-single-machine-wall-clock-time.pdf}
     \caption[Wall-clock time per single-machine configuration]{Wall-clock time of each single-machine configuration, in the same grid layout as the bytes-transferred figure: workload patterns in rows, size tiers in columns. Within each cell, every configuration is drawn as a raincloud, so the full distribution and its upper tail are visible on a logarithmic axis; the minimum estimator and its \num{95}\% bootstrap confidence interval are marked on each.}
     \label{fig:single-machine-wall-clock-time}
 \end{figure}
@@ -56,7 +56,7 @@ Figure~\ref{fig:single-machine-latency-ecdf} shows the per-iteration latency dis
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.8\textwidth]{Chapters/05-results/sub-chapters/figures/05-single-machine-latency-ecdf.pdf}
+    \includegraphics[width=\textwidth]{Chapters/05-results/sub-chapters/figures/05-single-machine-latency-ecdf.pdf}
     \caption[Latency distribution for the headline single-machine cell]{\acrfull{ecdf} of per-iteration elapsed time for the point-in-polygon lookup at the small tier, with one step curve per single-machine configuration on a logarithmic time axis. The median ($p_{50}$), $p_{95}$, and $p_{99}$ percentiles are marked on each curve, so the spread between the median and the upper tail is directly comparable across configurations.}
     \label{fig:single-machine-latency-ecdf}
 \end{figure}
@@ -68,7 +68,7 @@ Figure~\ref{fig:single-machine-operational-cost} decomposes the operational cost
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.9\textwidth]{Chapters/05-results/sub-chapters/figures/05-single-machine-operational-cost.pdf}
+    \includegraphics[width=\textwidth]{Chapters/05-results/sub-chapters/figures/05-single-machine-operational-cost.pdf}
     \caption[Operational cost per single-machine configuration]{Operational cost of each single-machine configuration, faceted by workload pattern. Each bar is stacked into the four terms of the cost model (compute, storage, operations, and egress), whose definitions and unit prices are given in Section~\ref{research-design-and-methodology:metrics-and-cost-model:cost-model} and Table~\ref{tab:cost-model-unit-prices}; each configuration is charged only for the terms it consumes, so the local-filesystem Shapefile path carries the compute term alone.}
     \label{fig:single-machine-operational-cost}
 \end{figure}
@@ -77,7 +77,7 @@ Figure~\ref{fig:single-machine-cost-time-quadrant} places each configuration in 
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.95\textwidth]{Chapters/05-results/sub-chapters/figures/05-single-machine-cost-time-quadrant.pdf}
+    \includegraphics[width=\textwidth]{Chapters/05-results/sub-chapters/figures/05-single-machine-cost-time-quadrant.pdf}
     \caption[Single-machine cost-time decision quadrant]{Operational cost against wall-clock time for the single-machine configurations, one panel per workload pattern, on logarithmic axes. Marker glyph encodes the configuration and color encodes the size tier; per-panel median cross-hairs split each panel into the four decision quadrants (fast and cheap, slow and cheap, fast and costly, slow and costly). The national-scale panel additionally anchors the best-worker Sedona point as a star, for context with the single-machine engines. This is the single-machine analogue of the distributed cost-time Pareto frontier, the configurations not beaten on both cost and time by any other (Figure~\ref{fig:distributed-cost-time-pareto}).}
     \label{fig:single-machine-cost-time-quadrant}
 \end{figure}

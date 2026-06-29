@@ -11,10 +11,10 @@ Figure~\ref{fig:distributed-speedup-efficiency} shows how the broadcast join sca
 \begin{figure}[H]
     \centering
     \subfloat[Speedup $S(n)$.\label{fig:distributed-speedup}]{%
-        \includegraphics[valign=t, width=0.45\textwidth]{Chapters/05-results/sub-chapters/figures/05-distributed-speedup.pdf}}%
-    \hfill
+        \includegraphics[valign=t, width=0.8\textwidth]{Chapters/05-results/sub-chapters/figures/05-distributed-speedup.pdf}}%
+    \\[1ex]
     \subfloat[Parallel efficiency $E(n)$.\label{fig:distributed-efficiency}]{%
-        \includegraphics[valign=t, width=0.45\textwidth]{Chapters/05-results/sub-chapters/figures/05-distributed-efficiency.pdf}}%
+        \includegraphics[valign=t, width=0.8\textwidth]{Chapters/05-results/sub-chapters/figures/05-distributed-efficiency.pdf}}%
     \caption[Speedup and parallel efficiency of the distributed join]{Scaling of the distributed national-scale spatial join over worker counts $\{2, 4, 8, 12, 16\}$, with speedup and parallel efficiency defined relative to the two-worker baseline ($n_0 = 2$) of Equation~\ref{eq:speedup-parallel-efficiency}. Panel~(a) shows speedup $S(n) = T_2/T_n$ against an ideal-linear reference, and panel~(b) the paired parallel efficiency $E(n) = (2/n)\,S(n)$ against its ideal of one. Markers are computed from the minimum-estimator elapsed times; line color encodes the join strategy (broadcast, partitioned) and line weight increases with the size tier, while the reference lines use a neutral palette color.}
     \label{fig:distributed-speedup-efficiency}
 \end{figure}
@@ -41,7 +41,7 @@ Figure~\ref{fig:distributed-wall-clock-vs-workers} places the distributed broadc
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.8\textwidth]{Chapters/05-results/sub-chapters/figures/05-distributed-wall-clock-vs-workers.pdf}
+    \includegraphics[width=\textwidth]{Chapters/05-results/sub-chapters/figures/05-distributed-wall-clock-vs-workers.pdf}
     \caption[Distributed wall-clock time versus single-node baselines]{Wall-clock time of the distributed national-scale spatial join as a function of worker count, on a logarithmic axis, with the single-node PostGIS and DuckDB minima drawn as per-tier horizontal reference lines. The broadcast strategy is shown at the small, medium, and large tiers and the partitioned strategy at the small tier; line color encodes the strategy. Heights are the minimum estimator, so the worker count at which a broadcast curve drops below its best single-node baseline can be read off where the curve crosses that line. The large-tier single-node baselines are absent because those engines did not complete the large join, and the partitioned medium and large runs are annotated as not completed (executor out-of-memory).}
     \label{fig:distributed-wall-clock-vs-workers}
 \end{figure}
@@ -54,10 +54,10 @@ Nearly all of the broadcast join's time fell in the executor-run phase. Decompos
 \begin{figure}[H]
     \centering
     \subfloat[Wall-clock time by phase.\label{fig:distributed-phase-time}]{%
-        \includegraphics[valign=t, width=0.45\textwidth]{Chapters/05-results/sub-chapters/figures/05-distributed-phase-time.pdf}}%
-    \hfill
+        \includegraphics[valign=t, width=0.8\textwidth]{Chapters/05-results/sub-chapters/figures/05-distributed-phase-time.pdf}}%
+    \\[1ex]
     \subfloat[Shuffle bytes.\label{fig:distributed-shuffle-bytes}]{%
-        \includegraphics[valign=t, width=0.45\textwidth]{Chapters/05-results/sub-chapters/figures/05-distributed-shuffle-bytes.pdf}}%
+        \includegraphics[valign=t, width=0.8\textwidth]{Chapters/05-results/sub-chapters/figures/05-distributed-shuffle-bytes.pdf}}%
     \caption[Execution-phase breakdown of the distributed join]{Decomposition of the broadcast national-scale spatial join from its instrumented phase metrics (Section~\ref{research-design-and-methodology:metrics-and-cost-model:distributed-phase-metrics}), against worker count and across the three size tiers. Panel~(a) stacks the two time phases, executor run time and driver collection time; panel~(b) stacks the shuffle read and write volumes, in bytes. Each bar is the per-iteration median of the corresponding metric, and shuffle is reported as a data volume rather than as a stacked time component.}
     \label{fig:distributed-execution-phase-breakdown}
 \end{figure}
@@ -66,7 +66,7 @@ At the driver boundary, the returned result was small in absolute terms. Figure~
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.65\textwidth]{Chapters/05-results/sub-chapters/figures/05-distributed-client-boundary.pdf}
+    \includegraphics[width=\textwidth]{Chapters/05-results/sub-chapters/figures/05-distributed-client-boundary.pdf}
     \caption[Directional network transfer at the distributed client boundary]{Network bytes received versus sent at the Sedona driver (client) boundary for the national-scale spatial join, measured for the eight-worker broadcast configuration, with one pair of mirrored bars per size tier. Bytes received extend to the right and bytes sent to the left from a central zero on a symmetric-log axis, with the median estimator and its \num{95}\% bootstrap confidence interval marked on each direction. This is the distributed analogue of the single-machine directional figure (Figure~\ref{fig:single-machine-bytes-directional}); unlike the shuffle volume of the phase breakdown, it measures transfer at the driver/client boundary.}
     \label{fig:distributed-client-boundary}
 \end{figure}
@@ -78,7 +78,7 @@ Figure~\ref{fig:distributed-cost-time-pareto} places every strategy, tier, and w
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.75\textwidth]{Chapters/05-results/sub-chapters/figures/05-distributed-cost-time-pareto.pdf}
+    \includegraphics[width=\textwidth]{Chapters/05-results/sub-chapters/figures/05-distributed-cost-time-pareto.pdf}
     \caption[Cost-time tradeoff of the distributed join]{Operational cost (USD) against wall-clock time (s) for the distributed national-scale spatial join, on logarithmic axes, with one point per join strategy, size tier, and worker count and each point annotated with its worker count. Line color encodes the join strategy, and the connected line traces the non-dominated (Pareto) frontier.}
     \label{fig:distributed-cost-time-pareto}
 \end{figure}

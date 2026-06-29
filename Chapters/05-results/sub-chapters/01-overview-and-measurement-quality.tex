@@ -12,7 +12,7 @@ Where more than one configuration ran the same workload, the returned result cou
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.85\textwidth]{Chapters/05-results/sub-chapters/figures/05-results-coverage-single-machine.pdf}
+    \includegraphics[width=\textwidth]{Chapters/05-results/sub-chapters/figures/05-results-coverage-single-machine.pdf}
     \caption[Run-completeness coverage grid (single-machine)]{Completion status of
     every single-machine configuration across the three query patterns and the small
     and large tiers. Each cell records whether the run completed in full, completed
@@ -24,7 +24,7 @@ Where more than one configuration ran the same workload, the returned result cou
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.85\textwidth]{Chapters/05-results/sub-chapters/figures/05-results-coverage-distributed.pdf}
+    \includegraphics[width=\textwidth]{Chapters/05-results/sub-chapters/figures/05-results-coverage-distributed.pdf}
     \caption[Run-completeness coverage grid (distributed join)]{Completion status of
     every configuration for the national-scale spatial join -- the single-node DuckDB
     and PostGIS engines and the Apache Sedona broadcast and partitioned variants at
@@ -42,10 +42,10 @@ Figure~\ref{fig:results-warmup} shows the per-iteration timing behavior for a re
 \begin{figure}[H]
     \centering
     \subfloat[Per-iteration elapsed-time distribution.\label{fig:results-warmup-distribution}]{%
-        \includegraphics[valign=t, width=0.45\textwidth]{Chapters/05-results/sub-chapters/figures/05-results-warmup-distribution.pdf}}%
-    \hfill
+        \includegraphics[valign=t, width=0.8\textwidth]{Chapters/05-results/sub-chapters/figures/05-results-warmup-distribution.pdf}}%
+    \\[1ex]
     \subfloat[Warmup-to-steady-state decay.\label{fig:results-warmup-decay}]{%
-        \includegraphics[valign=t, width=0.45\textwidth]{Chapters/05-results/sub-chapters/figures/05-results-warmup-decay.pdf}}%
+        \includegraphics[valign=t, width=0.8\textwidth]{Chapters/05-results/sub-chapters/figures/05-results-warmup-decay.pdf}}%
     \caption[Per-iteration timing distribution and warmup behavior]{Per-iteration
     timing behavior for one representative configuration, workload, and tier (DuckDB
     over GeoParquet, point-in-polygon, small tier). Panel~(a) shows the distribution
@@ -66,7 +66,7 @@ Table~\ref{tab:results-achieved-n} records the achieved count of successful iter
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.7\textwidth]{Chapters/05-results/sub-chapters/figures/05-results-convergence.pdf}
+    \includegraphics[width=\textwidth]{Chapters/05-results/sub-chapters/figures/05-results-convergence.pdf}
     \caption[Sequential-stopping convergence]{Convergence of the sequential stopping rule for one representative configuration, workload, and tier (DuckDB over GeoParquet, point-in-polygon, small tier), over a single measurement pass. The running bootstrap \num{95}\% confidence-interval half-width, expressed as a fraction of the running minimum elapsed time, is plotted against the number of accumulated iterations; the horizontal line marks the \num{5}\% relative target half-width \parencite{georges2007_statistically_rigorous_java_performance,laaber2019_software_microbenchmarking_cloud}, and the marker indicates the first iteration at which the running half-width meets that target.}
     \label{fig:results-convergence}
 \end{figure}
