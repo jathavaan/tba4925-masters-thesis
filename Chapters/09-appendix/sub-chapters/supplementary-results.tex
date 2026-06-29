@@ -134,15 +134,15 @@ Figure~\ref{fig:latency-ecdf-grid} extends the headline latency distribution of 
 
 \begin{figure}[H]
     \centering
-    \subfloat[k-NN search, small tier]{\includegraphics[valign=t, width=0.49\textwidth]{Chapters/09-appendix/sub-chapters/figures/09-single-machine-latency-ecdf-knn-search-small.pdf}\label{fig:ecdf-knn-small}}
+    \subfloat[k-NN search, small tier]{\includegraphics[valign=t, width=0.46\textwidth]{Chapters/09-appendix/sub-chapters/figures/09-single-machine-latency-ecdf-knn-search-small.pdf}\label{fig:ecdf-knn-small}}
     \hfill
-    \subfloat[k-NN search, large tier]{\includegraphics[valign=t, width=0.49\textwidth]{Chapters/09-appendix/sub-chapters/figures/09-single-machine-latency-ecdf-knn-search-large.pdf}\label{fig:ecdf-knn-large}}
+    \subfloat[k-NN search, large tier]{\includegraphics[valign=t, width=0.46\textwidth]{Chapters/09-appendix/sub-chapters/figures/09-single-machine-latency-ecdf-knn-search-large.pdf}\label{fig:ecdf-knn-large}}
     \\[1ex]
-    \subfloat[Bounding-box filter, small tier]{\includegraphics[valign=t, width=0.49\textwidth]{Chapters/09-appendix/sub-chapters/figures/09-single-machine-latency-ecdf-bbox-filtering-small.pdf}\label{fig:ecdf-bbox-small}}
+    \subfloat[Bounding-box filter, small tier]{\includegraphics[valign=t, width=0.46\textwidth]{Chapters/09-appendix/sub-chapters/figures/09-single-machine-latency-ecdf-bbox-filtering-small.pdf}\label{fig:ecdf-bbox-small}}
     \hfill
-    \subfloat[Bounding-box filter, large tier]{\includegraphics[valign=t, width=0.49\textwidth]{Chapters/09-appendix/sub-chapters/figures/09-single-machine-latency-ecdf-bbox-filtering-large.pdf}\label{fig:ecdf-bbox-large}}
+    \subfloat[Bounding-box filter, large tier]{\includegraphics[valign=t, width=0.46\textwidth]{Chapters/09-appendix/sub-chapters/figures/09-single-machine-latency-ecdf-bbox-filtering-large.pdf}\label{fig:ecdf-bbox-large}}
     \\[1ex]
-    \subfloat[Point-in-polygon lookup, large tier]{\includegraphics[valign=t, width=0.49\textwidth]{Chapters/09-appendix/sub-chapters/figures/09-single-machine-latency-ecdf-point-in-polygon-lookup-large.pdf}\label{fig:ecdf-pip-large}}
+    \subfloat[Point-in-polygon lookup, large tier]{\includegraphics[valign=t, width=0.46\textwidth]{Chapters/09-appendix/sub-chapters/figures/09-single-machine-latency-ecdf-point-in-polygon-lookup-large.pdf}\label{fig:ecdf-pip-large}}
     \caption[Latency distributions for the remaining single-machine cells]{Empirical cumulative distribution of per-iteration elapsed time for the single-machine cells not shown in Figure~\ref{fig:single-machine-latency-ecdf}, one step curve per configuration on a logarithmic time axis with the $p_{50}$, $p_{95}$, and $p_{99}$ percentiles marked. The small-tier panels carry all three configurations; the local Shapefile path was not run at the large tier, so the large-tier panels contrast DuckDB against PostGIS only. The relative ordering is stable within each cell, but the slowest engine differs by query pattern.}
     \label{fig:latency-ecdf-grid}
 \end{figure}
@@ -265,16 +265,16 @@ Figure~\ref{fig:appendix-cell-grid} collects every query pattern and size tier i
 
 Figure~\ref{fig:appendix-spark-metrics} shows the distributions of the raw Spark-internal metrics --- executor run time, input bytes read, shuffle bytes, and per-stage durations --- that feed the execution-phase breakdown of Figure~\ref{fig:distributed-execution-phase-breakdown}.
 
-\begin{figure}[H]
+\begin{sidewaysfigure}
     \centering
-    \includegraphics[width=0.9\textwidth]{Chapters/09-appendix/sub-chapters/figures/09-spark-metrics.pdf}
+    \includegraphics[width=0.95\textheight]{Chapters/09-appendix/sub-chapters/figures/09-spark-metrics.pdf}
     \caption[Raw Spark-internal metric distributions]{Distributions of the raw
     Databricks Spark-internal metrics recorded by the \texttt{SparkListener}: executor
     run time, input bytes read, shuffle bytes read and written, and per-stage durations,
-    across iterations and worker counts. These are the raw quantities that feed the
-    execution-phase breakdown of Figure~\ref{fig:distributed-execution-phase-breakdown}.}
+    across iterations and worker counts, on logarithmic axes. These are the raw quantities
+    that feed the execution-phase breakdown of Figure~\ref{fig:distributed-execution-phase-breakdown}.}
     \label{fig:appendix-spark-metrics}
-\end{figure}
+\end{sidewaysfigure}
 
 Figure~\ref{fig:appendix-spark-stage-profile} resolves the join into individual Spark stages: a single stage (stage index~2) dominated the profile at every worker count, its median duration falling from about \SI{352}{\second} at \num{2} workers to about \SI{61}{\second} at \num{16} workers, while the remaining stages stayed comparatively short.
 
@@ -295,9 +295,9 @@ Figure~\ref{fig:spark-stage-extra} shows the same per-stage decomposition at the
 
 \begin{figure}[H]
     \centering
-    \subfloat[Broadcast, small tier]{\includegraphics[width=0.9\textwidth]{Chapters/09-appendix/sub-chapters/figures/09-spark-stage-profile-broadcast-small.pdf}\label{fig:spark-broadcast-small}}\\[1ex]
-    \subfloat[Broadcast, medium tier]{\includegraphics[width=0.9\textwidth]{Chapters/09-appendix/sub-chapters/figures/09-spark-stage-profile-broadcast-medium.pdf}\label{fig:spark-broadcast-medium}}\\[1ex]
-    \subfloat[Partitioned, small tier]{\includegraphics[width=0.9\textwidth]{Chapters/09-appendix/sub-chapters/figures/09-spark-stage-profile-partitioned-small.pdf}\label{fig:spark-partitioned-small}}
+    \subfloat[Broadcast, small tier]{\includegraphics[width=0.85\textwidth]{Chapters/09-appendix/sub-chapters/figures/09-spark-stage-profile-broadcast-small.pdf}\label{fig:spark-broadcast-small}}\\[0.3ex]
+    \subfloat[Broadcast, medium tier]{\includegraphics[width=0.85\textwidth]{Chapters/09-appendix/sub-chapters/figures/09-spark-stage-profile-broadcast-medium.pdf}\label{fig:spark-broadcast-medium}}\\[0.3ex]
+    \subfloat[Partitioned, small tier]{\includegraphics[width=0.85\textwidth]{Chapters/09-appendix/sub-chapters/figures/09-spark-stage-profile-partitioned-small.pdf}\label{fig:spark-partitioned-small}}
     \caption[Spark per-stage profiles at the remaining cluster configurations]{Median duration of each Spark stage, one panel per worker count $\{2, 4, 8, 12, 16\}$, complementing the broadcast/large profile of Figure~\ref{fig:appendix-spark-stage-profile}. The panels show the broadcast strategy at the small and medium tiers and the partitioned strategy at the small tier. For broadcast, stage~2 dominates and shrinks with added workers; for partitioned, a single range-join stage of roughly \SI{2800}{\second} dominates and is insensitive to worker count. The medium and large partitioned tiers did not complete (executor \acrshort{oom}).}
     \label{fig:spark-stage-extra}
 \end{figure}
