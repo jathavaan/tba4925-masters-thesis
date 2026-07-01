@@ -265,16 +265,11 @@ Figure~\ref{fig:appendix-cell-grid} collects every query pattern and size tier i
 
 Figure~\ref{fig:appendix-spark-metrics} shows the distributions of the raw Spark-internal metrics --- executor run time, input bytes read, shuffle bytes, and per-stage durations --- that feed the execution-phase breakdown of Figure~\ref{fig:distributed-execution-phase-breakdown}.
 
-% Landscape page: pdflscape rotates the page itself in the PDF (the figure stays
-% upright on a rotated page), and the landscape environment is non-floating, so it
-% renders in source order — before the per-stage profile of
-% Figure~\ref{fig:appendix-spark-stage-profile}.
-\begin{landscape}
 \begin{figure}[p]
     \centering
-    % keepaspectratio so the figure fits the rotated page both ways (the height cap
-    % stops the vertical config labels from running off the bottom of the page).
-    \includegraphics[width=\linewidth,height=0.78\textwidth,keepaspectratio]{Chapters/09-appendix/sub-chapters/figures/09-spark-metrics.pdf}
+    % keepaspectratio with a \textheight cap so the tall multi-panel grid fits an
+    % upright page without running off the bottom.
+    \includegraphics[width=\textwidth,height=0.9\textheight,keepaspectratio]{Chapters/09-appendix/sub-chapters/figures/09-spark-metrics.pdf}
     \caption[Raw Spark-internal metric distributions]{Distributions of the raw
     Databricks Spark-internal metrics recorded by the \texttt{SparkListener}: executor
     run time, input bytes read, shuffle bytes read and written, and per-stage durations,
@@ -282,7 +277,6 @@ Figure~\ref{fig:appendix-spark-metrics} shows the distributions of the raw Spark
     that feed the execution-phase breakdown of Figure~\ref{fig:distributed-execution-phase-breakdown}.}
     \label{fig:appendix-spark-metrics}
 \end{figure}
-\end{landscape}
 
 Figure~\ref{fig:appendix-spark-stage-profile} resolves the join into individual Spark stages: a single stage (stage index~2) dominated the profile at every worker count, its median duration falling from about \SI{352}{\second} at \num{2} workers to about \SI{61}{\second} at \num{16} workers, while the remaining stages stayed comparatively short.
 
