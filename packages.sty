@@ -297,6 +297,14 @@
 	\ifmmode\nfss@text{\ttfamily\bk@dot#1.\bk@edot}%
 	\else\leavevmode{\ttfamily\bk@dot#1.\bk@edot}\fi}
 \makeatother
+% The \allowbreak break points inserted above carry no stretchable glue, so a
+% break taken early in a long literal can leave the line too loose for TeX to
+% accept -- it then overflows the margin instead (e.g. the last line ending in
+% spark.sql.autoBroadcastJoinThreshold=). A small \emergencystretch lets the
+% final line-break pass stretch such a line rather than overflow, so the literal
+% wraps at a separator. It only activates on lines that would otherwise be
+% over/underfull; ordinary paragraphs are unaffected.
+\emergencystretch=3em
 
 % =============================================================================
 % Quotations
