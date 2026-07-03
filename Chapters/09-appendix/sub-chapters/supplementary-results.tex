@@ -47,6 +47,20 @@ The separability grouping of Figure~\ref{fig:pairwise-significance-cliques} rest
 \end{longtable}
 }
 
+% The longtable above ends on a short page, and \usepackage[bottom]{footmisc}
+% injects footnote-sinking glue that floats the closing \bottomrule down that page.
+% Suppress the sinking glue for just this page break, then restore it. Guarded so
+% it is a harmless no-op on LaTeX kernels without the socket output routine.
+\makeatletter
+\ifdefined\AssignSocketPlug
+  \AssignSocketPlug{build/column/outputbox}{floats-footnotes}%
+\fi
+\clearpage
+\ifdefined\AssignSocketPlug
+  \AssignSocketPlug{build/column/outputbox}{floats-space-footnotes}%
+\fi
+\makeatother
+
 \subsection{Result-cardinality agreement}
 
 Table~\ref{tab:appendix-cardinality-agreement} reports the returned row count for the configurations that ran each workload, backing the agreement check of Section~\ref{results:overview-and-measurement-quality:run-completeness-and-result-agreement}: the point-in-polygon lookup, the k-nearest-neighbor search, and the national-scale join returned identical counts across the engines that ran them, and the bounding-box filter was the only pattern whose returned set differed between engines, at a maximum relative discrepancy of \num{1.53}\%.
