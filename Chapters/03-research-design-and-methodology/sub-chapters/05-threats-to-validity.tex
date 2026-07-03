@@ -11,7 +11,7 @@ A further concern is that the framework distinguishes the two failure modes only
 
 External validity concerns how far the findings extend beyond their conditions. The design runs in a single region, with a single provider, on one dataset domain. The architectural orderings are expected to carry beyond these conditions: which access pattern moves fewer bytes, and whether distribution repays its coordination cost. They follow from format and engine structure (Section~\ref{background:spatial-data-formats-and-storage-models:summary}; Section~\ref{background:cloud-native-data-architecture:distributed-and-non-distributed-computation}) rather than from the platform, which is why they carry. Absolute times and costs do not carry, because they depend on provider- and region-specific rates whose predictability itself varies \parencite{leitner2016_patterns_chaos_iaas}. Data is the most limited axis. A workload governed by spatial skew (Section~\ref{background:distributed-spatial-processing:spatial-partitioning-and-parallel-efficiency}), such as the distributed join, is the most sensitive to building polygons not representing other inputs. Table~\ref{tab:threats-validity-summary} collects these threats across all three validity dimensions, with the design measures that address them.
 
-\begin{longtable}{@{}l p{0.40\textwidth} p{0.40\textwidth}@{}}
+\begin{longtable}{@{\extracolsep{\fill}}l p{0.40\textwidth} p{0.40\textwidth}@{}}
 	\caption[Threats to validity and their mitigations]{Threats to validity grouped by dimension, the threat each poses, and how the design addresses it.}
 	\label{tab:threats-validity-summary} \\
 	\toprule
