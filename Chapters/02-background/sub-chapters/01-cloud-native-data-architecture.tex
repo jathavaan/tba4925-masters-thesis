@@ -1,5 +1,9 @@
 \section{Cloud-native data architecture}
 \label{background:cloud-native-data-architecture}
+
+% Academic rewrite
+Cloud-native data architecture supplies the setting for the formats and engines this thesis evaluates, built on a single organizing move that the section takes apart in stages. That move places data in one layer and processing in another, and the section opens by establishing this decoupled model and the pressure it puts on how a format is laid out on disk. It then follows each separated layer in turn: how the storage layer, reduced to keyed objects, is reached across a network, and how the compute layer is organized as either a single process or a coordinated set of workers. A cost model that meters each of these resources separately, and that governs the choice between those two compute models, closes the section. The account starts from the separation itself.
+
 \subsection{Decoupled storage and compute} 
 \label{background:cloud-native-data-architecture:decoupled-storage-and-compute}
 Traditional data processing systems co-locate storage and compute on the same node, each node being a single server in the cluster, so each node processes only the data it stores locally. This tight coupling, the architectural binding of compute and storage to the same hardware, forces the two layers to scale together, even when demand for each grows at different rates \parencite{dageville2016_snowflake_elastic_data_warehouse}.

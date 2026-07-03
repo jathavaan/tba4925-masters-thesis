@@ -1,9 +1,8 @@
 \section{Measurement instrumentation and cost model}
 \label{system-architecture-and-implementation:measurement-instrumentation-and-cost-model}
 
-% LEAD: two instrumentation regimes — host-level for single-node, Spark-internal for Databricks —
-%   feeding one cost model. Realizes the metrics of
-%   Section~\ref{research-design-and-methodology:metrics-and-cost-model:cost-model}.
+% Academic rewrite
+With the configurations paired and dispatched, each timed run must be observed and priced, and this section realizes the measurement framework and cost model set out in Section~\ref{research-design-and-methodology:metrics-and-cost-model}. Instrumentation comes first at two scopes: the host-level counters a per-node decorator records around each timed iteration, and the executor, shuffle, and driver phases a Spark listener recovers from within a distributed run. The cost model then computes each run's monetary figure offline from that window, after which the raw-sample layer persists every iteration in full alongside a per-run metadata summary. The section closes at the edges of the frame, with how the harness declares reproducibly-failing cells infeasible and skips them, and what the reported numbers leave outside the timing window by design.
 
 \subsection{Host-level instrumentation}
 \label{system-architecture-and-implementation:measurement-instrumentation-and-cost-model:host-level-instrumentation}
