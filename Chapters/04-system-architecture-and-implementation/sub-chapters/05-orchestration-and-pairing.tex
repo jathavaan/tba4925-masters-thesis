@@ -11,7 +11,7 @@ The orchestrator in \texttt{main.py} drives the suite through a single serial lo
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=0.7\textwidth]{Chapters/04-system-architecture-and-implementation/sub-chapters/figures/04-dispatch-loop.pdf}
-	\caption[Orchestrator dispatch loop.]{Control flow of the \texttt{main.py} dispatch loop: a serial outer pass admits one batch at a time, launches its members in parallel as one-off ACI container groups, and blocks on a join barrier until every member has finished before marking the batch completed and advancing to the next experiment.}
+	\caption[Orchestrator dispatch loop]{Control flow of the \texttt{main.py} dispatch loop: a serial outer pass admits one batch at a time, launches its members in parallel as one-off ACI container groups, and blocks on a join barrier until every member has finished before marking the batch completed and advancing to the next experiment.}
 	\label{fig:dispatch-loop}
 \end{figure}
 
@@ -32,7 +32,7 @@ Table~\ref{tab:batch-listing} packs the \num{51} experiments into \num{17} batch
 \begingroup
 \footnotesize
 \begin{longtable}{@{}l >{\raggedright\arraybackslash}p{0.20\textwidth} l r >{\raggedright\arraybackslash}p{0.40\textwidth}@{}}
-	\caption[Benchmark batch listing.]{Co-scheduled members of each batch and the summed Databricks-\acrshort{vcpu} demand. The \acrshort{vcpu} column adds $(w+1)\times 4$ over a batch's Sedona members; \texttt{duckdb}, \texttt{postgis}, and \texttt{local} draw on a separate \acrshort{aci} quota and contribute nothing.}
+	\caption[Benchmark batch listing]{Co-scheduled members of each batch and the summed Databricks-\acrshort{vcpu} demand. The \acrshort{vcpu} column adds $(w+1)\times 4$ over a batch's Sedona members; \texttt{duckdb}, \texttt{postgis}, and \texttt{local} draw on a separate \acrshort{aci} quota and contribute nothing.}
 	\label{tab:batch-listing} \\
 	\toprule
 	Batch & Type & Dataset size & \acrshort{vcpu} & Members \\

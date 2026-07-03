@@ -19,7 +19,7 @@ Cloud architectures decouple these layers, placing data in object storage and pr
     \subfloat[Decoupled storage and compute.\label{fig:decoupled-compute}]{%
         \includegraphics[valign=t, width=0.45\textwidth]{Chapters/02-background/sub-chapters/figures/02-decoupled-compute.pdf}%
     }
-    \caption[Coupled versus decoupled storage and compute architectures.]{Comparison of storage and compute architectures. (a) In the traditional coupled architecture, each node bundles its own compute and storage, so the two layers must scale together as a unit. (b) In the decoupled architecture, multiple independent compute resources access a shared object storage layer, allowing storage and compute to be provisioned, priced, and scaled independently of one another.}
+    \caption[Coupled versus decoupled storage and compute architectures]{Comparison of storage and compute architectures. (a) In the traditional coupled architecture, each node bundles its own compute and storage, so the two layers must scale together as a unit. (b) In the decoupled architecture, multiple independent compute resources access a shared object storage layer, allowing storage and compute to be provisioned, priced, and scaled independently of one another.}
     \label{fig:storage-compute-architectures}
 \end{figure}
 
@@ -32,7 +32,7 @@ Read access is mediated by \acrshort{http} itself. \textcite{fielding2022_rfc911
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.85\textwidth]{Chapters/02-background/sub-chapters/figures/02-http-range-requests.pdf}
-    \caption[HTTP range request access pattern.]{HTTP range request access pattern for cloud-native objects. The reader first issues a small range request for the metadata block at a known offset within the object (1), parses the layout information it returns to identify which byte intervals satisfy the query, and then issues range requests for only those intervals (2). Bytes outside the requested intervals are never transferred.}
+    \caption[HTTP range request access pattern]{HTTP range request access pattern for cloud-native objects. The reader first issues a small range request for the metadata block at a known offset within the object (1), parses the layout information it returns to identify which byte intervals satisfy the query, and then issues range requests for only those intervals (2). Bytes outside the requested intervals are never transferred.}
     \label{fig:http-range-requests}
 \end{figure}
 
@@ -50,7 +50,7 @@ With storage and compute decoupled, the choice of computational model becomes a 
     \subfloat[Distributed compute.\label{fig:distributed-compute}]{%
         \includegraphics[valign=t, width=0.45\textwidth]{Chapters/02-background/sub-chapters/figures/02-distributed-compute.pdf}%
     }
-    \caption[Non-distributed versus distributed compute models.]{Comparison of compute models. (a) In the non-distributed model, a single process executes the query end-to-end, with no coordination overhead between workers. (b) In the distributed model, a driver dispatches tasks to multiple workers, each operating on a partition of the data.}
+    \caption[Non-distributed versus distributed compute models]{Comparison of compute models. (a) In the non-distributed model, a single process executes the query end-to-end, with no coordination overhead between workers. (b) In the distributed model, a driver dispatches tasks to multiple workers, each operating on a partition of the data.}
     \label{fig:compute-models}
 \end{figure}
 This distribution introduces overhead from four sources: task scheduling, the assignment of work to specific workers; data shuffling between nodes, the network-based redistribution of intermediate data; serialization of in-memory objects into transmittable byte form; and network communication between workers. Each adds latency before any computation begins \parencite{mcsherry2015_scalability_but_at_what_cost,zaharia2012_resilient_distributed_datasets}. Distributed systems therefore outperform single-node systems only when the dataset or computation is large enough to justify the coordination cost \parencite{mcsherry2015_scalability_but_at_what_cost}. For spatial workloads in particular, the data partitioning strategy is critical: poor spatial partitioning produces skewed workloads, a recognized failure mode in which some workers process far more data than others, so the parallel efficiency, the speedup actually realized from each additional worker, degrades \parencite{tang2020_locationspark_distributed_spatial_query}.

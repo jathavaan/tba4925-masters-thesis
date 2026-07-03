@@ -20,7 +20,7 @@ Each single-machine workload is defined by three elements: the spatial predicate
     \subfloat[]{\includegraphics[width=0.30\textwidth]{Chapters/03-research-design-and-methodology/sub-chapters/figures/03-single-machine-point-in-polygon.pdf}}\hfill
     \subfloat[]{\includegraphics[width=0.30\textwidth]{Chapters/03-research-design-and-methodology/sub-chapters/figures/03-single-machine-k-nearest-neighbor.pdf}}\hfill
     \subfloat[]{\includegraphics[width=0.30\textwidth]{Chapters/03-research-design-and-methodology/sub-chapters/figures/03-single-machine-bounding-box.pdf}}
-    \caption[Single-machine query patterns.]{The three single-machine query patterns, each evaluated against the same building set, with query geometry shown in coral and result features in green. (a) Point-in-polygon returns the polygon containing a fixed query point. (b) $k$-nearest-neighbor returns the $k$ buildings closest to a fixed query point, here $k = \num{3}$. (c) Bounding-box filter returns every building whose geometry intersects a fixed rectangular window.}
+    \caption[Single-machine query patterns]{The three single-machine query patterns, each evaluated against the same building set, with query geometry shown in coral and result features in green. (a) Point-in-polygon returns the polygon containing a fixed query point. (b) $k$-nearest-neighbor returns the $k$ buildings closest to a fixed query point, here $k = \num{3}$. (c) Bounding-box filter returns every building whose geometry intersects a fixed rectangular window.}
     \label{fig:single-machine-query-definitions}
 \end{figure}
 
@@ -31,7 +31,7 @@ The \acrshort{rq}2 workload is a spatial join between Norwegian municipal bounda
     \footnotesize
     \setlength{\tabcolsep}{6pt}
     \renewcommand{\arraystretch}{1.2}
-    \caption[Benchmark workloads.]{The benchmark workloads, the predicate each evaluates, the configurations that execute it, and the dataset tiers at which it is run. The GeoPandas + Shapefile configuration runs at the small tier only and is excluded from the large tier.}
+    \caption[Benchmark workloads]{The benchmark workloads, the predicate each evaluates, the configurations that execute it, and the dataset tiers at which it is run. The GeoPandas + Shapefile configuration runs at the small tier only and is excluded from the large tier.}
     \label{tab:workload-matrix}
     \begin{tabularx}{\textwidth}{@{}l >{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}X l@{}}
         \toprule

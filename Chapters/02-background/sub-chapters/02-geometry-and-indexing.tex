@@ -27,7 +27,7 @@ The dominant family of spatial indexes is tree-based \parencite{gaede1998_multid
 	\subfloat[The corresponding R-tree.\label{fig:r-tree-indexing-tree}]{%
 		\includegraphics[valign=t, width=0.45\textwidth]{Chapters/02-background/sub-chapters/figures/02-r-tree-indexing-tree.pdf}%
 	}
-	\caption[The R-tree as a height-balanced hierarchy of bounding rectangles.]{The R-tree as a height-balanced hierarchy of bounding rectangles. (a) The leaf rectangles $R_{6}$--$R_{11}$ are grouped into intermediate rectangles $R_{3}$--$R_{5}$, which in turn fall under the root entries $R_{1}$ and $R_{2}$; sibling rectangles may overlap in space. (b) Each non-leaf node stores the rectangle that encloses all rectangles in its child node, so a query rectangle descends only into branches whose enclosing rectangle it intersects. Adapted from \textcite{guttman1984_rtree_dynamic_index}.}
+	\caption[The R-tree as a height-balanced hierarchy of bounding rectangles]{The R-tree as a height-balanced hierarchy of bounding rectangles. (a) The leaf rectangles $R_{6}$--$R_{11}$ are grouped into intermediate rectangles $R_{3}$--$R_{5}$, which in turn fall under the root entries $R_{1}$ and $R_{2}$; sibling rectangles may overlap in space. (b) Each non-leaf node stores the rectangle that encloses all rectangles in its child node, so a query rectangle descends only into branches whose enclosing rectangle it intersects. Adapted from \textcite{guttman1984_rtree_dynamic_index}.}
 	\label{fig:r-tree-indexing}
 \end{figure}
 
