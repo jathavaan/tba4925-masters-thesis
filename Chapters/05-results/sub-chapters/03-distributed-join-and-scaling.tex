@@ -21,7 +21,7 @@ Figure~\ref{fig:distributed-speedup-efficiency} shows how the broadcast join sca
 
 The two strategies differed by a wide margin at the small tier, the only tier at which the partitioned join completed. Figure~\ref{fig:distributed-strategy-contrast} contrasts them across worker counts. The partitioned join ran between about \SI{2540}{\second} and \SI{2760}{\second} across the worker counts, roughly two orders of magnitude slower than the broadcast join, which ran between about \SI{14}{\second} and \SI{32}{\second}. The same separation appeared in operational cost: the partitioned runs cost between about \num{11.9} and \num{56.8} US dollars, against about \num{0.38} to \num{1.59} dollars for broadcast, roughly \num{30} times as much. The partitioned medium- and large-tier runs did not complete, recording an executor out-of-memory failure at every worker count, as listed in Table~\ref{tab:distributed-join-descriptive-statistics}.
 
-\begin{figure}[tbp]
+\begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{Chapters/05-results/sub-chapters/figures/05-distributed-strategy-contrast.pdf}
     \caption[Broadcast versus partitioned strategy at the small tier]{Broadcast and partitioned execution of the national-scale spatial join at the small tier, across worker counts $\{2, 4, 8, 12, 16\}$, with one line per strategy. The left panel shows the wall-clock minimum on a logarithmic axis, with markers at the minimum estimator and whiskers spanning the \num{95}\% bootstrap confidence interval; the right panel shows the total operational cost (USD). The partitioned strategy completed at the small tier only, and its medium- and large-tier runs did not complete, recording an executor out-of-memory failure; that absence is annotated from Table~\ref{tab:distributed-join-descriptive-statistics} rather than drawn from the measurement cache.}
@@ -53,7 +53,7 @@ Nearly all of the broadcast join's time fell in the executor-run phase. Decompos
 
 % A normal (floating) figure with one caption; the float lets surrounding text
 % fill the page rather than leaving a tall gap, while the figure order is kept.
-\begin{figure}[tbp]
+\begin{figure}[H]
     \centering
     \subfloat[Wall-clock time by phase.\label{fig:distributed-phase-time}]{%
         \includegraphics[valign=t, width=0.8\textwidth]{Chapters/05-results/sub-chapters/figures/05-distributed-phase-time.pdf}}%
@@ -66,7 +66,7 @@ Nearly all of the broadcast join's time fell in the executor-run phase. Decompos
 
 At the driver boundary, the returned result was small in absolute terms. Figure~\ref{fig:distributed-client-boundary} reports the directional transfer at the Sedona client boundary for the eight-worker broadcast configuration, with the median estimator marked on each direction. Bytes received ranged from about \SI{34}{\kilo\byte} at the small tier to about \SI{62}{\kilo\byte} at the large tier, and bytes sent from about \SI{18}{\kilo\byte} to about \SI{32}{\kilo\byte}. Received therefore exceeded sent by roughly a factor of two at each tier, and both directions grew modestly with tier. This boundary is distinct from the shuffle volume of the phase breakdown and is the distributed counterpart of the single-machine directional transfer in Figure~\ref{fig:single-machine-bytes-directional}.
 
-\begin{figure}[tbp]
+\begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{Chapters/05-results/sub-chapters/figures/05-distributed-client-boundary.pdf}
     \caption[Directional network transfer at the distributed client boundary]{Network bytes received versus sent at the Sedona driver (client) boundary for the national-scale spatial join, measured for the eight-worker broadcast configuration, with one pair of mirrored bars per size tier. Bytes received extend to the right and bytes sent to the left from a central zero on a symmetric-log axis, with the median estimator and its \num{95}\% bootstrap confidence interval marked on each direction. This is the distributed analogue of the single-machine directional figure (Figure~\ref{fig:single-machine-bytes-directional}); unlike the shuffle volume of the phase breakdown, it measures transfer at the driver/client boundary.}
@@ -78,7 +78,7 @@ At the driver boundary, the returned result was small in absolute terms. Figure~
 
 Figure~\ref{fig:distributed-cost-time-pareto} places every strategy, tier, and worker count in the cost-time plane and traces the non-dominated frontier. The frontier was composed entirely of small-tier broadcast points, at \num{2}, \num{4}, \num{12}, and \num{16} workers. The small-tier broadcast point at \num{8} workers was dominated, as were all of the medium- and large-tier broadcast points and every partitioned point, each sitting further up and to the right at both higher time and higher cost. The per-cell achieved iteration counts, minimum-estimator run-times, confidence-interval half-widths, and costs behind these figures are collected in Table~\ref{tab:distributed-join-descriptive-statistics}.
 
-\begin{figure}[tbp]
+\begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{Chapters/05-results/sub-chapters/figures/05-distributed-cost-time-pareto.pdf}
     \caption[Cost-time tradeoff of the distributed join]{Operational cost (USD) against wall-clock time (s) for the distributed national-scale spatial join, on logarithmic axes, with one point per join strategy, size tier, and worker count and each point annotated with its worker count. Line color encodes the join strategy, and the connected line traces the non-dominated (Pareto) frontier.}

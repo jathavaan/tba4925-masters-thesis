@@ -265,7 +265,7 @@ Figure~\ref{fig:appendix-cell-grid} collects every query pattern and size tier i
 
 Figure~\ref{fig:appendix-spark-metrics} shows the distributions of the raw Spark-internal metrics --- executor run time, input bytes read, shuffle bytes, and per-stage durations --- that feed the execution-phase breakdown of Figure~\ref{fig:distributed-execution-phase-breakdown}.
 
-\begin{figure}[p]
+\begin{figure}[H]
     \centering
     % keepaspectratio with a \textheight cap so the tall multi-panel grid fits an
     % upright page without running off the bottom.
@@ -297,7 +297,7 @@ Figure~\ref{fig:spark-stage-extra} shows the same per-stage decomposition at the
 
 % One figure, one caption (below the last panel); the three strips fit a single
 % page at the authored size.
-\begin{figure}[tbp]
+\begin{figure}[H]
     \centering
     \subfloat[Broadcast, small tier]{\includegraphics[width=0.88\textwidth]{Chapters/09-appendix/sub-chapters/figures/09-spark-stage-profile-broadcast-small.pdf}\label{fig:spark-broadcast-small}}\\[0.6ex]
     \subfloat[Broadcast, medium tier]{\includegraphics[width=0.88\textwidth]{Chapters/09-appendix/sub-chapters/figures/09-spark-stage-profile-broadcast-medium.pdf}\label{fig:spark-broadcast-medium}}\\[0.6ex]
